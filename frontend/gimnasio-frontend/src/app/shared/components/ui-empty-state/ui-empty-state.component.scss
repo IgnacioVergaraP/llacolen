@@ -1,0 +1,44 @@
+@import "tokens";
+
+.ui-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: $space-3;
+
+  padding: $space-8 $space-4;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.ui-empty-state__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 56px;
+  height: 56px;
+  border-radius: $radius-lg;
+
+  background: $color-bg-subtle;
+  color: $color-text-subtle;
+
+  i { font-size: 26px; line-height: 1; }
+}
+
+.ui-empty-state__title {
+  font-size: $fs-md;
+  font-weight: $fw-semibold;
+  color: $color-text;
+  margin: 0;
+}
+
+.ui-empty-state__message {
+  font-size: $fs-sm;
+  color: $color-text-muted;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.ui-empty-state__actions:empty { display: none; }

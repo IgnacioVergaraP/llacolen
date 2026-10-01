@@ -1,0 +1,39 @@
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Ejercicio } from '../../models/rutina.model';
+
+@Component({
+  selector: 'app-ejercicio-item',
+  templateUrl: './ejercicio-item.component.html',
+  styleUrls: ['./ejercicio-item.component.scss'],
+})
+export class EjercicioItemComponent {
+
+  @Input() ejercicio!: Ejercicio;
+  @Input() indice = 1;
+
+  @Output() verDetalle = new EventEmitter<Ejercicio>();
+
+  get esMaquina(): boolean {
+    return this.ejercicio?.tipo === 'maquina';
+  }
+
+  get esLibre(): boolean {
+    return this.ejercicio?.tipo === 'libre';
+  }
+
+  get nombreVisible(): string {
+    return this.esMaquina
+      ? (this.ejercicio.maquina?.nombre ?? 'Máquina no disponible')
+      : (this.ejercicio.nombre ?? 'Ejercicio');
+  }
+
+  get resumenSeries(): string {
+    const s = this.ejercicio.series;
+    const r = this.ejercicio.repeticiones;
+    return `${s} × ${r}`;
+  }
+
+  onTap(): void {
+    this.verDetalle.emit(this.ejercicio);
+  }
+}

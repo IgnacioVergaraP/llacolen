@@ -1,0 +1,51 @@
+<nav class="bottom-nav" role="navigation" aria-label="Navegación principal">
+  <a
+    *ngFor="let item of items"
+    class="bottom-nav__item"
+    [routerLink]="item.action ? null : item.route"
+    routerLinkActive="bottom-nav__item--active"
+    [routerLinkActiveOptions]="{ exact: item.route === '/profesor' || item.route === '/admin' }"
+    [attr.aria-label]="item.label"
+    (click)="onTabClick(item, $event)">
+    <i class="bi {{ item.icon }}" aria-hidden="true"></i>
+    <span class="bottom-nav__label">{{ item.label }}</span>
+  </a>
+</nav>
+
+<!-- Sheet "Más" -->
+<div
+  *ngIf="masVisible"
+  class="bottom-nav__mas-overlay"
+  (click)="cerrarMas()">
+
+  <div class="bottom-nav__mas-sheet" (click)="$event.stopPropagation()">
+
+    <div class="bottom-nav__mas-handle" aria-hidden="true"></div>
+
+    <h3 class="bottom-nav__mas-titulo">Más opciones</h3>
+
+    <button type="button" class="bottom-nav__mas-item" (click)="irA('/admin/dashboard')">
+      <i class="bi bi-bar-chart" aria-hidden="true"></i>
+      <span>Dashboard</span>
+      <i class="bi bi-chevron-right" aria-hidden="true"></i>
+    </button>
+
+    <button type="button" class="bottom-nav__mas-item" (click)="irA('/admin/maquinas')">
+      <i class="bi bi-gear" aria-hidden="true"></i>
+      <span>Mantenciones</span>
+      <i class="bi bi-chevron-right" aria-hidden="true"></i>
+    </button>
+
+    <button type="button" class="bottom-nav__mas-item" (click)="irA('/admin/perfil')">
+      <i class="bi bi-person" aria-hidden="true"></i>
+      <span>Perfil</span>
+      <i class="bi bi-chevron-right" aria-hidden="true"></i>
+    </button>
+
+    <button type="button" class="bottom-nav__mas-item bottom-nav__mas-item--peligro" (click)="cerrarSesion()">
+      <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
+      <span>Cerrar sesión</span>
+    </button>
+
+  </div>
+</div>

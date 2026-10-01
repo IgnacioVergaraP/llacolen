@@ -1,0 +1,20 @@
+<div class="musculo-filter" role="tablist" aria-label="Filtrar por grupo muscular">
+
+  <button
+    type="button"
+    class="musculo-filter__chip"
+    [class.musculo-filter__chip--active]="!seleccionado"
+    (click)="limpiar($event)">
+    Todos
+  </button>
+
+  <button
+    *ngFor="let m of grupos"
+    type="button"
+    class="musculo-filter__chip"
+    [class.musculo-filter__chip--active]="seleccionado === m"
+    (click)="toggle(m)">
+    {{ etiqueta(m) }}
+  </button>
+
+</div>

@@ -1,0 +1,31 @@
+@mixin touch-target {
+  min-height: $touch-min;
+  display: flex;
+  align-items: center;
+}
+
+@mixin card-surface {
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+}
+
+@mixin truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin focus-ring {
+  outline: 2px solid $color-primary;
+  outline-offset: 2px;
+}
+
+// Aplica :hover SOLO en dispositivos con mouse real (hover: hover).
+// Evita el bug de iOS Safari donde el primer tap se consume como hover
+// y hace falta un segundo tap para disparar el click.
+@mixin hover {
+  @media (hover: hover) {
+    &:hover { @content; }
+  }
+}

@@ -1,0 +1,56 @@
+<div class="solicitud-card">
+
+  <div class="solicitud-card__header">
+    <div class="solicitud-card__titulos">
+      <p class="solicitud-card__nombre">{{ solicitud.nombre }}</p>
+      <p class="solicitud-card__fecha">{{ fechaFormateada }}</p>
+      <p class="solicitud-card__solicitante">
+        Propuesta por <strong>{{ solicitud.solicitante_nombre }}</strong>
+      </p>
+    </div>
+
+    <app-ui-badge [variant]="badgeVariant">
+      {{ estadoLabel }}
+    </app-ui-badge>
+  </div>
+
+  <div class="solicitud-card__tags" *ngIf="solicitud.grupos_musculares.length > 0">
+    <app-ui-badge
+      *ngFor="let g of solicitud.grupos_musculares"
+      variant="neutral">
+      {{ g }}
+    </app-ui-badge>
+  </div>
+
+  <p class="solicitud-card__descripcion">{{ solicitud.descripcion }}</p>
+
+  <div *ngIf="solicitud.estado === 'rechazada' && solicitud.motivo_rechazo" class="solicitud-card__motivo">
+    <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+    <span>{{ solicitud.motivo_rechazo }}</span>
+  </div>
+
+  <p *ngIf="solicitud.revisado_por_nombre" class="solicitud-card__revisor">
+    Revisada por {{ solicitud.revisado_por_nombre }}
+  </p>
+
+  <!-- Acciones -->
+  <div *ngIf="solicitud.estado === 'pendiente' && mostrarAcciones" class="solicitud-card__acciones solicitud-card__acciones--admin">
+    <app-ui-button variant="secondary" [block]="true" (clicked)="onRechazar()">
+      Rechazar
+    </app-ui-button>
+    <app-ui-button variant="primary" [block]="true" (clicked)="onAprobar()">
+      <i class="bi bi-check-lg" aria-hidden="true"></i>
+      Aprobar
+    </app-ui-button>
+  </div>
+
+  <div *ngIf="solicitud.estado === 'pendiente' && !mostrarAcciones" class="solicitud-card__acciones">
+    <button
+      type="button"
+      class="solicitud-card__cancelar"
+      (click)="onCancelar()">
+      Cancelar solicitud
+    </button>
+  </div>
+
+</div>

@@ -1,0 +1,90 @@
+<app-ui-page-header
+  title="Solicitudes de ejercicios"
+  subtitle="Propuestas de profesores pendientes de aprobación">
+</app-ui-page-header>
+
+<div *ngIf="cargando" class="ad__loading" aria-live="polite">
+  <span class="spinner" aria-hidden="true"></span>
+  <span>Cargando solicitudes…</span>
+</div>
+
+<app-ui-empty-state
+  *ngIf="!cargando && errorMensaje"
+  icon="bi-wifi-off"
+  title="No pudimos cargar las solicitudes"
+  [message]="errorMensaje">
+  <app-ui-button variant="secondary" (clicked)="reintentar()">Reintentar</app-ui-button>
+</app-ui-empty-state>
+
+<app-ui-empty-state
+  *ngIf="!cargando && !errorMensaje && solicitudes.length === 0"
+  icon="bi-check2-circle"
+  title="Sin solicitudes pendientes"
+  message="No hay propuestas de ejercicios esperando aprobación.">
+</app-ui-empty-state>
+
+<div *ngIf="!cargando && !errorMensaje && solicitudes.length > 0" class="ad__lista">
+  <app-solicitud-card
+    *ngFor="let s of solicitudes; trackBy: trackById"
+    [solicitud]="s"
+    [mostrarAcciones]="true"
+    (aprobar)="abrirAprobar($event)"
+    (rechazar)="abrirRechazo($event)">
+  </app-solicitud-card>
+</div>
+
+<!-- Modal Aprobar -->
+<div *ngIf="modalAprobarVisible" class="ad__modal" (click)="cerrarAprobar()">
+  <div class="ad__modal-panel" (click)="$event.stopPropagation()">
+    <h2 class="ad__modal-titulo">Aprobar solicitud</h2>
+    <p class="ad__modal-texto">
+      ¿Confirmás aprobar "<strong>{{ solicitudAAprobar?.nombre }}</strong>"?
+      Se va a agregar al catálogo de máquinas.
+    </p>
+
+    <div *ngIf="errorAprobar" class="ad__modal-error">
+      <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+      <span>{{ errorAprobar }}</span>
+    </div>
+
+    <div class="ad__modal-acciones">
+      <app-ui-button variant="secondary" type="button" [block]="true" (clicked)="cerrarAprobar()">
+        Cancelar
+      </app-ui-button>
+      <app-ui-button variant="primary" type="button" [block]="true" [loading]="aprobando" [disabled]="aprobando" (clicked)="confirmarAprobar()">
+        Aprobar
+      </app-ui-button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Rechazar -->
+<div *ngIf="modalRechazoVisible" class="ad__modal" (click)="cerrarRechazo()">
+  <div class="ad__modal-panel" (click)="$event.stopPropagation()">
+    <h2 class="ad__modal-titulo">Rechazar solicitud</h2>
+    <p class="ad__modal-texto">
+      Motivo del rechazo de "<strong>{{ solicitudARechazar?.nombre }}</strong>":
+    </p>
+
+    <textarea
+      class="ad__modal-textarea"
+      [(ngModel)]="motivoRechazo"
+      rows="4"
+      placeholder="Explicá por qué se rechaza...">
+    </textarea>
+
+    <div *ngIf="errorRechazo" class="ad__modal-error">
+      <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+      <span>{{ errorRechazo }}</span>
+    </div>
+
+    <div class="ad__modal-acciones">
+      <app-ui-button variant="secondary" type="button" [block]="true" (clicked)="cerrarRechazo()">
+        Cancelar
+      </app-ui-button>
+      <app-ui-button variant="primary" type="button" [block]="true" [loading]="enviandoRechazo" [disabled]="enviandoRechazo" (clicked)="confirmarRechazo()">
+        Rechazar
+      </app-ui-button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,113 @@
+<app-ui-page-header
+  title="Inicio"
+  subtitle="Panel del profesor">
+</app-ui-page-header>
+
+<div *ngIf="cargando" class="inicio__loading" aria-live="polite">
+  <span class="spinner" aria-hidden="true"></span>
+  <span>Cargando panel…</span>
+</div>
+
+<app-ui-empty-state
+  *ngIf="!cargando && errorMensaje"
+  icon="bi-wifi-off"
+  title="No pudimos cargar el panel"
+  [message]="errorMensaje">
+  <app-ui-button variant="secondary" (clicked)="reintentar()">
+    Reintentar
+  </app-ui-button>
+</app-ui-empty-state>
+
+<ng-container *ngIf="!cargando && !errorMensaje && dashboard">
+
+  <!-- Horario de hoy -->
+  <section class="inicio__horario-hoy">
+    <h2 class="inicio__section-title inicio__section-title--inline">
+      <i class="bi bi-calendar-event" aria-hidden="true"></i>
+      Hoy · {{ diaSemanaHoy }}
+    </h2>
+
+    <div *ngIf="cargandoHorarios" class="inicio__horario-loading">
+      <span class="spinner" aria-hidden="true"></span>
+    </div>
+
+    <div *ngIf="!cargandoHorarios && horariosHoy.length === 0" class="inicio__horario-vacio">
+      <i class="bi bi-cup-hot" aria-hidden="true"></i>
+      <p>No tenés turnos asignados para hoy.</p>
+    </div>
+
+    <div *ngIf="!cargandoHorarios && horariosHoy.length > 0" class="inicio__horario-lista">
+      <div *ngFor="let h of horariosHoy" class="inicio__horario-slot">
+        <div class="inicio__horario-hora">
+          <span>{{ h.hora_inicio }}</span>
+          <span class="inicio__horario-sep">–</span>
+          <span>{{ h.hora_fin }}</span>
+        </div>
+        <p *ngIf="h.notas" class="inicio__horario-notas">{{ h.notas }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Métricas principales -->
+  <section class="inicio__metricas">
+    <button
+      type="button"
+      class="inicio__metrica-card"
+      (click)="irAAlumnos()">
+      <i class="bi bi-people inicio__metrica-icon" aria-hidden="true"></i>
+      <p class="inicio__metrica-valor">
+        {{ dashboard.alumnos_activos_semana }}
+        <span class="inicio__metrica-sufijo">/ {{ dashboard.alumnos_total }}</span>
+      </p>
+      <p class="inicio__metrica-label">Alumnos activos esta semana</p>
+    </button>
+
+    <button
+      type="button"
+      class="inicio__metrica-card inicio__metrica-card--destacada"
+      (click)="irASolicitudesRutina()">
+      <i class="bi bi-chat-dots inicio__metrica-icon" aria-hidden="true"></i>
+      <p class="inicio__metrica-valor">{{ dashboard.solicitudes_rutina_pendientes }}</p>
+      <p class="inicio__metrica-label">Solicitudes de rutina</p>
+    </button>
+  </section>
+
+  <!-- Métricas secundarias -->
+  <section class="inicio__metricas-sec">
+    <button
+      type="button"
+      class="inicio__metrica-mini"
+      (click)="irASubir()">
+      <i class="bi bi-inbox inicio__metrica-mini-icon" aria-hidden="true"></i>
+      <span class="inicio__metrica-mini-valor">{{ dashboard.solicitudes_pendientes }}</span>
+      <span class="inicio__metrica-mini-label">Solicitudes de ejercicios</span>
+    </button>
+
+    <button
+      type="button"
+      class="inicio__metrica-mini"
+      (click)="irAReportar()">
+      <i class="bi bi-flag inicio__metrica-mini-icon" aria-hidden="true"></i>
+      <span class="inicio__metrica-mini-valor">{{ dashboard.reportes_abiertos }}</span>
+      <span class="inicio__metrica-mini-label">Reportes abiertos</span>
+    </button>
+  </section>
+
+  <!-- Accesos rápidos -->
+  <section class="inicio__accesos">
+    <h2 class="inicio__section-title">Accesos rápidos</h2>
+
+    <button type="button" class="inicio__acceso" (click)="irAAlumnos()">
+      <i class="bi bi-people inicio__acceso-icon" aria-hidden="true"></i>
+      <span class="inicio__acceso-texto">Ver alumnos</span>
+      <i class="bi bi-chevron-right inicio__acceso-chevron" aria-hidden="true"></i>
+    </button>
+
+    <button type="button" class="inicio__acceso" (click)="irASubir()">
+      <i class="bi bi-plus-square inicio__acceso-icon" aria-hidden="true"></i>
+      <span class="inicio__acceso-texto">Subir ejercicio</span>
+      <i class="bi bi-chevron-right inicio__acceso-chevron" aria-hidden="true"></i>
+    </button>
+  </section>
+
+</ng-container>

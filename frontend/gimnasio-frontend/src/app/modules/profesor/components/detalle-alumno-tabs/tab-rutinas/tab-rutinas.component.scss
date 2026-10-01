@@ -1,0 +1,157 @@
+@import "tokens";
+
+.tr {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  padding-bottom: $space-6;
+}
+
+.tr__cta {
+  margin-top: $space-2;
+}
+
+.tr__toggle-wrap {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.tr__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 6px 12px;
+  font-size: $fs-xs;
+  font-weight: $fw-medium;
+  color: $color-text-muted;
+  background: transparent;
+  border: 1px solid $color-border;
+  border-radius: $radius-full;
+  cursor: pointer;
+
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+
+  @include hover { border-color: $color-border-strong; color: $color-text; }
+
+  i { font-size: 13px; }
+}
+
+.tr__toggle--active {
+  background: $color-primary-soft;
+  border-color: rgba(47, 111, 78, 0.30);
+  color: $color-primary;
+}
+
+.tr__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  padding: $space-6 0;
+  color: $color-text-muted;
+  font-size: $fs-sm;
+}
+
+.tr__lista {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+// -------- Modal duplicar --------
+
+.tr__modal {
+  position: fixed;
+  inset: 0;
+  z-index: $z-sheet;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-4;
+  background: rgba(15, 15, 15, 0.42);
+}
+
+.tr__modal-panel {
+  width: 100%;
+  max-width: 420px;
+  padding: $space-5;
+  background: #ffffff;
+  border-radius: $radius-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.tr__modal-titulo {
+  font-size: $fs-lg;
+  font-weight: $fw-semibold;
+  color: $color-text;
+  margin: 0;
+}
+
+.tr__modal-subtitulo {
+  font-size: $fs-sm;
+  color: $color-text-muted;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.tr__modal-label {
+  font-size: $fs-sm;
+  font-weight: $fw-medium;
+  color: $color-text;
+  margin-top: $space-2;
+}
+
+.tr__modal-select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 14px;
+  font-family: inherit;
+  font-size: $fs-base;
+  color: $color-text;
+  background: #ffffff;
+  border: 1px solid $color-border;
+  border-radius: 10px;
+  outline: none;
+
+  &:focus {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px rgba(47, 111, 78, 0.10);
+  }
+}
+
+.tr__modal-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(192, 57, 43, 0.06);
+  border: 1px solid rgba(192, 57, 43, 0.18);
+  color: $color-danger;
+  font-size: $fs-sm;
+
+  i { font-size: 14px; margin-top: 1px; }
+}
+
+.tr__modal-acciones {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $space-3;
+  margin-top: $space-3;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid $color-border-strong;
+  border-top-color: $color-primary;
+  border-radius: 50%;
+  animation: tr-spin 700ms linear infinite;
+}
+
+@keyframes tr-spin {
+  to { transform: rotate(360deg); }
+}

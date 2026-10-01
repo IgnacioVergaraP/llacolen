@@ -1,0 +1,56 @@
+@import "tokens";
+
+.uc {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: $space-3;
+  background: #ffffff;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+}
+
+.uc__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-2;
+}
+
+.uc__nombre {
+  flex: 1;
+  min-width: 0;
+  font-size: $fs-sm;
+  font-weight: $fw-medium;
+  color: $color-text;
+  margin: 0;
+
+  @include truncate;
+}
+
+.uc__valor {
+  font-size: $fs-sm;
+  font-weight: $fw-semibold;
+  color: $color-primary;
+  flex-shrink: 0;
+}
+
+.uc__barra {
+  height: 6px;
+  background: $color-bg-subtle;
+  border-radius: $radius-full;
+  overflow: hidden;
+}
+
+.uc__barra-fill {
+  height: 100%;
+  background: $color-primary;
+  border-radius: $radius-full;
+  transition: width 300ms ease;
+}
+
+// Variante "menos usadas"
+.uc--baja {
+  .uc__valor { color: $color-warning; }
+  .uc__barra-fill { background: $color-warning; }
+}

@@ -1,0 +1,50 @@
+<app-ui-page-header
+  title="Alumnos"
+  subtitle="Todos los alumnos del gimnasio">
+</app-ui-page-header>
+
+<!-- Buscador -->
+<div class="lista__buscador">
+  <i class="bi bi-search lista__buscador-icon" aria-hidden="true"></i>
+  <input
+    type="search"
+    class="lista__buscador-input"
+    placeholder="Buscar alumno..."
+    [(ngModel)]="busqueda"
+    (ngModelChange)="onBusquedaChange()" />
+</div>
+
+<!-- Loading -->
+<div *ngIf="cargando" class="lista__loading" aria-live="polite">
+  <span class="spinner" aria-hidden="true"></span>
+  <span>Cargando alumnos…</span>
+</div>
+
+<!-- Error -->
+<app-ui-empty-state
+  *ngIf="!cargando && errorMensaje"
+  icon="bi-wifi-off"
+  title="No pudimos cargar los alumnos"
+  [message]="errorMensaje">
+  <app-ui-button variant="secondary" (clicked)="reintentar()">
+    Reintentar
+  </app-ui-button>
+</app-ui-empty-state>
+
+<!-- Vacío -->
+<app-ui-empty-state
+  *ngIf="!cargando && !errorMensaje && filtrados.length === 0"
+  icon="bi-people"
+  [title]="alumnos.length === 0 ? 'Sin alumnos' : 'Sin resultados'"
+  [message]="alumnos.length === 0
+    ? 'Todavía no hay alumnos registrados en el gimnasio.'
+    : 'Probá con otro nombre o email.'">
+</app-ui-empty-state>
+
+<!-- Listado -->
+<div *ngIf="!cargando && !errorMensaje && filtrados.length > 0" class="lista">
+  <app-alumno-card
+    *ngFor="let a of filtrados; trackBy: trackById"
+    [alumno]="a">
+  </app-alumno-card>
+</div>

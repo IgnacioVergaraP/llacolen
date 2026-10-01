@@ -1,0 +1,119 @@
+@import "tokens";
+
+.ui-input {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ui-input__label {
+  font-size: $fs-sm;
+  font-weight: $fw-medium;
+  color: $color-text;
+  line-height: 1.2;
+}
+
+.ui-input__wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.ui-input__icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: $color-text-subtle;
+  pointer-events: none;
+  transition: color 150ms ease;
+}
+
+.ui-input__field {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 14px;
+  font-size: $fs-base;
+  color: $color-text;
+  background: #ffffff;
+  border: 1px solid $color-border;
+  border-radius: 10px;
+  outline: none;
+  transition: border-color 150ms ease, box-shadow 150ms ease, background 150ms ease;
+
+  &::placeholder {
+    color: $color-text-subtle;
+  }
+
+  @include hover {
+    &:not(:disabled) {
+      border-color: $color-border-strong;
+    }
+  }
+
+  &:focus {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px rgba(47, 111, 78, 0.10);
+  }
+
+  &:disabled {
+    background: $color-bg-subtle;
+    color: $color-text-subtle;
+    cursor: not-allowed;
+  }
+}
+
+.ui-input__field--with-icon {
+  padding-left: 40px;
+}
+
+.ui-input__field--with-action {
+  padding-right: 44px;
+}
+
+.ui-input__wrap:focus-within .ui-input__icon {
+  color: $color-primary;
+}
+
+.ui-input__action {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  color: $color-text-subtle;
+  cursor: pointer;
+  transition: color 150ms ease, background 150ms ease;
+
+  i { font-size: 16px; line-height: 1; }
+
+  @include hover { color: $color-text; background: $color-bg-hover; }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
+}
+
+.ui-input--error .ui-input__field {
+  border-color: $color-danger;
+
+  &:focus {
+    box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.10);
+  }
+}
+
+.ui-input__error {
+  margin: 0;
+  font-size: $fs-xs;
+  color: $color-danger;
+  line-height: 1.3;
+}

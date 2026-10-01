@@ -1,0 +1,196 @@
+<app-ui-page-header
+  title="Calendario"
+  subtitle="Horarios semanales de los profesores">
+</app-ui-page-header>
+
+<!-- Barra de acciones -->
+<div class="cal__acciones">
+  <div class="cal__acciones-left">
+    <select
+      class="cal__select"
+      [(ngModel)]="filtroProfesorId"
+      (ngModelChange)="onFiltroProfesorChange()">
+      <option [ngValue]="null">Todos los profesores</option>
+      <option *ngFor="let p of profesores" [ngValue]="p.id">{{ p.nombre }}</option>
+    </select>
+  </div>
+
+  <div class="cal__acciones-right">
+    <button
+      type="button"
+      class="cal__btn-import"
+      disabled
+      title="Próximamente: importar horarios desde Excel">
+      <i class="bi bi-file-earmark-excel" aria-hidden="true"></i>
+      <span>Importar Excel</span>
+      <span class="cal__btn-import-badge">Pronto</span>
+    </button>
+
+    <app-ui-button variant="primary" (clicked)="abrirCrear()">
+      <i class="bi bi-plus-lg" aria-hidden="true"></i>
+      Agregar horario
+    </app-ui-button>
+  </div>
+</div>
+
+<!-- Loading -->
+<div *ngIf="cargando" class="cal__loading" aria-live="polite">
+  <span class="spinner" aria-hidden="true"></span>
+  <span>Cargando horarios…</span>
+</div>
+
+<!-- Error -->
+<app-ui-empty-state
+  *ngIf="!cargando && errorMensaje"
+  icon="bi-wifi-off"
+  title="No pudimos cargar los horarios"
+  [message]="errorMensaje">
+  <app-ui-button variant="secondary" (clicked)="reintentarCarga()">
+    Reintentar
+  </app-ui-button>
+</app-ui-empty-state>
+
+<!-- Sin horarios -->
+<app-ui-empty-state
+  *ngIf="!cargando && !errorMensaje && horarios.length === 0"
+  icon="bi-calendar3"
+  title="Sin horarios cargados"
+  message="Todavía no hay horarios asignados a ningún profesor.">
+  <app-ui-button variant="primary" (clicked)="abrirCrear()">
+    Cargar primer horario
+  </app-ui-button>
+</app-ui-empty-state>
+
+<!-- Grilla (desktop/tablet) -->
+<div *ngIf="!cargando && !errorMensaje && horarios.length > 0" class="cal__vista-desktop">
+  <app-calendario-grid
+    [horarios]="horarios"
+    [mostrarProfesor]="true"
+    (celdaClick)="onCeldaClick($event)">
+  </app-calendario-grid>
+</div>
+
+<!-- Lista (mobile) -->
+<div *ngIf="!cargando && !errorMensaje && horarios.length > 0" class="cal__vista-mobile">
+  <app-calendario-lista
+    [horarios]="horarios"
+    (horarioClick)="onHorarioListaClick($event)">
+  </app-calendario-lista>
+</div>
+
+<!-- Sheet crear/editar -->
+<app-ui-sheet
+  [visible]="sheetVisible"
+  [title]="modoEdicion ? 'Editar horario' : 'Nuevo horario'"
+  (closed)="cerrarSheet()">
+
+  <form class="cal__form" [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+
+    <div *ngIf="!modoEdicion" class="cal__form-field">
+      <label class="cal__form-label" for="cal-prof">Profesor</label>
+      <select
+        id="cal-prof"
+        class="cal__select-full"
+        formControlName="profesor_id">
+        <option *ngFor="let p of profesores" [value]="p.id">{{ p.nombre }}</option>
+      </select>
+    </div>
+
+    <div *ngIf="modoEdicion" class="cal__form-info">
+      <i class="bi bi-info-circle" aria-hidden="true"></i>
+      <span>Profesor: <strong>{{ horarioEditando?.profesor_nombre }}</strong></span>
+    </div>
+
+    <div class="cal__form-field">
+      <label class="cal__form-label" for="cal-dia">Día de la semana</label>
+      <select
+        id="cal-dia"
+        class="cal__select-full"
+        formControlName="dia_semana">
+        <option *ngFor="let d of dias" [value]="d.value">{{ d.long }}</option>
+      </select>
+    </div>
+
+    <div class="cal__form-grid">
+      <div class="cal__form-field">
+        <label class="cal__form-label" for="cal-hi">Hora inicio</label>
+        <input
+          id="cal-hi"
+          type="time"
+          class="cal__input"
+          formControlName="hora_inicio" />
+      </div>
+
+      <div class="cal__form-field">
+        <label class="cal__form-label" for="cal-hf">Hora fin</label>
+        <input
+          id="cal-hf"
+          type="time"
+          class="cal__input"
+          formControlName="hora_fin" />
+      </div>
+    </div>
+
+    <div class="cal__form-field">
+      <label class="cal__form-label" for="cal-notas">Notas (opcional)</label>
+      <input
+        id="cal-notas"
+        type="text"
+        class="cal__input"
+        formControlName="notas"
+        placeholder="Ej: Turno mañana, Clase funcional..." />
+    </div>
+
+    <div *ngIf="errorSheet" class="cal__form-error" role="alert">
+      <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+      <span>{{ errorSheet }}</span>
+    </div>
+
+    <div class="cal__form-acciones">
+      <app-ui-button
+        *ngIf="modoEdicion"
+        variant="secondary"
+        type="button"
+        [block]="true"
+        (clicked)="confirmarEliminar(horarioEditando!)">
+        <i class="bi bi-trash3" aria-hidden="true"></i>
+        Eliminar
+      </app-ui-button>
+
+      <app-ui-button
+        variant="primary"
+        type="submit"
+        [block]="true"
+        [loading]="guardando"
+        [disabled]="!puedeGuardar">
+        {{ modoEdicion ? 'Guardar cambios' : 'Crear horario' }}
+      </app-ui-button>
+    </div>
+
+    <p *ngIf="!modoEdicion" class="cal__form-cancelar">
+      <button type="button" class="cal__link-cancelar" (click)="cerrarSheet()">
+        Cancelar
+      </button>
+    </p>
+
+  </form>
+
+</app-ui-sheet>
+
+<!-- Modal eliminar -->
+<div *ngIf="modalEliminarVisible" class="cal__modal" (click)="cerrarEliminar()">
+  <div class="cal__modal-panel" (click)="$event.stopPropagation()">
+    <h2 class="cal__modal-titulo">Eliminar horario</h2>
+    <p class="cal__modal-texto">
+      ¿Confirmás eliminar el horario del <strong>{{ horarioAEliminar?.profesor_nombre }}</strong>?
+    </p>
+    <div class="cal__modal-acciones">
+      <app-ui-button variant="secondary" type="button" [block]="true" (clicked)="cerrarEliminar()">
+        Cancelar
+      </app-ui-button>
+      <app-ui-button variant="primary" type="button" [block]="true" [loading]="eliminando" [disabled]="eliminando" (clicked)="eliminar()">
+        Eliminar
+      </app-ui-button>
+    </div>
+  </div>
+</div>

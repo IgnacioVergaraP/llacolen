@@ -1,0 +1,24 @@
+@import "tokens";
+
+.mh__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  padding: $space-8 0;
+  color: $color-text-muted;
+  font-size: $fs-sm;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid $color-border-strong;
+  border-top-color: $color-primary;
+  border-radius: 50%;
+  animation: mh-spin 700ms linear infinite;
+}
+
+@keyframes mh-spin {
+  to { transform: rotate(360deg); }
+}

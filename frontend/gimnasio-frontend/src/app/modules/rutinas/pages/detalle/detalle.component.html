@@ -1,0 +1,111 @@
+<div *ngIf="cargando" class="rutina-detalle__loading" aria-live="polite">
+  <span class="spinner" aria-hidden="true"></span>
+  <span>Cargando…</span>
+</div>
+
+<app-ui-empty-state
+  *ngIf="!cargando && errorMensaje"
+  icon="bi-exclamation-triangle"
+  title="No pudimos cargar la rutina"
+  [message]="errorMensaje">
+  <app-ui-button variant="secondary" (clicked)="reintentar()">
+    Reintentar
+  </app-ui-button>
+</app-ui-empty-state>
+
+<ng-container *ngIf="!cargando && rutina">
+
+  <app-ui-page-header [title]="rutina.titulo"></app-ui-page-header>
+
+  <div class="rutina-detalle__tags">
+    <app-ui-badge
+      *ngFor="let g of rutina.grupos_musculares"
+      variant="primary">
+      {{ g }}
+    </app-ui-badge>
+  </div>
+
+  <section class="rutina-detalle__ejercicios">
+    <h2 class="rutina-detalle__section-title">Ejercicios</h2>
+
+    <div class="rutina-detalle__lista">
+      <app-ejercicio-item
+        *ngFor="let e of rutina.ejercicios; let i = index; trackBy: trackByEjercicio"
+        [ejercicio]="e"
+        [indice]="i + 1"
+        (verDetalle)="abrirSheet($event)">
+      </app-ejercicio-item>
+    </div>
+  </section>
+
+</ng-container>
+
+<app-ui-sheet
+  [visible]="sheetVisible"
+  [title]="sheetTitulo"
+  (closed)="cerrarSheet()">
+
+  <ng-container *ngIf="ejercicioEnSheet">
+
+    <div class="rutina-detalle__sheet-resumen">
+      <div class="rutina-detalle__sheet-resumen-item">
+        <span class="rutina-detalle__sheet-resumen-label">Series</span>
+        <span class="rutina-detalle__sheet-resumen-valor">{{ ejercicioEnSheet.series }}</span>
+      </div>
+      <div class="rutina-detalle__sheet-resumen-item">
+        <span class="rutina-detalle__sheet-resumen-label">Reps</span>
+        <span class="rutina-detalle__sheet-resumen-valor">{{ ejercicioEnSheet.repeticiones }}</span>
+      </div>
+      <div class="rutina-detalle__sheet-resumen-item">
+        <span class="rutina-detalle__sheet-resumen-label">Peso</span>
+        <span class="rutina-detalle__sheet-resumen-valor">
+          {{ ejercicioEnSheet.peso_sugerido || '—' }}
+        </span>
+      </div>
+    </div>
+
+    <div *ngIf="sheetVideoUrlSeguro" class="rutina-detalle__sheet-video">
+      <iframe
+        [src]="sheetVideoUrlSeguro"
+        title="Video demostrativo"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+        loading="lazy">
+      </iframe>
+    </div>
+
+    <section class="rutina-detalle__sheet-section">
+      <h3 class="rutina-detalle__sheet-section-title">Descripción</h3>
+      <p *ngIf="sheetDescripcion" class="rutina-detalle__sheet-text">
+        {{ sheetDescripcion }}
+      </p>
+      <p *ngIf="!sheetDescripcion" class="rutina-detalle__sheet-text rutina-detalle__sheet-text--muted">
+        Este ejercicio no tiene descripción.
+      </p>
+    </section>
+
+    <div class="rutina-detalle__sheet-actions">
+
+      <app-ui-button
+        *ngIf="sheetEsMaquina"
+        variant="secondary"
+        [block]="true"
+        (clicked)="verDetalleMaquina()">
+        <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>
+        Ver detalle completo
+      </app-ui-button>
+
+      <app-ui-button
+        variant="primary"
+        [block]="true"
+        (clicked)="registrarSeries()">
+        <i class="bi bi-check2-square" aria-hidden="true"></i>
+        Registrar series
+      </app-ui-button>
+
+    </div>
+
+  </ng-container>
+
+</app-ui-sheet>

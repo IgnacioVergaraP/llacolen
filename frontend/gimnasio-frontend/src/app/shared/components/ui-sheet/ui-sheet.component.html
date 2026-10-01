@@ -1,0 +1,27 @@
+<div
+  class="ui-sheet"
+  [class.ui-sheet--visible]="visible"
+  role="dialog"
+  aria-modal="true"
+  (click)="onBackdropClick()">
+
+  <div class="ui-sheet__panel" (click)="stopPropagation($event)">
+
+    <div class="ui-sheet__handle" aria-hidden="true"></div>
+
+    <header class="ui-sheet__header">
+      <h2 class="ui-sheet__title">{{ title }}</h2>
+      <button
+        type="button"
+        class="ui-sheet__close"
+        aria-label="Cerrar"
+        (click)="onCloseClick()">
+        <i class="bi bi-x-lg" aria-hidden="true"></i>
+      </button>
+    </header>
+
+    <div class="ui-sheet__body">
+      <ng-content></ng-content>
+    </div>
+  </div>
+</div>

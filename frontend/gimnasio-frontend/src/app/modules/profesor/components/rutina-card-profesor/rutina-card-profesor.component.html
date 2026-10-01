@@ -1,0 +1,58 @@
+<div class="rcp" [class.rcp--inactiva]="!rutina.activa">
+
+  <!-- Header: título + badge archivada -->
+  <div class="rcp__header">
+    <p class="rcp__titulo">{{ rutina.titulo }}</p>
+    <span *ngIf="!rutina.activa" class="rcp__archivada-badge">
+      <i class="bi bi-archive" aria-hidden="true"></i>
+      Archivada
+    </span>
+  </div>
+
+  <!-- Meta: ejercicios + fecha -->
+  <p class="rcp__meta">
+    {{ cantidadEjercicios }} ejercicio{{ cantidadEjercicios === 1 ? '' : 's' }}
+    · {{ fechaFormateada }}
+  </p>
+
+  <!-- Tags -->
+  <div class="rcp__tags" *ngIf="rutina.grupos_musculares.length > 0">
+    <app-ui-badge
+      *ngFor="let g of rutina.grupos_musculares"
+      variant="primary">
+      {{ g }}
+    </app-ui-badge>
+  </div>
+
+  <!-- Acciones -->
+  <div class="rcp__acciones">
+    <button type="button" class="rcp__btn" (click)="onEditar()">
+      <i class="bi bi-pencil" aria-hidden="true"></i>
+      Editar
+    </button>
+
+    <button type="button" class="rcp__btn" (click)="onDuplicar()">
+      <i class="bi bi-files" aria-hidden="true"></i>
+      Duplicar
+    </button>
+
+    <button
+      *ngIf="rutina.activa"
+      type="button"
+      class="rcp__btn rcp__btn--peligro"
+      (click)="onArchivar()">
+      <i class="bi bi-archive" aria-hidden="true"></i>
+      Archivar
+    </button>
+
+    <button
+      *ngIf="!rutina.activa"
+      type="button"
+      class="rcp__btn"
+      (click)="onReactivar()">
+      <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i>
+      Reactivar
+    </button>
+  </div>
+
+</div>

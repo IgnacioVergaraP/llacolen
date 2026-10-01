@@ -1,0 +1,220 @@
+@import "tokens";
+
+.seleccionar__label {
+  font-size: $fs-sm;
+  font-weight: $fw-semibold;
+  color: $color-text;
+  margin: 0 0 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.seleccionar__ayuda {
+  font-size: $fs-xs;
+  color: $color-text-muted;
+  margin: 0 0 $space-3;
+  line-height: 1.4;
+}
+
+.seleccionar__libre {
+  display: flex;
+  gap: $space-2;
+
+  @media (max-width: #{$bp-md - 1px}) {
+    flex-direction: column;
+  }
+}
+
+.seleccionar__input {
+  flex: 1;
+  min-width: 0;
+  min-height: 48px;
+  padding: 0 14px;
+  font-size: $fs-base;
+  color: $color-text;
+  background: #ffffff;
+  border: 1px solid $color-border;
+  border-radius: 10px;
+  outline: none;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+
+  &::placeholder { color: $color-text-subtle; }
+
+  &:focus {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px rgba(47, 111, 78, 0.10);
+  }
+}
+
+.seleccionar__catalogo {
+  margin-top: $space-6;
+}
+
+.seleccionar__section-title {
+  font-size: $fs-md;
+  font-weight: $fw-semibold;
+  color: $color-text;
+  margin: 0 0 $space-3;
+}
+
+.seleccionar__search {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 14px;
+  font-size: $fs-base;
+  color: $color-text;
+  background: #ffffff;
+  border: 1px solid $color-border;
+  border-radius: 10px;
+  outline: none;
+  margin-bottom: $space-3;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+
+  &::placeholder { color: $color-text-subtle; }
+
+  &:focus {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px rgba(47, 111, 78, 0.10);
+  }
+}
+
+.seleccionar__chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: $space-3;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+.seleccionar__chip {
+  flex: 0 0 auto;
+  padding: 6px 14px;
+  min-height: 36px;
+
+  font-size: $fs-sm;
+  font-weight: $fw-medium;
+  white-space: nowrap;
+
+  color: $color-text-muted;
+  background: #ffffff;
+  border: 1px solid $color-border;
+  border-radius: $radius-full;
+  cursor: pointer;
+
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+
+  @include hover {
+    border-color: $color-border-strong;
+    color: $color-text;
+  }
+}
+
+.seleccionar__chip--active {
+  background: $color-primary-soft;
+  border-color: rgba(47, 111, 78, 0.30);
+  color: $color-primary;
+  font-weight: $fw-semibold;
+}
+
+.seleccionar__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  padding: $space-6 0;
+  color: $color-text-muted;
+  font-size: $fs-sm;
+}
+
+.seleccionar__lista {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.seleccionar__item {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+
+  width: 100%;
+  padding: $space-3;
+  text-align: left;
+
+  background: #ffffff;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  color: inherit;
+  cursor: pointer;
+
+  transition: border-color 150ms ease, background 150ms ease;
+
+  @include hover { border-color: $color-border-strong; }
+  &:active { background: $color-bg-hover; }
+  &:focus-visible { outline: 2px solid $color-primary; outline-offset: 2px; }
+}
+
+.seleccionar__item-thumb {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border-radius: $radius-sm;
+  overflow: hidden;
+  background: $color-bg-subtle;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $color-text-subtle;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  i { font-size: 18px; }
+}
+
+.seleccionar__item-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.seleccionar__item-nombre {
+  font-size: $fs-base;
+  font-weight: $fw-medium;
+  color: $color-text;
+  margin: 0;
+  line-height: 1.3;
+
+  @include truncate;
+}
+
+.seleccionar__item-tags {
+  font-size: $fs-xs;
+  color: $color-text-muted;
+  margin: 2px 0 0;
+  text-transform: capitalize;
+}
+
+.seleccionar__item-chevron {
+  flex: 0 0 auto;
+  font-size: 14px;
+  color: $color-text-subtle;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid $color-border-strong;
+  border-top-color: $color-primary;
+  border-radius: 50%;
+  animation: seleccionar-spin 700ms linear infinite;
+}
+
+@keyframes seleccionar-spin {
+  to { transform: rotate(360deg); }
+}

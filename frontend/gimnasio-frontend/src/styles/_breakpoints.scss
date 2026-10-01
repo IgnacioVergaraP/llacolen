@@ -1,0 +1,18 @@
+// Mobile-first: por defecto diseñamos para 320–428px.
+// Estos son los puntos donde MEJORAMOS la experiencia.
+
+$bp-xs: 360px;
+$bp-sm: 428px;
+$bp-md: 640px;
+$bp-lg: 768px;
+$bp-xl: 1024px;
+$bp-2xl: 1280px;
+
+@mixin from($bp) {
+  @media (min-width: $bp) { @content; }
+}
+
+@mixin sm-up { @include from($bp-sm) { @content; } }
+@mixin md-up { @include from($bp-md) { @content; } }
+@mixin lg-up { @include from($bp-lg) { @content; } }
+@mixin xl-up { @include from($bp-xl) { @content; } }

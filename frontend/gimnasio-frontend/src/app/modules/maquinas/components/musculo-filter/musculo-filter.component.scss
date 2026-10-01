@@ -1,0 +1,61 @@
+@import "tokens";
+
+.musculo-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+
+  padding: 4px $content-padding-x 8px;
+  margin: 0 -#{$content-padding-x};
+
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+.musculo-filter__chip {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 36px;
+  padding: 0 14px;
+
+  font-size: $fs-sm;
+  font-weight: $fw-medium;
+  white-space: nowrap;
+
+  color: $color-text-muted;
+  background: #ffffff;
+  border: 1px solid $color-border;
+  border-radius: $radius-full;
+
+  cursor: pointer;
+  user-select: none;
+
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+
+  @include hover {
+    border-color: $color-border-strong;
+    color: $color-text;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
+}
+
+.musculo-filter__chip--active {
+  background: $color-primary-soft;
+  border-color: rgba(47, 111, 78, 0.30);
+  color: $color-primary;
+  font-weight: $fw-semibold;
+}

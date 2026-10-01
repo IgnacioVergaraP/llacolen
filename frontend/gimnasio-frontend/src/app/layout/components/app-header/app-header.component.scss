@@ -1,0 +1,46 @@
+@import "tokens";
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: $z-header;
+
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+
+  min-height: $header-height;
+  padding: calc(#{$space-3} + #{$safe-area-top}) $content-padding-x $space-3;
+
+  background: $color-bg;
+  border-bottom: 1px solid $color-border;
+}
+
+.app-header__back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: $touch-min;
+  height: $touch-min;
+  margin-left: -$space-2;
+  border-radius: $radius-md;
+  color: $color-text;
+
+  &:active { background: $color-bg-hover; }
+  i { font-size: 20px; }
+}
+
+.app-header__titles { flex: 1; min-width: 0; }
+
+.app-header__title {
+  font-size: $fs-lg;
+  font-weight: $fw-semibold;
+  @include truncate;
+}
+
+.app-header__subtitle {
+  margin: 2px 0 0;
+  font-size: $fs-sm;
+  color: $color-text-muted;
+  @include truncate;
+}

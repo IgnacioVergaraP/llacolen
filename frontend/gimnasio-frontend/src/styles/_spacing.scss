@@ -1,0 +1,24 @@
+// Escala 4px — todo el espaciado del sistema sale de acá.
+$space-1: 4px;
+$space-2: 8px;
+$space-3: 12px;
+$space-4: 16px;
+$space-5: 20px;
+$space-6: 24px;
+$space-8: 32px;
+$space-10: 40px;
+$space-12: 48px;
+$space-16: 64px;
+
+// Alturas táctiles mínimas (mobile-first, touch targets)
+$touch-min: 44px;
+
+// Layout
+$bottom-nav-height: 60px;
+$header-height: 56px;
+$content-max-width: 720px;
+$content-padding-x: $space-4;
+
+// Safe areas iOS (para Capacitor)
+$safe-area-bottom: env(safe-area-inset-bottom, 0px);
+$safe-area-top:    env(safe-area-inset-top, 0px);

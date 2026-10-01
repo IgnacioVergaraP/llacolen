@@ -1,0 +1,42 @@
+<div class="ui-input" [class.ui-input--error]="!!error">
+
+  <label *ngIf="label" class="ui-input__label" [for]="inputId">{{ label }}</label>
+
+  <div class="ui-input__wrap">
+
+    <i
+      *ngIf="icon"
+      class="bi {{ icon }} ui-input__icon"
+      aria-hidden="true">
+    </i>
+
+    <input
+      class="ui-input__field"
+      [class.ui-input__field--with-icon]="!!icon"
+      [class.ui-input__field--with-action]="esPassword"
+      [id]="inputId"
+      [type]="tipoEfectivo"
+      [placeholder]="placeholder"
+      [autocomplete]="autocomplete"
+      [disabled]="disabled"
+      [value]="value"
+      (input)="handleInput($event)"
+      (blur)="handleBlur()" />
+
+    <button
+      *ngIf="esPassword"
+      type="button"
+      class="ui-input__action"
+      [attr.aria-label]="mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+      (click)="togglePassword()">
+      <i
+        class="bi"
+        [class.bi-eye]="!mostrarPassword"
+        [class.bi-eye-slash]="mostrarPassword"
+        aria-hidden="true">
+      </i>
+    </button>
+  </div>
+
+  <p *ngIf="error" class="ui-input__error">{{ error }}</p>
+</div>

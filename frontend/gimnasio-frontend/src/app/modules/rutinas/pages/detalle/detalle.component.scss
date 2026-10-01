@@ -1,0 +1,155 @@
+@import "tokens";
+
+.rutina-detalle__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+
+  padding: $space-8 0;
+  color: $color-text-muted;
+  font-size: $fs-sm;
+}
+
+.rutina-detalle__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: $space-5;
+}
+
+.rutina-detalle__section-title {
+  font-size: $fs-md;
+  font-weight: $fw-semibold;
+  color: $color-text;
+  margin: 0 0 $space-3;
+}
+
+.rutina-detalle__lista {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.rutina-detalle__cta {
+  margin-top: $space-6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-2;
+}
+
+.rutina-detalle__aviso {
+  font-size: $fs-sm;
+  color: $color-text-muted;
+  margin: 0;
+  animation: fadeIn 200ms ease;
+}
+
+// ---------------- Sheet ----------------
+
+.rutina-detalle__sheet-resumen {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $space-2;
+
+  padding: $space-3;
+  background: $color-bg-subtle;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+
+  margin-bottom: $space-4;
+}
+
+.rutina-detalle__sheet-resumen-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-align: center;
+}
+
+.rutina-detalle__sheet-resumen-label {
+  font-size: $fs-xs;
+  color: $color-text-subtle;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.rutina-detalle__sheet-resumen-valor {
+  font-size: $fs-base;
+  font-weight: $fw-semibold;
+  color: $color-text;
+}
+
+.rutina-detalle__sheet-video {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border-radius: $radius-md;
+  overflow: hidden;
+  margin-bottom: $space-4;
+
+  iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+}
+
+.rutina-detalle__sheet-section {
+  margin-bottom: $space-4;
+}
+
+.rutina-detalle__sheet-section-title {
+  font-size: $fs-sm;
+  font-weight: $fw-semibold;
+  color: $color-text;
+  margin: 0 0 $space-2;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.rutina-detalle__sheet-text {
+  font-size: $fs-base;
+  line-height: $lh-relaxed;
+  color: $color-text;
+  margin: 0;
+}
+
+.rutina-detalle__sheet-text--muted {
+  color: $color-text-muted;
+  font-size: $fs-sm;
+}
+
+.rutina-detalle__sheet-actions {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  margin-top: $space-5;
+  padding-top: $space-4;
+  border-top: 1px solid $color-border;
+}
+
+// ---------------- Spinner ----------------
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid $color-border-strong;
+  border-top-color: $color-primary;
+  border-radius: 50%;
+  animation: rutina-detalle-spin 700ms linear infinite;
+}
+
+@keyframes rutina-detalle-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}

@@ -1,0 +1,179 @@
+<app-ui-page-header
+  title="Progreso"
+  subtitle="Tu evolución en el entrenamiento">
+</app-ui-page-header>
+
+<div *ngIf="cargando" class="progreso__loading" aria-live="polite">
+  <span class="spinner" aria-hidden="true"></span>
+  <span>Cargando tu progreso…</span>
+</div>
+
+<app-ui-empty-state
+  *ngIf="!cargando && errorMensaje"
+  icon="bi-wifi-off"
+  title="No pudimos cargar tu progreso"
+  [message]="errorMensaje">
+  <app-ui-button variant="secondary" (clicked)="reintentar()">
+    Reintentar
+  </app-ui-button>
+</app-ui-empty-state>
+
+<ng-container *ngIf="!cargando && !errorMensaje">
+
+  <app-ui-empty-state
+    *ngIf="historial.length === 0"
+    icon="bi-graph-up-arrow"
+    title="Sin registros todavía"
+    message="Empezá a registrar tus series para ver tu evolución.">
+    <app-ui-button variant="primary" (clicked)="irARegistrarLibre()">
+      <i class="bi bi-plus-lg" aria-hidden="true"></i>
+      Registrar serie
+    </app-ui-button>
+  </app-ui-empty-state>
+
+  <ng-container *ngIf="historial.length > 0">
+
+    <app-ui-card padding="md" *ngIf="evolucion">
+      <div class="progreso__evolucion-header">
+        <div class="progreso__evolucion-titles">
+          <p class="progreso__evolucion-label">Evolución</p>
+          <p class="progreso__evolucion-ejercicio">{{ ejercicioDestacado }}</p>
+        </div>
+        <i class="bi bi-graph-up-arrow progreso__evolucion-icon" aria-hidden="true"></i>
+      </div>
+
+      <div *ngIf="cargandoEvolucion" class="progreso__evolucion-loading">
+        <span class="spinner" aria-hidden="true"></span>
+      </div>
+
+    <app-grafico-evolucion
+    *ngIf="!cargandoEvolucion"
+    [puntos]="evolucion.puntos"
+    [prHistorico]="evolucion.pr_historico">
+    </app-grafico-evolucion>
+    </app-ui-card>
+
+    <section class="progreso__historial">
+      <h2 class="progreso__section-title">Historial reciente</h2>
+
+      <div class="progreso__lista">
+        <app-historial-item
+          *ngFor="let f of historial; trackBy: trackByFila"
+          [fila]="f"
+          (verEvolucion)="verEvolucion($event)"
+          (editarSesion)="abrirEdicionSesion($event)">
+        </app-historial-item>
+      </div>
+    </section>
+
+  </ng-container>
+
+</ng-container>
+
+<button
+  type="button"
+  class="progreso__fab"
+  aria-label="Registrar serie"
+  (click)="irARegistrarLibre()">
+  <i class="bi bi-plus-lg" aria-hidden="true"></i>
+</button>
+
+<!-- Sheet de edición de sesión -->
+<app-ui-sheet
+  [visible]="edicionVisible"
+  [title]="tituloSheet"
+  (closed)="cerrarEdicionSesion()">
+
+  <!-- Loading -->
+  <div *ngIf="cargandoSesion" class="progreso__sesion-loading">
+    <span class="spinner" aria-hidden="true"></span>
+    <span>Cargando series…</span>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="!cargandoSesion && errorSesion" class="progreso__sesion-error" role="alert">
+    <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+    <span>{{ errorSesion }}</span>
+  </div>
+
+  <!-- Contenido -->
+  <ng-container *ngIf="!cargandoSesion && sesion">
+
+    <!-- Modo edición de una serie puntual -->
+    <ng-container *ngIf="serieEnEdicion; else listaSeries">
+
+      <p class="progreso__sesion-editando">
+        Editando serie #{{ serieEnEdicion.numero_serie }}
+      </p>
+
+      <section class="progreso__sesion-steppers">
+        <app-stepper
+          label="Peso"
+          sufijo="kg"
+          [valor]="pesoEdicion"
+          [paso]="2.5"
+          [min]="0"
+          [max]="500"
+          (valorChange)="onPesoEdicionChange($event)">
+        </app-stepper>
+
+        <app-stepper
+          label="Repeticiones"
+          sufijo="reps"
+          [valor]="repsEdicion"
+          [paso]="1"
+          [min]="1"
+          [max]="200"
+          (valorChange)="onRepsEdicionChange($event)">
+        </app-stepper>
+      </section>
+
+      <div *ngIf="errorEdicion" class="progreso__sesion-error" role="alert">
+        <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+        <span>{{ errorEdicion }}</span>
+      </div>
+
+      <div class="progreso__sesion-edit-actions">
+        <app-ui-button
+          variant="secondary"
+          [block]="true"
+          (clicked)="cancelarEdicionSerie()">
+          Cancelar
+        </app-ui-button>
+        <app-ui-button
+          variant="primary"
+          [block]="true"
+          [loading]="guardandoEdicion"
+          (clicked)="guardarEdicionSerie()">
+          Guardar
+        </app-ui-button>
+      </div>
+
+    </ng-container>
+
+    <!-- Lista de series -->
+    <ng-template #listaSeries>
+      <ul class="progreso__sesion-lista">
+        <li
+          *ngFor="let s of sesion.series; trackBy: trackBySerie"
+          class="progreso__sesion-serie">
+
+          <span class="progreso__sesion-serie-num">#{{ s.numero_serie }}</span>
+          <span class="progreso__sesion-serie-resumen">
+            {{ s.peso }} × {{ s.repeticiones }} reps
+          </span>
+
+          <button
+            type="button"
+            class="progreso__sesion-serie-editar"
+            aria-label="Editar serie"
+            (click)="editarSerie(s)">
+            <i class="bi bi-pencil" aria-hidden="true"></i>
+          </button>
+        </li>
+      </ul>
+    </ng-template>
+
+  </ng-container>
+
+</app-ui-sheet>

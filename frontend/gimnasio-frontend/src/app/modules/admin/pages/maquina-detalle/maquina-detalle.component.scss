@@ -1,0 +1,335 @@
+@import "tokens";
+
+.md__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  padding: $space-8 0;
+  color: $color-text-muted;
+  font-size: $fs-sm;
+}
+
+.md__info {
+  padding: $space-4 0;
+}
+
+.md__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: $space-3;
+}
+
+.md__descripcion {
+  font-size: $fs-sm;
+  color: $color-text;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.md__section {
+  margin-top: $space-5;
+  padding-bottom: $space-16;
+}
+
+.md__section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+  margin-bottom: $space-3;
+}
+
+.md__section-title {
+  font-size: $fs-md;
+  font-weight: $fw-semibold;
+  color: $color-text;
+  margin: 0;
+}
+
+.md__lista {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+// FAB
+.md__fab {
+  position: fixed;
+  right: $space-4;
+  bottom: calc(#{$bottom-nav-height} + #{$safe-area-bottom} + #{$space-4});
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+
+  background: $color-primary;
+  color: $color-text-inverse;
+  border: 0;
+  cursor: pointer;
+
+  box-shadow: 0 4px 12px rgba(47, 111, 78, 0.28);
+  transition: background 150ms ease, transform 100ms ease;
+
+  @include hover { background: $color-primary-hover; }
+  &:active { transform: scale(0.96); }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
+
+  i { font-size: 24px; line-height: 1; }
+
+  @include lg-up {
+    right: calc(50% - #{$content-max-width} / 2 + #{$space-4});
+  }
+}
+
+// -------- Sheet --------
+
+.md__form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+}
+
+.md__form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.md__form-label {
+  font-size: $fs-sm;
+  font-weight: $fw-medium;
+  color: $color-text;
+}
+
+.md__tipos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.md__tipo {
+  padding: 8px 10px;
+  font-size: $fs-sm;
+  font-weight: $fw-medium;
+  color: $color-text-muted;
+  background: #ffffff;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  cursor: pointer;
+
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+
+  @include hover { border-color: $color-border-strong; color: $color-text; }
+}
+
+.md__tipo--active {
+  background: $color-primary-soft;
+  border-color: rgba(47, 111, 78, 0.30);
+  color: $color-primary;
+  font-weight: $fw-semibold;
+}
+
+.md__textarea {
+  width: 100%;
+  padding: $space-3;
+  font-family: inherit;
+  font-size: $fs-base;
+  color: $color-text;
+  background: #ffffff;
+  border: 1px solid $color-border;
+  border-radius: 10px;
+  outline: none;
+  resize: vertical;
+  min-height: 80px;
+
+  &::placeholder { color: $color-text-subtle; }
+
+  &:focus {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px rgba(47, 111, 78, 0.10);
+  }
+}
+
+.md__form-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(192, 57, 43, 0.20);
+  background: rgba(192, 57, 43, 0.06);
+  color: $color-danger;
+  font-size: $fs-sm;
+
+  i { font-size: 15px; margin-top: 1px; }
+}
+
+.md__form-acciones {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $space-3;
+  margin-top: $space-3;
+  padding-top: $space-3;
+  border-top: 1px solid $color-border;
+}
+
+// -------- Modal --------
+
+.md__modal {
+  position: fixed;
+  inset: 0;
+  z-index: $z-sheet;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-4;
+  background: rgba(15, 15, 15, 0.42);
+}
+
+.md__modal-panel {
+  width: 100%;
+  max-width: 420px;
+  padding: $space-5;
+  background: #ffffff;
+  border-radius: $radius-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.md__modal-titulo {
+  font-size: $fs-lg;
+  font-weight: $fw-semibold;
+  color: $color-text;
+  margin: 0;
+}
+
+.md__modal-texto {
+  font-size: $fs-sm;
+  color: $color-text-muted;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.md__modal-acciones {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $space-3;
+  margin-top: $space-3;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid $color-border-strong;
+  border-top-color: $color-primary;
+  border-radius: 50%;
+  animation: md-spin 700ms linear infinite;
+}
+
+@keyframes md-spin {
+  to { transform: rotate(360deg); }
+}
+
+.md__input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 14px;
+  font-family: inherit;
+  font-size: $fs-base;
+  color: $color-text;
+  background: #ffffff;
+  border: 1px solid $color-border;
+  border-radius: 10px;
+  outline: none;
+
+  &:focus {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px rgba(47, 111, 78, 0.10);
+  }
+}
+
+.md__section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+  margin-bottom: $space-3;
+}
+
+.md__agregar-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 6px 12px;
+  min-height: 36px;
+
+  font-size: $fs-sm;
+  font-weight: $fw-medium;
+
+  color: $color-primary;
+  background: $color-primary-soft;
+  border: 1px solid rgba(47, 111, 78, 0.20);
+  border-radius: $radius-md;
+  cursor: pointer;
+
+  transition: background 150ms ease, border-color 150ms ease;
+
+  @include hover { background: rgba(47, 111, 78, 0.12); border-color: rgba(47, 111, 78, 0.35); }
+  &:active { transform: scale(0.98); }
+
+  i { font-size: 13px; }
+}
+
+// FAB
+.md__fab {
+  position: fixed;
+  right: $space-4;
+  bottom: calc(#{$bottom-nav-height} + #{$safe-area-bottom} + #{$space-4});
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+
+  background: $color-primary;
+  color: $color-text-inverse;
+  border: 0;
+  cursor: pointer;
+
+  box-shadow: 0 4px 12px rgba(47, 111, 78, 0.28);
+  transition: background 150ms ease, transform 100ms ease;
+
+  @include hover { background: $color-primary-hover; }
+  &:active { transform: scale(0.96); }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
+
+  i { font-size: 24px; line-height: 1; }
+
+  // En pantallas grandes no hay bottom nav
+  @include md-up {
+    bottom: $space-6;
+  }
+
+  @include lg-up {
+    right: calc(50% - #{$content-max-width} / 2 + #{$space-4});
+  }
+}

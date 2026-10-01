@@ -1,0 +1,176 @@
+@import "tokens";
+
+.bottom-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: $z-bottom-nav;
+
+  display: flex;
+  justify-content: space-around;
+  align-items: stretch;
+
+  height: calc(#{$bottom-nav-height} + #{$safe-area-bottom});
+  padding-bottom: $safe-area-bottom;
+
+  background: $color-bg;
+  border-top: 1px solid $color-border;
+
+  @include lg-up {
+    max-width: $content-max-width;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 1px solid $color-border;
+    border-right: 1px solid $color-border;
+    border-top-left-radius: $radius-lg;
+    border-top-right-radius: $radius-lg;
+  }
+}
+
+.bottom-nav__item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+
+  min-height: $touch-min;
+  color: $color-text-muted;
+  font-size: $fs-xs;
+  font-weight: $fw-medium;
+  text-decoration: none;
+
+  transition: color 120ms ease, background 120ms ease;
+
+  &:active { background: $color-bg-hover; }
+
+  i { font-size: 20px; line-height: 1; }
+}
+
+.bottom-nav__item--active {
+  color: $color-primary;
+}
+
+.bottom-nav__label {
+  font-size: 10px;
+  letter-spacing: 0.01em;
+  line-height: 1.1;
+  text-align: center;
+}
+
+// -------- Sheet "Más" --------
+
+.bottom-nav__mas-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: $z-sheet;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+
+  background: rgba(15, 15, 15, 0);
+  animation: bn-mas-fade-in 200ms ease forwards;
+}
+
+@keyframes bn-mas-fade-in {
+  to { background: rgba(15, 15, 15, 0.42); }
+}
+
+.bottom-nav__mas-sheet {
+  width: 100%;
+  max-width: $content-max-width;
+  background: $color-surface;
+
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  border: 1px solid $color-border;
+  border-bottom: none;
+
+  padding: $space-2 $content-padding-x calc(#{$space-6} + #{$safe-area-bottom});
+
+  transform: translateY(100%);
+  animation: bn-mas-slide-up 260ms cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  @include md-up {
+    margin-bottom: 24px;
+    border-radius: 20px;
+    border-bottom: 1px solid $color-border;
+  }
+}
+
+@keyframes bn-mas-slide-up {
+  to { transform: translateY(0); }
+}
+
+.bottom-nav__mas-handle {
+  width: 40px;
+  height: 4px;
+  border-radius: 999px;
+  background: $color-border-strong;
+  margin: 6px auto $space-3;
+}
+
+.bottom-nav__mas-titulo {
+  font-size: $fs-md;
+  font-weight: $fw-semibold;
+  color: $color-text;
+  margin: 0 0 $space-3;
+}
+
+.bottom-nav__mas-item {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+
+  width: 100%;
+  min-height: 52px;
+  padding: 0 $space-3;
+  text-align: left;
+
+  font-size: $fs-base;
+  font-weight: $fw-medium;
+  color: $color-text;
+  background: transparent;
+  border: 0;
+  border-radius: $radius-md;
+  cursor: pointer;
+
+  transition: background 150ms ease;
+
+  i:first-child {
+    font-size: 18px;
+    color: $color-primary;
+    width: 22px;
+    text-align: center;
+  }
+
+  i:last-child {
+    font-size: 14px;
+    color: $color-text-subtle;
+    margin-left: auto;
+  }
+
+  @include hover { background: $color-bg-hover; }
+  &:active { background: $color-bg-hover; }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: -2px;
+  }
+}
+
+.bottom-nav__mas-item--peligro {
+  color: $color-danger;
+  margin-top: $space-2;
+  border-top: 1px solid $color-border;
+  border-radius: 0;
+  padding-top: $space-2;
+
+  i:first-child { color: $color-danger; }
+}

@@ -1,0 +1,118 @@
+<app-ui-page-header
+  title="Solicitudes de rutina"
+  subtitle="Pedidos de alumnos para coordinar entrenamiento">
+</app-ui-page-header>
+
+<!-- Filtros -->
+<div class="srp__filtros">
+  <button
+    type="button"
+    class="srp__chip"
+    [class.srp__chip--active]="filtro === 'disponibles'"
+    (click)="filtro = 'disponibles'">
+    Disponibles
+  </button>
+  <button
+    type="button"
+    class="srp__chip"
+    [class.srp__chip--active]="filtro === 'tomadas'"
+    (click)="filtro = 'tomadas'">
+    Mis tomadas
+  </button>
+  <button
+    type="button"
+    class="srp__chip"
+    [class.srp__chip--active]="filtro === 'todas'"
+    (click)="filtro = 'todas'">
+    Todas
+  </button>
+</div>
+
+<!-- Loading -->
+<div *ngIf="cargando" class="srp__loading" aria-live="polite">
+  <span class="spinner" aria-hidden="true"></span>
+  <span>Cargando…</span>
+</div>
+
+<!-- Error -->
+<app-ui-empty-state
+  *ngIf="!cargando && errorMensaje"
+  icon="bi-wifi-off"
+  title="No pudimos cargar las solicitudes"
+  [message]="errorMensaje">
+  <app-ui-button variant="secondary" (clicked)="reintentar()">
+    Reintentar
+  </app-ui-button>
+</app-ui-empty-state>
+
+<!-- Vacío -->
+<app-ui-empty-state
+  *ngIf="!cargando && !errorMensaje && listaActual.length === 0"
+  icon="bi-inbox"
+  title="Sin solicitudes"
+  [message]="filtro === 'disponibles'
+    ? 'No hay solicitudes pendientes para tomar.'
+    : 'No tenés solicitudes en esta categoría.'">
+</app-ui-empty-state>
+
+<!-- Lista -->
+<div *ngIf="!cargando && !errorMensaje && listaActual.length > 0" class="srp__lista">
+  <app-solicitud-rutina-card
+    *ngFor="let s of listaActual; trackBy: trackById"
+    [solicitud]="s"
+    [mostrarAcciones]="filtro !== 'tomadas'"
+    [modoProfesor]="s.profesor_id === null ? false : true"
+    (tomar)="tomar($event)"
+    (resolver)="abrirModalResolver($event)"
+    (rechazar)="abrirModalRechazar($event)"
+    (solicitarLiberacion)="solicitarLiberacion($event)">
+  </app-solicitud-rutina-card>
+</div>
+
+<!-- Modal resolver/rechazar -->
+<div
+  *ngIf="modalVisible"
+  class="srp__modal"
+  (click)="cerrarModal()">
+
+  <div class="srp__modal-panel" (click)="$event.stopPropagation()">
+
+    <h2 class="srp__modal-titulo">{{ tituloModal }}</h2>
+
+    <p *ngIf="solicitudEnModal" class="srp__modal-subtitulo">
+      Alumno: {{ solicitudEnModal.alumno_nombre }}
+    </p>
+
+    <textarea
+      class="srp__modal-textarea"
+      [(ngModel)]="textoModal"
+      [placeholder]="placeholderModal"
+      rows="4">
+    </textarea>
+
+    <div *ngIf="errorModal" class="srp__modal-error">
+      <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+      <span>{{ errorModal }}</span>
+    </div>
+
+    <div class="srp__modal-acciones">
+      <app-ui-button
+        variant="secondary"
+        type="button"
+        [block]="true"
+        (clicked)="cerrarModal()">
+        Cancelar
+      </app-ui-button>
+      <app-ui-button
+        variant="primary"
+        type="button"
+        [block]="true"
+        [loading]="enviandoModal"
+        [disabled]="enviandoModal"
+        (clicked)="confirmarModal()">
+        Confirmar
+      </app-ui-button>
+    </div>
+
+  </div>
+</div>

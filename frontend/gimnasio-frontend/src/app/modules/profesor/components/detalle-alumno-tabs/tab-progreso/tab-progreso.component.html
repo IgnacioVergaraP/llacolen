@@ -1,0 +1,64 @@
+<div class="tpg">
+
+  <!-- Loading -->
+  <div *ngIf="cargando" class="tpg__loading" aria-live="polite">
+    <span class="spinner" aria-hidden="true"></span>
+    <span>Cargando progreso…</span>
+  </div>
+
+  <!-- Error -->
+  <app-ui-empty-state
+    *ngIf="!cargando && errorMensaje"
+    icon="bi-wifi-off"
+    title="No pudimos cargar el progreso"
+    [message]="errorMensaje">
+    <app-ui-button variant="secondary" (clicked)="reintentar()">
+      Reintentar
+    </app-ui-button>
+  </app-ui-empty-state>
+
+  <!-- Sin datos -->
+  <app-ui-empty-state
+    *ngIf="!cargando && !errorMensaje && historial.length === 0"
+    icon="bi-graph-up-arrow"
+    title="Sin registros todavía"
+    message="Este alumno no tiene series registradas.">
+  </app-ui-empty-state>
+
+  <!-- Contenido -->
+  <ng-container *ngIf="!cargando && !errorMensaje && historial.length > 0">
+
+    <!-- Gráfico de evolución -->
+    <section *ngIf="evolucion" class="tpg__section">
+      <app-ui-card padding="md">
+        <div class="tpg__evolucion-header">
+          <div class="tpg__evolucion-titles">
+            <p class="tpg__evolucion-label">Evolución</p>
+            <p class="tpg__evolucion-ejercicio">{{ ejercicioDestacado }}</p>
+          </div>
+          <i class="bi bi-graph-up-arrow tpg__evolucion-icon" aria-hidden="true"></i>
+        </div>
+
+        <app-grafico-evolucion
+          [puntos]="evolucion.puntos"
+          [prHistorico]="evolucion.pr_historico">
+        </app-grafico-evolucion>
+      </app-ui-card>
+    </section>
+
+    <!-- Historial -->
+    <section class="tpg__section">
+      <h2 class="tpg__section-title">Historial reciente</h2>
+
+      <div class="tpg__lista">
+        <app-historial-item
+          *ngFor="let f of historial; trackBy: trackByHistorial"
+          [fila]="f"
+          (verEvolucion)="verEvolucion($event)">
+        </app-historial-item>
+      </div>
+    </section>
+
+  </ng-container>
+
+</div>

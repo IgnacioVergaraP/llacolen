@@ -1,0 +1,124 @@
+@import "tokens";
+
+.cg {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-x: auto;
+}
+
+.cg__header {
+  display: grid;
+  grid-template-columns: 80px repeat(7, minmax(100px, 1fr));
+  gap: 4px;
+}
+
+.cg__header-hueco {
+  // Celda vacía arriba de las etiquetas de franja
+}
+
+.cg__header-dia {
+  text-align: center;
+  font-size: $fs-xs;
+  font-weight: $fw-semibold;
+  color: $color-text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 8px 4px;
+}
+
+.cg__fila {
+  display: grid;
+  grid-template-columns: 80px repeat(7, minmax(100px, 1fr));
+  gap: 4px;
+}
+
+.cg__franja-label {
+  display: flex;
+  align-items: center;
+  font-size: $fs-xs;
+  color: $color-text-muted;
+  font-weight: $fw-medium;
+  padding: 0 8px;
+}
+
+.cg__celda {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  min-height: 72px;
+  padding: 6px;
+
+  background: $color-bg-subtle;
+  border: 1px dashed $color-border;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  color: inherit;
+  text-align: left;
+
+  transition: background 150ms ease, border-color 150ms ease;
+
+  @include hover {
+    background: $color-bg-hover;
+    border-color: $color-border-strong;
+  }
+
+  &:active { transform: scale(0.99); }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: -2px;
+  }
+}
+
+.cg__celda--con-horarios {
+  background: #ffffff;
+  border-style: solid;
+  border-color: $color-border;
+}
+
+.cg__celda-vacia {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: $color-text-subtle;
+  font-size: 16px;
+  opacity: 0.4;
+}
+
+.cg__slot {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+
+  padding: 4px 6px;
+  background: $color-primary-soft;
+  border-left: 3px solid $color-primary;
+  border-radius: $radius-sm;
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+.cg__slot--multi {
+  // Variante cuando hay más de un slot en la misma celda
+  background: rgba(183, 121, 31, 0.10);
+  border-left-color: $color-warning;
+}
+
+.cg__slot-prof {
+  font-weight: $fw-semibold;
+  color: $color-text;
+}
+
+.cg__slot-notas {
+  font-weight: $fw-medium;
+  color: $color-text;
+}
+
+.cg__slot-hora {
+  font-size: 10px;
+  color: $color-text-muted;
+}

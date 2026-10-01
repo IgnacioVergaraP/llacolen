@@ -1,0 +1,126 @@
+<div *ngIf="cargando" class="rb__loading" aria-live="polite">
+  <span class="spinner" aria-hidden="true"></span>
+  <span>Cargando…</span>
+</div>
+
+<app-ui-empty-state
+  *ngIf="!cargando && errorMensaje"
+  icon="bi-exclamation-triangle"
+  title="No pudimos cargar la rutina"
+  [message]="errorMensaje">
+  <app-ui-button variant="secondary" (clicked)="volver()">
+    Volver
+  </app-ui-button>
+</app-ui-empty-state>
+
+<ng-container *ngIf="!cargando && !errorMensaje">
+
+  <app-ui-page-header
+    [title]="tituloPagina"
+    [subtitle]="modo === 'editar' ? 'Modificá los datos de la rutina' : 'Armá la rutina para el alumno'">
+  </app-ui-page-header>
+
+  <!-- Selector de alumno -->
+  <div *ngIf="modo === 'nueva'" class="rb__field">
+    <label class="rb__label" for="rb-alumno">Alumno destinatario</label>
+
+    <div *ngIf="cargandoAlumnos" class="rb__loading-inline">
+      <span class="spinner" aria-hidden="true"></span>
+    </div>
+
+    <select
+      *ngIf="!cargandoAlumnos"
+      id="rb-alumno"
+      class="rb__select"
+      [(ngModel)]="alumnoId">
+      <option [ngValue]="null">Elegí un alumno...</option>
+      <option *ngFor="let a of alumnos" [ngValue]="a.id">{{ a.nombre }}</option>
+    </select>
+  </div>
+
+  <!-- Título -->
+  <div class="rb__field">
+    <label class="rb__label" for="rb-titulo">Título de la rutina</label>
+    <input
+      id="rb-titulo"
+      type="text"
+      class="rb__input"
+      [(ngModel)]="titulo"
+      placeholder="Ej: Rutina de espalda y bíceps" />
+  </div>
+
+  <!-- Grupos musculares -->
+  <div class="rb__field">
+    <label class="rb__label">Grupos musculares (opcional)</label>
+    <div class="rb__chips">
+      <button
+        *ngFor="let g of gruposDisponibles"
+        type="button"
+        class="rb__chip"
+        [class.rb__chip--active]="estaSeleccionado(g)"
+        (click)="toggleGrupo(g)">
+        {{ etiqueta(g) }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Ejercicios -->
+  <section class="rb__ejercicios">
+    <h2 class="rb__section-title">
+      Ejercicios ({{ ejercicios.length }})
+    </h2>
+
+    <div *ngIf="ejercicios.length === 0" class="rb__vacio">
+      <p>Agregá al menos un ejercicio para poder guardar.</p>
+    </div>
+
+    <div class="rb__lista">
+      <app-ejercicio-builder-card
+        *ngFor="let e of ejercicios; let i = index; trackBy: trackByUid"
+        [ejercicio]="e"
+        [indice]="i + 1"
+        [total]="ejercicios.length"
+        (cambio)="onEjercicioCambio(e.uid, $event)"
+        (eliminar)="eliminarEjercicio(e.uid)"
+        (subir)="subirEjercicio(i)"
+        (bajar)="bajarEjercicio(i)"
+        (toggleMin)="toggleMinimizado(e.uid)">
+      </app-ejercicio-builder-card>
+    </div>
+
+    <button
+      type="button"
+      class="rb__agregar"
+      (click)="agregarEjercicioVacio()">
+      <i class="bi bi-plus-lg" aria-hidden="true"></i>
+      Agregar ejercicio
+    </button>
+  </section>
+
+  <!-- Error -->
+  <div *ngIf="errorGuardar" class="rb__error" role="alert">
+    <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+    <span>{{ errorGuardar }}</span>
+  </div>
+
+  <!-- Acciones -->
+  <div class="rb__acciones">
+    <app-ui-button
+      variant="secondary"
+      type="button"
+      [block]="true"
+      (clicked)="cancelar()">
+      Cancelar
+    </app-ui-button>
+    <app-ui-button
+      variant="primary"
+      type="button"
+      [block]="true"
+      [loading]="guardando"
+      [disabled]="!puedeGuardar"
+      (clicked)="guardar()">
+      Guardar rutina
+    </app-ui-button>
+  </div>
+
+</ng-container>

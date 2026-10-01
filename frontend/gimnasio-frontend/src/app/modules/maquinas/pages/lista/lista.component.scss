@@ -1,0 +1,34 @@
+@import "tokens";
+
+.maquinas-lista {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  padding-top: $space-2;
+}
+
+.maquinas-lista__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+
+  padding: $space-8 0;
+  color: $color-text-muted;
+  font-size: $fs-sm;
+}
+
+.maquinas-lista__loading-text { line-height: 1; }
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid $color-border-strong;
+  border-top-color: $color-primary;
+  border-radius: 50%;
+  animation: maquinas-spin 700ms linear infinite;
+}
+
+@keyframes maquinas-spin {
+  to { transform: rotate(360deg); }
+}

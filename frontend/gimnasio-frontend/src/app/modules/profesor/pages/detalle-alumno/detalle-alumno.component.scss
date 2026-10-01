@@ -1,0 +1,65 @@
+@import "tokens";
+
+.da__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  padding: $space-8 0;
+  color: $color-text-muted;
+  font-size: $fs-sm;
+}
+
+.da__tabs {
+  display: flex;
+  gap: 4px;
+  margin: $space-4 0;
+  border-bottom: 1px solid $color-border;
+
+  // Scroll horizontal en mobile si no entran los 4
+  overflow-x: auto;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+.da__tab {
+  flex: 0 0 auto;
+  padding: 10px 16px;
+  font-size: $fs-sm;
+  font-weight: $fw-medium;
+  color: $color-text-muted;
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  margin-bottom: -1px;
+  white-space: nowrap;
+
+  transition: color 150ms ease, border-color 150ms ease;
+
+  @include hover { color: $color-text; }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: -2px;
+  }
+}
+
+.da__tab--active {
+  color: $color-primary;
+  border-bottom-color: $color-primary;
+  font-weight: $fw-semibold;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid $color-border-strong;
+  border-top-color: $color-primary;
+  border-radius: 50%;
+  animation: da-spin 700ms linear infinite;
+}
+
+@keyframes da-spin {
+  to { transform: rotate(360deg); }
+}

@@ -1,0 +1,40 @@
+@import "tokens";
+
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  color: #ffffff;
+  font-weight: $fw-semibold;
+  user-select: none;
+}
+
+.avatar--sm { width: 32px; height: 32px; font-size: $fs-xs; }
+.avatar--md { width: 48px; height: 48px; font-size: $fs-base; }
+.avatar--lg { width: 72px; height: 72px; font-size: $fs-xl; }
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.avatar__iniciales {
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+// Paleta de 8 colores derivada del nombre. Tonos apagados, sin gradientes.
+.avatar--color-0 { background: #2f6f4e; }  // verde institucional
+.avatar--color-1 { background: #2f5f8f; }  // azul
+.avatar--color-2 { background: #8f5f2f; }  // marrón
+.avatar--color-3 { background: #6f2f5f; }  // violeta
+.avatar--color-4 { background: #2f6f7f; }  // teal
+.avatar--color-5 { background: #7f5f2f; }  // ocre
+.avatar--color-6 { background: #4f5f8f; }  // azul grisáceo
+.avatar--color-7 { background: #5f4f8f; }  // lavanda oscuro

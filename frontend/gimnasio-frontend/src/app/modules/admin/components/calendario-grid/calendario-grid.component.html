@@ -1,0 +1,38 @@
+<div class="cg">
+
+  <!-- Encabezado de días -->
+  <div class="cg__header">
+    <div class="cg__header-hueco"></div>
+    <div *ngFor="let d of dias" class="cg__header-dia">
+      {{ d.short }}
+    </div>
+  </div>
+
+  <!-- Filas por franja -->
+  <div *ngFor="let franja of franjas" class="cg__fila">
+    <div class="cg__franja-label">{{ franja.label }}</div>
+
+    <button
+      *ngFor="let dia of dias"
+      type="button"
+      class="cg__celda"
+      [class.cg__celda--con-horarios]="celda(dia.value, franja).horarios.length > 0"
+      (click)="onCeldaClick(dia.value, franja)"
+      [attr.aria-label]="'Ver ' + nombreDiaCorto(dia.value) + ' ' + franja.label">
+
+      <ng-container *ngFor="let h of celda(dia.value, franja).horarios; let i = index">
+        <div class="cg__slot" [class.cg__slot--multi]="celda(dia.value, franja).horarios.length > 1">
+          <span *ngIf="mostrarProfesor" class="cg__slot-prof">{{ h.profesor_nombre }}</span>
+          <span *ngIf="!mostrarProfesor && h.notas" class="cg__slot-notas">{{ h.notas }}</span>
+          <span class="cg__slot-hora">{{ h.hora_inicio }} - {{ h.hora_fin }}</span>
+        </div>
+      </ng-container>
+
+      <span *ngIf="celda(dia.value, franja).horarios.length === 0" class="cg__celda-vacia">
+        +
+      </span>
+
+    </button>
+  </div>
+
+</div>

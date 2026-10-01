@@ -1,0 +1,42 @@
+<app-ui-page-header
+  title="Máquinas"
+  subtitle="Explorá los equipos y ejercicios del gimnasio">
+</app-ui-page-header>
+
+<app-musculo-filter
+  [seleccionado]="musculoSeleccionado"
+  (seleccionadoChange)="onMusculoChange($event)">
+</app-musculo-filter>
+
+<!-- Loading -->
+<div *ngIf="cargando" class="maquinas-lista__loading" aria-live="polite">
+  <span class="spinner" aria-hidden="true"></span>
+  <span class="maquinas-lista__loading-text">Cargando máquinas…</span>
+</div>
+
+<!-- Error -->
+<app-ui-empty-state
+  *ngIf="!cargando && errorMensaje"
+  icon="bi-wifi-off"
+  title="No pudimos cargar el catálogo"
+  [message]="errorMensaje">
+  <app-ui-button variant="secondary" (clicked)="reintentar()">
+    Reintentar
+  </app-ui-button>
+</app-ui-empty-state>
+
+<!-- Empty (sin resultados) -->
+<app-ui-empty-state
+  *ngIf="!cargando && !errorMensaje && maquinas.length === 0"
+  icon="bi-search"
+  title="Sin resultados"
+  message="No hay máquinas para el grupo muscular seleccionado.">
+</app-ui-empty-state>
+
+<!-- Listado -->
+<div *ngIf="!cargando && !errorMensaje && maquinas.length > 0" class="maquinas-lista">
+  <app-maquina-card
+    *ngFor="let m of maquinas; trackBy: trackById"
+    [maquina]="m">
+  </app-maquina-card>
+</div>

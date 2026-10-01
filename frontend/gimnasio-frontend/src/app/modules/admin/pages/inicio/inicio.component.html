@@ -1,0 +1,97 @@
+<app-ui-page-header
+  title="Panel del administrador"
+  subtitle="Supervisión general del gimnasio">
+</app-ui-page-header>
+
+<div *ngIf="cargando" class="ad__loading" aria-live="polite">
+  <span class="spinner" aria-hidden="true"></span>
+  <span>Cargando panel…</span>
+</div>
+
+<app-ui-empty-state
+  *ngIf="!cargando && errorMensaje"
+  icon="bi-wifi-off"
+  title="No pudimos cargar el panel"
+  [message]="errorMensaje">
+  <app-ui-button variant="secondary" (clicked)="reintentar()">
+    Reintentar
+  </app-ui-button>
+</app-ui-empty-state>
+
+<section *ngIf="!cargando && !errorMensaje" class="ad__metricas">
+
+  <button
+    type="button"
+    class="ad__metrica"
+    [class.ad__metrica--alerta]="dashboard.solicitudes_ejercicios > 0"
+    (click)="irASolicitudes()">
+    <i class="bi bi-inbox ad__metrica-icon" aria-hidden="true"></i>
+    <p class="ad__metrica-valor">{{ dashboard.solicitudes_ejercicios }}</p>
+    <p class="ad__metrica-label">Solicitudes de ejercicios</p>
+  </button>
+
+  <button
+    type="button"
+    class="ad__metrica"
+    [class.ad__metrica--alerta]="dashboard.reportes_pendientes > 0"
+    (click)="irAReportes()">
+    <i class="bi bi-flag ad__metrica-icon" aria-hidden="true"></i>
+    <p class="ad__metrica-valor">{{ dashboard.reportes_pendientes }}</p>
+    <p class="ad__metrica-label">Reportes abiertos</p>
+  </button>
+
+  <button
+    type="button"
+    class="ad__metrica"
+    (click)="irARutinas()">
+    <i class="bi bi-list-check ad__metrica-icon" aria-hidden="true"></i>
+    <p class="ad__metrica-valor">{{ dashboard.solicitudes_rutina_activas }}</p>
+    <p class="ad__metrica-label">Solicitudes de rutina activas</p>
+  </button>
+
+  <button
+    type="button"
+    class="ad__metrica"
+    [class.ad__metrica--alerta]="dashboard.liberaciones_pendientes > 0"
+    (click)="irALiberaciones()">
+    <i class="bi bi-hourglass-split ad__metrica-icon" aria-hidden="true"></i>
+    <p class="ad__metrica-valor">{{ dashboard.liberaciones_pendientes }}</p>
+    <p class="ad__metrica-label">Liberaciones pendientes</p>
+  </button>
+
+</section>
+
+<!-- Perfil del admin -->
+<section *ngIf="!cargando && !errorMensaje && usuario" class="ad__perfil">
+  <h2 class="ad__perfil-section-title">Mi cuenta</h2>
+
+  <div class="ad__perfil-card">
+    <app-avatar
+      [nombre]="usuario.nombre"
+      [imagenUrl]="usuario.imagen_url"
+      size="md">
+    </app-avatar>
+
+    <div class="ad__perfil-info">
+      <p class="ad__perfil-nombre">{{ usuario.nombre }}</p>
+      <p class="ad__perfil-email">{{ usuario.email }}</p>
+      <p class="ad__perfil-desde">Administrador · desde {{ miembroDesde }}</p>
+    </div>
+
+    <button
+      type="button"
+      class="ad__perfil-btn"
+      aria-label="Editar perfil"
+      (click)="irAPerfil()">
+      <i class="bi bi-pencil" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <button
+    type="button"
+    class="ad__perfil-logout"
+    (click)="cerrarSesion()">
+    <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
+    Cerrar sesión
+  </button>
+</section>

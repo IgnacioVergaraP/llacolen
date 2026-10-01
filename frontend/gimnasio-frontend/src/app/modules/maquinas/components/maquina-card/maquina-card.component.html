@@ -1,0 +1,31 @@
+<a
+  class="maquina-card"
+  [routerLink]="['/maquinas', maquina.id]"
+  [attr.aria-label]="'Ver detalle de ' + maquina.nombre">
+
+  <div class="maquina-card__thumb">
+    <img
+      *ngIf="tieneImagen"
+      [src]="maquina.imagen_url"
+      [alt]="maquina.nombre"
+      loading="lazy" />
+
+    <div *ngIf="!tieneImagen" class="maquina-card__thumb-placeholder" aria-hidden="true">
+      <i class="bi bi-image"></i>
+    </div>
+  </div>
+
+  <div class="maquina-card__body">
+    <h3 class="maquina-card__title">{{ maquina.nombre }}</h3>
+
+    <div class="maquina-card__tags">
+      <app-ui-badge
+        *ngFor="let g of maquina.grupos_musculares"
+        variant="primary">
+        {{ etiqueta(g) }}
+      </app-ui-badge>
+    </div>
+  </div>
+
+  <i class="bi bi-chevron-right maquina-card__chevron" aria-hidden="true"></i>
+</a>

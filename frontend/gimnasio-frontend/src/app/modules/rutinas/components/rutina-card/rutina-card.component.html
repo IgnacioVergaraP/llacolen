@@ -1,0 +1,30 @@
+<a
+  class="rutina-card"
+  [class.rutina-card--archivada]="estaArchivada"
+  [routerLink]="['/rutinas', rutina.id]"
+  [attr.aria-label]="'Ver rutina ' + rutina.titulo">
+
+  <div class="rutina-card__body">
+    <div class="rutina-card__titulo-row">
+      <h3 class="rutina-card__title">{{ rutina.titulo }}</h3>
+      <span *ngIf="estaArchivada" class="rutina-card__archivada-badge">
+        <i class="bi bi-archive" aria-hidden="true"></i>
+        Archivada
+      </span>
+    </div>
+
+    <div class="rutina-card__tags">
+      <app-ui-badge
+        *ngFor="let g of rutina.grupos_musculares"
+        variant="primary">
+        {{ etiqueta(g) }}
+      </app-ui-badge>
+    </div>
+
+    <p class="rutina-card__meta">
+      {{ cantidadEjercicios }} ejercicio{{ cantidadEjercicios === 1 ? '' : 's' }}
+    </p>
+  </div>
+
+  <i class="bi bi-chevron-right rutina-card__chevron" aria-hidden="true"></i>
+</a>

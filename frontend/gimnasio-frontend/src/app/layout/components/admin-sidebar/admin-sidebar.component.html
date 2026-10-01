@@ -1,0 +1,33 @@
+<aside class="as">
+
+  <div class="as__header">
+    <div class="as__user">
+      <div class="as__avatar">{{ iniciales }}</div>
+      <div class="as__user-info">
+        <p class="as__user-nombre">{{ nombre }}</p>
+        <p class="as__user-rol">Administrador</p>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      class="as__switch"
+      (click)="irAModoProfesor()">
+      <i class="bi bi-arrow-left-right" aria-hidden="true"></i>
+      Ir a modo profesor
+    </button>
+  </div>
+
+  <nav class="as__nav" role="navigation" aria-label="Navegación admin">
+    <a
+      *ngFor="let item of items"
+      class="as__link"
+      [routerLink]="item.route"
+      routerLinkActive="as__link--active"
+      [routerLinkActiveOptions]="{ exact: item.route === '/admin' }">
+      <i class="bi {{ item.icon }}" aria-hidden="true"></i>
+      <span>{{ item.label }}</span>
+    </a>
+  </nav>
+
+</aside>

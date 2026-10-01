@@ -1,0 +1,249 @@
+@import "tokens";
+
+.sra__cta {
+  margin-bottom: $space-4;
+}
+
+.sra__cta-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+
+  padding: $space-4;
+  background: $color-primary-soft;
+  border: 1px solid rgba(47, 111, 78, 0.20);
+  border-radius: $radius-md;
+  cursor: pointer;
+  color: inherit;
+  text-align: left;
+
+  transition: background 150ms ease, border-color 150ms ease;
+
+  @include hover { background: rgba(47, 111, 78, 0.10); border-color: rgba(47, 111, 78, 0.35); }
+  &:active { transform: scale(0.99); }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
+}
+
+.sra__cta-btn > i:first-child {
+  font-size: 22px;
+  color: $color-primary;
+  flex-shrink: 0;
+}
+
+.sra__cta-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sra__cta-titulo {
+  font-size: $fs-base;
+  font-weight: $fw-semibold;
+  color: $color-primary;
+}
+
+.sra__cta-sub {
+  font-size: $fs-sm;
+  color: $color-text-muted;
+}
+
+.sra__cta-chevron {
+  font-size: 16px;
+  color: $color-primary;
+}
+
+// -------- Activa --------
+
+.sra__activa {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+
+  padding: $space-4;
+  margin-bottom: $space-4;
+  background: #ffffff;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+}
+
+.sra__activa-header {
+  display: flex;
+  align-items: flex-start;
+  gap: $space-3;
+}
+
+.sra__activa-icon {
+  font-size: 22px;
+  color: $color-primary;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.sra__activa-body { flex: 1; min-width: 0; }
+
+.sra__activa-titulo {
+  font-size: $fs-base;
+  font-weight: $fw-semibold;
+  color: $color-text;
+  margin: 0;
+}
+
+.sra__activa-estado {
+  font-size: $fs-sm;
+  color: $color-text-muted;
+  margin: 2px 0 0;
+  line-height: 1.4;
+}
+
+.sra__activa-detalle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $space-2;
+
+  padding: $space-3;
+  background: $color-bg-subtle;
+  border-radius: $radius-md;
+}
+
+.sra__activa-dato {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sra__activa-dato-label {
+  font-size: $fs-xs;
+  color: $color-text-subtle;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.sra__activa-dato-valor {
+  font-size: $fs-base;
+  font-weight: $fw-semibold;
+  color: $color-text;
+}
+
+.sra__activa-comentarios {
+  font-size: $fs-sm;
+  color: $color-text-muted;
+  font-style: italic;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.sra__cancelar {
+  align-self: flex-end;
+  padding: 6px 12px;
+  font-size: $fs-sm;
+  font-weight: $fw-medium;
+  color: $color-danger;
+  background: transparent;
+  border: 1px solid rgba(192, 57, 43, 0.30);
+  border-radius: $radius-md;
+  cursor: pointer;
+
+  transition: background 150ms ease, border-color 150ms ease;
+
+  @include hover { background: rgba(192, 57, 43, 0.06); border-color: rgba(192, 57, 43, 0.55); }
+  &:active { background: rgba(192, 57, 43, 0.10); }
+}
+
+// -------- Resuelta --------
+
+.sra__resuelta {
+  display: flex;
+  align-items: flex-start;
+  gap: $space-3;
+
+  padding: $space-3 $space-4;
+  margin-bottom: $space-4;
+  background: rgba(47, 111, 78, 0.06);
+  border: 1px solid rgba(47, 111, 78, 0.18);
+  border-radius: $radius-md;
+}
+
+.sra__resuelta-icon {
+  font-size: 20px;
+  color: $color-primary;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.sra__resuelta-body { flex: 1; min-width: 0; }
+
+.sra__resuelta-titulo {
+  font-size: $fs-sm;
+  font-weight: $fw-semibold;
+  color: $color-text;
+  margin: 0;
+}
+
+.sra__resuelta-mensaje {
+  font-size: $fs-sm;
+  color: $color-text-muted;
+  margin: 4px 0 0;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+// -------- Rechazada --------
+
+.sra__rechazada {
+  display: flex;
+  align-items: flex-start;
+  gap: $space-3;
+
+  padding: $space-3 $space-4;
+  margin-bottom: $space-4;
+  background: rgba(192, 57, 43, 0.06);
+  border: 1px solid rgba(192, 57, 43, 0.18);
+  border-radius: $radius-md;
+}
+
+.sra__rechazada-icon {
+  font-size: 20px;
+  color: $color-danger;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.sra__rechazada-body { flex: 1; min-width: 0; }
+
+.sra__rechazada-titulo {
+  font-size: $fs-sm;
+  font-weight: $fw-semibold;
+  color: $color-text;
+  margin: 0;
+}
+
+.sra__rechazada-motivo {
+  font-size: $fs-sm;
+  color: $color-text-muted;
+  margin: 4px 0 0;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+.sra__reintentar {
+  margin-top: $space-2;
+  padding: 6px 12px;
+  font-size: $fs-sm;
+  font-weight: $fw-medium;
+  color: $color-primary;
+  background: #ffffff;
+  border: 1px solid rgba(47, 111, 78, 0.30);
+  border-radius: $radius-md;
+  cursor: pointer;
+
+  transition: background 150ms ease, border-color 150ms ease;
+
+  @include hover { background: $color-primary-soft; }
+  &:active { background: $color-primary-soft; }
+}

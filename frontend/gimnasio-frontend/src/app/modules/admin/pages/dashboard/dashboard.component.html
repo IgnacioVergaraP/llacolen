@@ -1,0 +1,107 @@
+<app-ui-page-header
+  title="Dashboard de uso"
+  subtitle="Qué máquinas se usan más y cuáles menos">
+</app-ui-page-header>
+
+<!-- Selector de rango -->
+<div class="dash__rangos">
+  <button
+    *ngFor="let r of rangos"
+    type="button"
+    class="dash__chip"
+    [class.dash__chip--active]="rango === r.value"
+    (click)="setRango(r.value)">
+    {{ r.label }}
+  </button>
+</div>
+
+<div *ngIf="cargando" class="dash__loading" aria-live="polite">
+  <span class="spinner" aria-hidden="true"></span>
+  <span>Cargando datos…</span>
+</div>
+
+<app-ui-empty-state
+  *ngIf="!cargando && errorMensaje"
+  icon="bi-wifi-off"
+  title="No pudimos cargar el dashboard"
+  [message]="errorMensaje">
+  <app-ui-button variant="secondary" (clicked)="reintentar()">
+    Reintentar
+  </app-ui-button>
+</app-ui-empty-state>
+
+<ng-container *ngIf="!cargando && !errorMensaje && data">
+
+  <!-- Cards de resumen -->
+  <section class="dash__resumen">
+    <div class="dash__stat">
+      <i class="bi bi-activity dash__stat-icon" aria-hidden="true"></i>
+      <p class="dash__stat-valor">{{ data.total_series }}</p>
+      <p class="dash__stat-label">Series registradas</p>
+    </div>
+    <div class="dash__stat">
+      <i class="bi bi-gear dash__stat-icon" aria-hidden="true"></i>
+      <p class="dash__stat-valor">{{ data.total_maquinas_usadas }}</p>
+      <p class="dash__stat-label">Máquinas usadas</p>
+    </div>
+    <div class="dash__stat">
+      <i class="bi bi-calendar-event dash__stat-icon" aria-hidden="true"></i>
+      <p class="dash__stat-valor">{{ data.dias }}</p>
+      <p class="dash__stat-label">Días analizados</p>
+    </div>
+  </section>
+
+  <!-- Sin datos -->
+  <app-ui-empty-state
+    *ngIf="data.total_series === 0"
+    icon="bi-graph-up-arrow"
+    title="Sin datos en este rango"
+    message="No hay series registradas en el período seleccionado.">
+  </app-ui-empty-state>
+
+  <!-- Toggle top / menos usadas -->
+  <ng-container *ngIf="data.total_series > 0">
+    <div class="dash__vista-toggle">
+      <button
+        type="button"
+        class="dash__vista-btn"
+        [class.dash__vista-btn--active]="vista === 'top'"
+        (click)="setVista('top')">
+        <i class="bi bi-trophy" aria-hidden="true"></i>
+        Más usadas
+      </button>
+      <button
+        type="button"
+        class="dash__vista-btn"
+        [class.dash__vista-btn--active]="vista === 'bottom'"
+        (click)="setVista('bottom')">
+        <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+        Menos usadas
+      </button>
+    </div>
+
+    <section class="dash__section">
+      <h2 class="dash__section-title">
+        <i class="bi {{ iconoVista }}" aria-hidden="true"></i>
+        {{ tituloVista }}
+      </h2>
+
+      <app-ui-empty-state
+        *ngIf="lista.length === 0"
+        icon="bi-inbox"
+        title="Sin datos"
+        message="No hay máquinas para mostrar en este rango.">
+      </app-ui-empty-state>
+
+      <div *ngIf="lista.length > 0" class="dash__lista">
+        <app-uso-card
+          *ngFor="let m of lista"
+          [maquina]="m"
+          [maximo]="maximo"
+          [variante]="vista === 'top' ? 'top' : 'baja'">
+        </app-uso-card>
+      </div>
+    </section>
+  </ng-container>
+
+</ng-container>

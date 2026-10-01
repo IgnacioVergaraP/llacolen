@@ -1,0 +1,131 @@
+<app-ui-page-header
+  title="Solicitudes de rutina"
+  subtitle="Pedidos de alumnos y liberaciones pendientes">
+</app-ui-page-header>
+
+<!-- Tabs -->
+<div class="ad__tabs">
+  <button
+    type="button"
+    class="ad__tab"
+    [class.ad__tab--active]="tabActiva === 'todas'"
+    (click)="setTab('todas')">
+    Todas ({{ totalSolicitudes }})
+  </button>
+  <button
+    type="button"
+    class="ad__tab"
+    [class.ad__tab--active]="tabActiva === 'liberaciones'"
+    (click)="setTab('liberaciones')">
+    Liberaciones ({{ totalLiberaciones }})
+  </button>
+</div>
+
+<div *ngIf="cargando" class="ad__loading" aria-live="polite">
+  <span class="spinner" aria-hidden="true"></span>
+  <span>Cargando…</span>
+</div>
+
+<app-ui-empty-state
+  *ngIf="!cargando && errorMensaje"
+  icon="bi-wifi-off"
+  title="No pudimos cargar las solicitudes"
+  [message]="errorMensaje">
+  <app-ui-button variant="secondary" (clicked)="reintentar()">Reintentar</app-ui-button>
+</app-ui-empty-state>
+
+<!-- Tab: Todas -->
+<ng-container *ngIf="!cargando && !errorMensaje && tabActiva === 'todas'">
+
+  <div class="ad__filtros">
+    <button
+      *ngFor="let f of filtros"
+      type="button"
+      class="ad__chip"
+      [class.ad__chip--active]="filtro === f.value"
+      (click)="setFiltro(f.value)">
+      {{ f.label }}
+    </button>
+  </div>
+
+  <app-ui-empty-state
+    *ngIf="filtradas.length === 0"
+    icon="bi-inbox"
+    [title]="todas.length === 0 ? 'Sin solicitudes' : 'Sin resultados'"
+    [message]="todas.length === 0
+      ? 'No hay pedidos de rutina todavía.'
+      : 'Probá con otro filtro.'">
+  </app-ui-empty-state>
+
+  <div *ngIf="filtradas.length > 0" class="ad__lista">
+    <app-solicitud-rutina-card
+      *ngFor="let s of filtradas; trackBy: trackById"
+      [solicitud]="s"
+      [mostrarAcciones]="false"
+      [modoProfesor]="false">
+    </app-solicitud-rutina-card>
+  </div>
+
+</ng-container>
+
+<!-- Tab: Liberaciones -->
+<ng-container *ngIf="!cargando && !errorMensaje && tabActiva === 'liberaciones'">
+
+  <app-ui-empty-state
+    *ngIf="liberaciones.length === 0"
+    icon="bi-check2-circle"
+    title="Sin liberaciones pendientes"
+    message="No hay profesores pidiendo liberar solicitudes.">
+  </app-ui-empty-state>
+
+  <div *ngIf="liberaciones.length > 0" class="ad__lista">
+    <div *ngFor="let s of liberaciones; trackBy: trackById" class="ad__liberacion-wrap">
+      <app-solicitud-rutina-card
+        [solicitud]="s"
+        [mostrarAcciones]="false"
+        [modoProfesor]="false">
+      </app-solicitud-rutina-card>
+
+      <div class="ad__liberacion-acciones">
+        <app-ui-button variant="secondary" [block]="true" (clicked)="abrirRechazo(s)">
+          Rechazar
+        </app-ui-button>
+        <app-ui-button variant="primary" [block]="true" (clicked)="aprobarLiberacion(s)">
+          Aprobar liberación
+        </app-ui-button>
+      </div>
+    </div>
+  </div>
+
+</ng-container>
+
+<!-- Modal Rechazo liberación -->
+<div *ngIf="modalRechazoVisible" class="ad__modal" (click)="cerrarRechazo()">
+  <div class="ad__modal-panel" (click)="$event.stopPropagation()">
+    <h2 class="ad__modal-titulo">Rechazar liberación</h2>
+    <p class="ad__modal-texto">
+      Motivo por el que rechazás la liberación de <strong>{{ solicitudARechazar?.alumno_nombre }}</strong>:
+    </p>
+
+    <textarea
+      class="ad__modal-textarea"
+      [(ngModel)]="motivoRechazo"
+      rows="4"
+      placeholder="Ej: Terminá esta primera, después te liberamos.">
+    </textarea>
+
+    <div *ngIf="errorRechazo" class="ad__modal-error">
+      <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+      <span>{{ errorRechazo }}</span>
+    </div>
+
+    <div class="ad__modal-acciones">
+      <app-ui-button variant="secondary" type="button" [block]="true" (clicked)="cerrarRechazo()">
+        Cancelar
+      </app-ui-button>
+      <app-ui-button variant="primary" type="button" [block]="true" [loading]="enviandoRechazo" [disabled]="enviandoRechazo" (clicked)="confirmarRechazo()">
+        Rechazar
+      </app-ui-button>
+    </div>
+  </div>
+</div>

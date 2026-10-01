@@ -1,0 +1,241 @@
+@import "tokens";
+
+.cal__acciones {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+
+  margin-bottom: $space-4;
+  flex-wrap: wrap;
+}
+
+.cal__acciones-left { flex: 1; min-width: 200px; }
+.cal__acciones-right { display: flex; gap: $space-2; align-items: center; }
+
+.cal__select {
+  min-height: 40px;
+  padding: 0 14px;
+  font-family: inherit;
+  font-size: $fs-sm;
+  color: $color-text;
+  background: #ffffff;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  outline: none;
+  min-width: 200px;
+
+  &:focus {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px rgba(47, 111, 78, 0.10);
+  }
+}
+
+.cal__btn-import {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 8px 14px;
+  min-height: 40px;
+
+  font-size: $fs-sm;
+  font-weight: $fw-medium;
+  color: $color-text-subtle;
+  background: $color-bg-subtle;
+  border: 1px dashed $color-border;
+  border-radius: $radius-md;
+  cursor: not-allowed;
+
+  i { font-size: 14px; }
+}
+
+.cal__btn-import-badge {
+  font-size: 10px;
+  font-weight: $fw-medium;
+  text-transform: uppercase;
+  padding: 1px 6px;
+  background: $color-border;
+  border-radius: $radius-full;
+  color: $color-text-muted;
+}
+
+.cal__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  padding: $space-8 0;
+  color: $color-text-muted;
+  font-size: $fs-sm;
+}
+
+// -------- Vistas responsive --------
+
+.cal__vista-desktop { display: none; }
+.cal__vista-mobile { display: block; }
+
+@media (min-width: 768px) {
+  .cal__vista-desktop { display: block; }
+  .cal__vista-mobile { display: none; }
+}
+
+// -------- Sheet form --------
+
+.cal__form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+}
+
+.cal__form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cal__form-label {
+  font-size: $fs-sm;
+  font-weight: $fw-medium;
+  color: $color-text;
+}
+
+.cal__select-full,
+.cal__input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 14px;
+  font-family: inherit;
+  font-size: $fs-base;
+  color: $color-text;
+  background: #ffffff;
+  border: 1px solid $color-border;
+  border-radius: 10px;
+  outline: none;
+
+  &:focus {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px rgba(47, 111, 78, 0.10);
+  }
+}
+
+.cal__form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $space-3;
+}
+
+.cal__form-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: $color-bg-subtle;
+  border: 1px solid $color-border;
+  font-size: $fs-sm;
+  color: $color-text;
+
+  i { font-size: 14px; color: $color-primary; }
+  strong { font-weight: $fw-semibold; }
+}
+
+.cal__form-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(192, 57, 43, 0.20);
+  background: rgba(192, 57, 43, 0.06);
+  color: $color-danger;
+  font-size: $fs-sm;
+
+  i { font-size: 15px; margin-top: 1px; }
+}
+
+.cal__form-acciones {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  margin-top: $space-2;
+  padding-top: $space-3;
+  border-top: 1px solid $color-border;
+}
+
+.cal__form-cancelar {
+  text-align: center;
+  margin: $space-2 0 0;
+}
+
+.cal__link-cancelar {
+  font-size: $fs-sm;
+  color: $color-text-muted;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  text-decoration: underline;
+
+  @include hover { color: $color-text; }
+}
+
+// -------- Modal eliminar --------
+
+.cal__modal {
+  position: fixed;
+  inset: 0;
+  z-index: $z-sheet;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-4;
+  background: rgba(15, 15, 15, 0.42);
+}
+
+.cal__modal-panel {
+  width: 100%;
+  max-width: 420px;
+  padding: $space-5;
+  background: #ffffff;
+  border-radius: $radius-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.cal__modal-titulo {
+  font-size: $fs-lg;
+  font-weight: $fw-semibold;
+  color: $color-text;
+  margin: 0;
+}
+
+.cal__modal-texto {
+  font-size: $fs-sm;
+  color: $color-text-muted;
+  margin: 0;
+  line-height: 1.5;
+
+  strong { color: $color-text; font-weight: $fw-semibold; }
+}
+
+.cal__modal-acciones {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $space-3;
+  margin-top: $space-3;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid $color-border-strong;
+  border-top-color: $color-primary;
+  border-radius: 50%;
+  animation: cal-spin 700ms linear infinite;
+}
+
+@keyframes cal-spin {
+  to { transform: rotate(360deg); }
+}

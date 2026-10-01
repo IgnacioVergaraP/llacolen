@@ -1,0 +1,38 @@
+<div class="grafico">
+
+  <div *ngIf="!tieneDatos" class="grafico__vacio">
+    <i class="bi bi-graph-up" aria-hidden="true"></i>
+    <p>Sin datos suficientes para mostrar evolución.</p>
+  </div>
+
+  <svg
+    *ngIf="tieneDatos"
+    class="grafico__svg"
+    [attr.viewBox]="'0 0 ' + ancho + ' ' + alto"
+    preserveAspectRatio="none"
+    role="img"
+    aria-label="Gráfico de evolución de peso máximo">
+
+    <path class="grafico__area" [attr.d]="pathArea"></path>
+    <path class="grafico__linea" [attr.d]="pathLinea"></path>
+
+    <g *ngFor="let p of puntosGrafico">
+      <circle
+        class="grafico__punto"
+        [attr.cx]="p.x"
+        [attr.cy]="p.y"
+        r="3.5">
+      </circle>
+    </g>
+  </svg>
+
+  <div *ngIf="tieneDatos" class="grafico__footer">
+    <span class="grafico__footer-item">
+      <span class="grafico__footer-label">PR</span>
+      <span class="grafico__footer-valor">
+        {{ prHistorico != null ? prHistorico + ' kg' : '—' }}
+      </span>
+    </span>
+  </div>
+
+</div>

@@ -1,0 +1,67 @@
+@import "tokens";
+
+.lista__buscador {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: $space-4;
+}
+
+.lista__buscador-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: $color-text-subtle;
+  pointer-events: none;
+}
+
+.lista__buscador-input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 14px 0 40px;
+  font-size: $fs-base;
+  color: $color-text;
+  background: #ffffff;
+  border: 1px solid $color-border;
+  border-radius: 10px;
+  outline: none;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+
+  &::placeholder { color: $color-text-subtle; }
+
+  &:focus {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px rgba(47, 111, 78, 0.10);
+  }
+}
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.lista__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  padding: $space-8 0;
+  color: $color-text-muted;
+  font-size: $fs-sm;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid $color-border-strong;
+  border-top-color: $color-primary;
+  border-radius: 50%;
+  animation: lista-spin 700ms linear infinite;
+}
+
+@keyframes lista-spin {
+  to { transform: rotate(360deg); }
+}

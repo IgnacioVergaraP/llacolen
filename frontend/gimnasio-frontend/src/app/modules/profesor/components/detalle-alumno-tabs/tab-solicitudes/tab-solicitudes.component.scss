@@ -1,0 +1,72 @@
+@import "tokens";
+
+.ts {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  padding-top: $space-2;
+  padding-bottom: $space-6;
+}
+
+.ts__filtros {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: $space-2;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+.ts__chip {
+  flex: 0 0 auto;
+  padding: 6px 14px;
+  min-height: 34px;
+  font-size: $fs-sm;
+  font-weight: $fw-medium;
+  white-space: nowrap;
+  color: $color-text-muted;
+  background: #ffffff;
+  border: 1px solid $color-border;
+  border-radius: $radius-full;
+  cursor: pointer;
+
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+
+  @include hover { border-color: $color-border-strong; color: $color-text; }
+}
+
+.ts__chip--active {
+  background: $color-primary-soft;
+  border-color: rgba(47, 111, 78, 0.30);
+  color: $color-primary;
+  font-weight: $fw-semibold;
+}
+
+.ts__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  padding: $space-6 0;
+  color: $color-text-muted;
+  font-size: $fs-sm;
+}
+
+.ts__lista {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid $color-border-strong;
+  border-top-color: $color-primary;
+  border-radius: 50%;
+  animation: ts-spin 700ms linear infinite;
+}
+
+@keyframes ts-spin {
+  to { transform: rotate(360deg); }
+}

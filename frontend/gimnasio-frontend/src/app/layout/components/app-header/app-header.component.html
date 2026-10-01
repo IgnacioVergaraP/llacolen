@@ -1,0 +1,17 @@
+<header class="app-header">
+  <button
+    *ngIf="showBack"
+    type="button"
+    class="app-header__back"
+    aria-label="Volver"
+    (click)="onBack()">
+    <i class="bi bi-chevron-left" aria-hidden="true"></i>
+  </button>
+
+  <div class="app-header__titles">
+    <h1 class="app-header__title">{{ title }}</h1>
+    <p *ngIf="subtitle" class="app-header__subtitle">{{ subtitle }}</p>
+  </div>
+
+  <ng-content select="[header-actions]"></ng-content>
+</header>

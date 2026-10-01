@@ -1,0 +1,44 @@
+<div *ngIf="cargando" class="detalle__loading" aria-live="polite">
+  <span class="spinner" aria-hidden="true"></span>
+  <span>Cargando…</span>
+</div>
+
+<app-ui-empty-state
+  *ngIf="!cargando && errorMensaje"
+  icon="bi-exclamation-triangle"
+  title="No pudimos cargar la máquina"
+  [message]="errorMensaje">
+  <app-ui-button variant="secondary" (clicked)="reintentar()">
+    Reintentar
+  </app-ui-button>
+</app-ui-empty-state>
+
+<ng-container *ngIf="!cargando && maquina">
+
+  <app-ui-page-header [title]="maquina.nombre"></app-ui-page-header>
+
+  <div class="detalle__tags">
+    <app-ui-badge
+      *ngFor="let g of maquina.grupos_musculares"
+      variant="primary">
+      {{ etiqueta(g) }}
+    </app-ui-badge>
+  </div>
+
+  <div class="detalle__video" *ngIf="videoUrlSeguro">
+    <iframe
+      [src]="videoUrlSeguro"
+      title="Video demostrativo"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen
+      loading="lazy">
+    </iframe>
+  </div>
+
+  <section class="detalle__section">
+    <h2 class="detalle__section-title">Descripción</h2>
+    <p class="detalle__description">{{ maquina.descripcion }}</p>
+  </section>
+
+</ng-container>

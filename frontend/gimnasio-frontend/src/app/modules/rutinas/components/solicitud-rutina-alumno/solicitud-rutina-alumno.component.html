@@ -1,0 +1,76 @@
+<!-- Sin solicitud activa → botón para pedir -->
+<div *ngIf="mostrarPedirRutina" class="sra__cta">
+  <button
+    type="button"
+    class="sra__cta-btn"
+    (click)="onPedirRutina()">
+    <i class="bi bi-chat-dots" aria-hidden="true"></i>
+    <div class="sra__cta-text">
+      <span class="sra__cta-titulo">Pedir una rutina</span>
+      <span class="sra__cta-sub">Coordiná con un profesor</span>
+    </div>
+    <i class="bi bi-chevron-right sra__cta-chevron" aria-hidden="true"></i>
+  </button>
+</div>
+
+<!-- Solicitud activa (pendiente o en_proceso) -->
+<div *ngIf="activa" class="sra__activa">
+  <div class="sra__activa-header">
+    <i class="bi {{ estadoIcono }} sra__activa-icon" aria-hidden="true"></i>
+    <div class="sra__activa-body">
+      <p class="sra__activa-titulo">Solicitud de rutina en curso</p>
+      <p class="sra__activa-estado">{{ estadoTexto }}</p>
+    </div>
+  </div>
+
+  <div class="sra__activa-detalle">
+    <div class="sra__activa-dato">
+      <span class="sra__activa-dato-label">Objetivo</span>
+      <span class="sra__activa-dato-valor">{{ objetivoLegible }}</span>
+    </div>
+    <div class="sra__activa-dato">
+      <span class="sra__activa-dato-label">Días/semana</span>
+      <span class="sra__activa-dato-valor">{{ activa.dias_por_semana }}</span>
+    </div>
+  </div>
+
+  <p *ngIf="activa.comentarios" class="sra__activa-comentarios">
+    "{{ activa.comentarios }}"
+  </p>
+
+  <button
+    *ngIf="mostrarCancelar"
+    type="button"
+    class="sra__cancelar"
+    (click)="onCancelar()">
+    Cancelar solicitud
+  </button>
+</div>
+
+<!-- Última resuelta (informativo) -->
+<div *ngIf="!activa && ultimaResuelta" class="sra__resuelta">
+  <i class="bi bi-check-circle-fill sra__resuelta-icon" aria-hidden="true"></i>
+  <div class="sra__resuelta-body">
+    <p class="sra__resuelta-titulo">Tu última solicitud fue coordinada</p>
+    <p *ngIf="ultimaResuelta.mensaje_resolucion" class="sra__resuelta-mensaje">
+      "{{ ultimaResuelta.mensaje_resolucion }}"
+    </p>
+  </div>
+</div>
+
+<!-- Última rechazada (informativo) -->
+<div *ngIf="!activa && !ultimaResuelta && ultimaRechazada" class="sra__rechazada">
+  <i class="bi bi-x-circle-fill sra__rechazada-icon" aria-hidden="true"></i>
+  <div class="sra__rechazada-body">
+    <p class="sra__rechazada-titulo">Tu última solicitud fue rechazada</p>
+    <p *ngIf="ultimaRechazada.motivo_rechazo" class="sra__rechazada-motivo">
+      "{{ ultimaRechazada.motivo_rechazo }}"
+    </p>
+    <button
+      type="button"
+      class="sra__reintentar"
+      (click)="onPedirRutina()">
+      Pedir otra
+    </button>
+  </div>
+</div>

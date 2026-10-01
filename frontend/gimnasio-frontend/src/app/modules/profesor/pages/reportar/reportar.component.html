@@ -1,0 +1,238 @@
+<app-ui-page-header
+  title="Reportar"
+  subtitle="Informá un problema con el equipamiento">
+</app-ui-page-header>
+
+<!-- Botón principal -->
+<div class="rep__cta">
+  <app-ui-button
+    variant="primary"
+    [block]="true"
+    (clicked)="abrirSheet()">
+    <i class="bi bi-plus-lg" aria-hidden="true"></i>
+    Nuevo reporte
+  </app-ui-button>
+</div>
+
+<!-- Mensaje de éxito -->
+<div *ngIf="exitoCreacion" class="rep__exito" role="status">
+  <i class="bi bi-check-circle" aria-hidden="true"></i>
+  <span>{{ exitoCreacion }}</span>
+</div>
+
+<!-- Filtros -->
+<div class="rep__filtros">
+  <button
+    *ngFor="let f of filtros"
+    type="button"
+    class="rep__chip"
+    [class.rep__chip--active]="filtroEstado === f.value"
+    (click)="onFiltroChange(f.value)">
+    {{ f.label }}
+  </button>
+</div>
+
+<!-- Listado -->
+<section class="rep__lista-section">
+  <div *ngIf="cargando" class="rep__loading" aria-live="polite">
+    <span class="spinner" aria-hidden="true"></span>
+    <span>Cargando reportes…</span>
+  </div>
+
+  <app-ui-empty-state
+    *ngIf="!cargando && errorMensaje"
+    icon="bi-wifi-off"
+    title="No pudimos cargar tus reportes"
+    [message]="errorMensaje">
+    <app-ui-button variant="secondary" (clicked)="reintentar()">
+      Reintentar
+    </app-ui-button>
+  </app-ui-empty-state>
+
+  <app-ui-empty-state
+    *ngIf="!cargando && !errorMensaje && filtrados.length === 0"
+    icon="bi-flag"
+    [title]="reportes.length === 0 ? 'Sin reportes' : 'Sin resultados'"
+    [message]="reportes.length === 0
+      ? 'Todavía no reportaste ningún problema.'
+      : 'Probá con otro filtro.'">
+  </app-ui-empty-state>
+
+  <div *ngIf="!cargando && !errorMensaje && filtrados.length > 0" class="rep__lista">
+    <app-reporte-card
+      *ngFor="let r of filtrados; trackBy: trackById"
+      [reporte]="r"
+      (cancelar)="cancelarReporte($event)">
+    </app-reporte-card>
+  </div>
+</section>
+
+<!-- Sheet de creación -->
+<app-ui-sheet
+  [visible]="sheetVisible"
+  title="Nuevo reporte"
+  (closed)="cerrarSheet()">
+
+  <form class="rep__form" [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+
+    <!-- Tipo -->
+    <div class="rep__form-field">
+      <label class="rep__form-label">Tipo de problema</label>
+      <div class="rep__chips">
+        <button
+          *ngFor="let t of tipos"
+          type="button"
+          class="rep__chip-opt"
+          [class.rep__chip-opt--active]="tipoSeleccionado === t.value"
+          (click)="seleccionarTipo(t.value)">
+          {{ t.label }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Prioridad -->
+    <div class="rep__form-field">
+      <label class="rep__form-label">Prioridad</label>
+      <div class="rep__chips">
+        <button
+          *ngFor="let p of prioridades"
+          type="button"
+          class="rep__chip-opt"
+          [class.rep__chip-opt--active]="prioridadSeleccionada === p.value"
+          (click)="seleccionarPrioridad(p.value)">
+          {{ p.label }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Máquina asociada (opcional) -->
+    <div class="rep__form-field">
+      <label class="rep__form-label">
+        Máquina asociada <span class="rep__form-opt">(opcional)</span>
+      </label>
+
+      <div *ngIf="!maquinaSeleccionada" class="rep__maquina-picker">
+        <input
+          type="search"
+          class="rep__search"
+          placeholder="Buscar máquina..."
+          [(ngModel)]="busquedaMaquina"
+          [ngModelOptions]="{ standalone: true }"
+          (ngModelChange)="onBusquedaMaquinaChange()" />
+
+        <div class="rep__musculo-chips">
+          <button
+            type="button"
+            class="rep__musculo-chip"
+            [class.rep__musculo-chip--active]="!filtroMusculo"
+            (click)="onFiltroMusculoChange(null)">
+            Todos
+          </button>
+          <button
+            *ngFor="let g of grupos"
+            type="button"
+            class="rep__musculo-chip"
+            [class.rep__musculo-chip--active]="filtroMusculo === g"
+            (click)="onFiltroMusculoChange(g)">
+            {{ etiqueta(g) }}
+          </button>
+        </div>
+
+        <div *ngIf="cargandoMaquinas" class="rep__maquinas-loading">
+          <span class="spinner" aria-hidden="true"></span>
+        </div>
+
+        <ul *ngIf="!cargandoMaquinas && maquinasFiltradas.length > 0" class="rep__maquinas-lista">
+          <li *ngFor="let m of maquinasFiltradas">
+            <button type="button" class="rep__maquina-item" (click)="elegirMaquina(m)">
+              <i class="bi bi-gear" aria-hidden="true"></i>
+              <span>{{ m.nombre }}</span>
+            </button>
+          </li>
+        </ul>
+
+        <p *ngIf="!cargandoMaquinas && maquinasFiltradas.length === 0" class="rep__maquinas-vacio">
+          Sin resultados.
+        </p>
+      </div>
+
+      <!-- Máquina seleccionada -->
+      <div *ngIf="maquinaSeleccionada" class="rep__maquina-seleccionada">
+        <i class="bi bi-gear" aria-hidden="true"></i>
+        <span class="rep__maquina-seleccionada-nombre">{{ maquinaSeleccionada.nombre }}</span>
+        <button
+          type="button"
+          class="rep__maquina-quitar"
+          aria-label="Quitar máquina"
+          (click)="quitarMaquina()">
+          <i class="bi bi-x-lg" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Descripción -->
+    <div class="rep__form-field">
+      <label class="rep__form-label" for="rep-desc">Descripción</label>
+      <textarea
+        id="rep-desc"
+        class="rep__textarea"
+        formControlName="descripcion"
+        rows="4"
+        placeholder="Describí el problema con el mayor detalle posible...">
+      </textarea>
+      <span class="rep__form-hint">Entre 10 y 1000 caracteres</span>
+    </div>
+
+    <!-- Foto -->
+    <div class="rep__form-field">
+      <label class="rep__form-label">Foto <span class="rep__form-opt">(opcional)</span></label>
+
+      <div *ngIf="!fotoAdjunta" class="rep__foto-btn">
+        <button type="button" class="rep__adjuntar" (click)="simularFoto()">
+          <i class="bi bi-camera" aria-hidden="true"></i>
+          Adjuntar foto
+        </button>
+        <span class="rep__form-hint">Próximamente: subida real de imagen</span>
+      </div>
+
+      <div *ngIf="fotoAdjunta" class="rep__foto-adjunta">
+        <i class="bi bi-image" aria-hidden="true"></i>
+        <span>Foto adjunta</span>
+        <button
+          type="button"
+          class="rep__foto-quitar"
+          aria-label="Quitar foto"
+          (click)="quitarFoto()">
+          <i class="bi bi-x-lg" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="errorCreacion" class="rep__form-error" role="alert">
+      <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+      <span>{{ errorCreacion }}</span>
+    </div>
+
+    <!-- Acciones -->
+    <div class="rep__form-actions">
+      <app-ui-button
+        variant="secondary"
+        type="button"
+        [block]="true"
+        (clicked)="cerrarSheet()">
+        Cancelar
+      </app-ui-button>
+      <app-ui-button
+        variant="primary"
+        type="submit"
+        [block]="true"
+        [loading]="guardando"
+        [disabled]="!puedeGuardar">
+        Enviar reporte
+      </app-ui-button>
+    </div>
+
+  </form>
+
+</app-ui-sheet>

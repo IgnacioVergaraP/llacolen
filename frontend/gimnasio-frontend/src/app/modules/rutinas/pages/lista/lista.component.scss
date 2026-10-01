@@ -1,0 +1,289 @@
+@import "tokens";
+
+.rutinas-lista {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  padding-top: $space-2;
+}
+
+.rutinas-lista__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  padding: $space-8 0;
+  color: $color-text-muted;
+  font-size: $fs-sm;
+}
+
+.rutinas-lista__exito {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  margin-bottom: $space-3;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(47, 111, 78, 0.20);
+  background: rgba(47, 111, 78, 0.06);
+  color: $color-primary;
+  font-size: $fs-sm;
+
+  i { font-size: 15px; }
+}
+
+.rutinas-lista__toggle-wrap {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: $space-2;
+}
+
+.rutinas-lista__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 6px 12px;
+  font-size: $fs-xs;
+  font-weight: $fw-medium;
+  color: $color-text-muted;
+  background: transparent;
+  border: 1px solid $color-border;
+  border-radius: $radius-full;
+  cursor: pointer;
+
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+
+  @include hover { border-color: $color-border-strong; color: $color-text; }
+
+  i { font-size: 13px; }
+}
+
+.rutinas-lista__toggle--active {
+  background: $color-primary-soft;
+  border-color: rgba(47, 111, 78, 0.30);
+  color: $color-primary;
+}
+
+// -------- Sheet de solicitud --------
+
+.srs__form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+}
+
+.srs__info {
+  font-size: $fs-sm;
+  color: $color-text-muted;
+  line-height: 1.5;
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: $color-bg-subtle;
+  border: 1px solid $color-border;
+}
+
+.srs__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.srs__label {
+  font-size: $fs-sm;
+  font-weight: $fw-medium;
+  color: $color-text;
+}
+
+.srs__label-opt {
+  color: $color-text-subtle;
+  font-weight: $fw-regular;
+  font-size: $fs-xs;
+}
+
+.srs__field-hint {
+  font-size: $fs-xs;
+  color: $color-text-subtle;
+  line-height: 1.3;
+  margin-top: 2px;
+}
+
+.srs__select-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.srs__select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 40px 0 14px;
+  font-family: inherit;
+  font-size: $fs-base;
+  color: $color-text;
+  background: #ffffff;
+  border: 1px solid $color-border;
+  border-radius: 10px;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+
+  &:focus {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px rgba(47, 111, 78, 0.10);
+  }
+}
+
+.srs__select-chevron {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: $color-text-subtle;
+  pointer-events: none;
+}
+
+.srs__select-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  font-size: $fs-sm;
+  color: $color-text-muted;
+
+  background: #ffffff;
+  border: 1px solid $color-border;
+  border-radius: 10px;
+}
+
+.srs__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.srs__chip {
+  padding: 6px 12px;
+  min-height: 34px;
+  font-size: $fs-sm;
+  font-weight: $fw-medium;
+  white-space: nowrap;
+  color: $color-text-muted;
+  background: #ffffff;
+  border: 1px solid $color-border;
+  border-radius: $radius-full;
+  cursor: pointer;
+
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+
+  @include hover { border-color: $color-border-strong; color: $color-text; }
+}
+
+.srs__chip--active {
+  background: $color-primary-soft;
+  border-color: rgba(47, 111, 78, 0.30);
+  color: $color-primary;
+  font-weight: $fw-semibold;
+}
+
+.srs__stepper {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  justify-content: center;
+}
+
+.srs__stepper-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: $radius-md;
+  background: $color-bg-subtle;
+  border: 1px solid $color-border;
+  color: $color-text;
+  cursor: pointer;
+
+  transition: background 150ms ease, transform 100ms ease;
+
+  &:hover:not(:disabled) { background: $color-bg-hover; }
+  &:active:not(:disabled) { transform: scale(0.96); }
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  i { font-size: 18px; }
+}
+
+.srs__stepper-valor {
+  font-size: 28px;
+  font-weight: $fw-semibold;
+  color: $color-text;
+  min-width: 40px;
+  text-align: center;
+}
+
+.srs__textarea {
+  width: 100%;
+  padding: $space-3;
+  font-family: inherit;
+  font-size: $fs-base;
+  color: $color-text;
+  background: #ffffff;
+  border: 1px solid $color-border;
+  border-radius: 10px;
+  outline: none;
+  resize: vertical;
+  min-height: 72px;
+
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+
+  &::placeholder { color: $color-text-subtle; }
+
+  &:focus {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px rgba(47, 111, 78, 0.10);
+  }
+}
+
+.srs__error {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(192, 57, 43, 0.20);
+  background: rgba(192, 57, 43, 0.06);
+  color: $color-danger;
+  font-size: $fs-sm;
+  line-height: 1.4;
+
+  i { font-size: 15px; margin-top: 1px; }
+}
+
+.srs__actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $space-3;
+  margin-top: $space-4;
+  padding-top: $space-4;
+  border-top: 1px solid $color-border;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid $color-border-strong;
+  border-top-color: $color-primary;
+  border-radius: 50%;
+  animation: rutinas-spin 700ms linear infinite;
+}
+
+@keyframes rutinas-spin {
+  to { transform: rotate(360deg); }
+}

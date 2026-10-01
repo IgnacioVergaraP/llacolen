@@ -1,0 +1,12 @@
+<div class="uc" [class.uc--baja]="variante === 'baja'">
+
+  <div class="uc__header">
+    <p class="uc__nombre">{{ maquina.maquina_nombre }}</p>
+    <span class="uc__valor">{{ maquina.cantidad_series }}</span>
+  </div>
+
+  <div class="uc__barra">
+    <div class="uc__barra-fill" [style.width.%]="porcentaje"></div>
+  </div>
+
+</div>

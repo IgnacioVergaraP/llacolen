@@ -1,0 +1,64 @@
+<div class="mp">
+
+  <!-- Seleccionada -->
+  <div *ngIf="maquinaSeleccionada" class="mp__seleccionada">
+    <i class="bi bi-gear" aria-hidden="true"></i>
+    <div class="mp__seleccionada-info">
+      <p class="mp__seleccionada-nombre">{{ maquinaSeleccionada.nombre }}</p>
+      <p class="mp__seleccionada-tags">{{ maquinaSeleccionada.grupos_musculares.join(' · ') }}</p>
+    </div>
+    <button
+      type="button"
+      class="mp__quitar"
+      aria-label="Quitar máquina"
+      (click)="quitar()">
+      <i class="bi bi-x-lg" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <!-- Selector -->
+  <div *ngIf="!maquinaSeleccionada" class="mp__picker">
+    <input
+      type="search"
+      class="mp__search"
+      placeholder="Buscar máquina..."
+      [(ngModel)]="busqueda"
+      (ngModelChange)="onBusquedaChange()" />
+
+    <div class="mp__chips">
+      <button
+        type="button"
+        class="mp__chip"
+        [class.mp__chip--active]="!filtroMusculo"
+        (click)="onFiltroChange(null)">
+        Todos
+      </button>
+      <button
+        *ngFor="let g of grupos"
+        type="button"
+        class="mp__chip"
+        [class.mp__chip--active]="filtroMusculo === g"
+        (click)="onFiltroChange(g)">
+        {{ etiqueta(g) }}
+      </button>
+    </div>
+
+    <div *ngIf="cargando" class="mp__loading">
+      <span class="spinner" aria-hidden="true"></span>
+    </div>
+
+    <ul *ngIf="!cargando && filtradas.length > 0" class="mp__lista">
+      <li *ngFor="let m of filtradas">
+        <button type="button" class="mp__item" (click)="seleccionar(m)">
+          <i class="bi bi-gear" aria-hidden="true"></i>
+          <span class="mp__item-nombre">{{ m.nombre }}</span>
+        </button>
+      </li>
+    </ul>
+
+    <p *ngIf="!cargando && filtradas.length === 0" class="mp__vacio">
+      Sin resultados.
+    </p>
+  </div>
+
+</div>

@@ -1,0 +1,11 @@
+@import "tokens";
+
+.ui-card {
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+}
+
+.ui-card--pad-sm { padding: $space-3; }
+.ui-card--pad-md { padding: $space-4; }
+.ui-card--pad-lg { padding: $space-6; }

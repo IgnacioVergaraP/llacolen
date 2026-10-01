@@ -1,0 +1,18 @@
+h1, h2, h3, h4, h5, h6 {
+  color: $color-text;
+  font-weight: $fw-semibold;
+  line-height: $lh-tight;
+  margin: 0;
+}
+
+h1 { font-size: $fs-2xl; }
+h2 { font-size: $fs-xl; }
+h3 { font-size: $fs-lg; }
+h4 { font-size: $fs-md; }
+
+body {
+  font-family: $font-family-base;
+  font-size: $fs-base;
+  line-height: $lh-normal;
+  color: $color-text;
+}

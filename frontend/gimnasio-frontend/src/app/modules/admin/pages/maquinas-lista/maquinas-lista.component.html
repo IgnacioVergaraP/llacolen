@@ -1,0 +1,67 @@
+<app-ui-page-header
+  title="Máquinas"
+  subtitle="Catálogo e historial de mantenciones">
+</app-ui-page-header>
+
+<!-- Buscador -->
+<div class="ml__buscador">
+  <i class="bi bi-search ml__buscador-icon" aria-hidden="true"></i>
+  <input
+    type="search"
+    class="ml__buscador-input"
+    placeholder="Buscar máquina..."
+    [(ngModel)]="busqueda"
+    (ngModelChange)="onBusquedaChange()" />
+</div>
+
+<div *ngIf="cargando" class="ml__loading" aria-live="polite">
+  <span class="spinner" aria-hidden="true"></span>
+  <span>Cargando máquinas…</span>
+</div>
+
+<app-ui-empty-state
+  *ngIf="!cargando && errorMensaje"
+  icon="bi-wifi-off"
+  title="No pudimos cargar las máquinas"
+  [message]="errorMensaje">
+  <app-ui-button variant="secondary" (clicked)="reintentar()">
+    Reintentar
+  </app-ui-button>
+</app-ui-empty-state>
+
+<app-ui-empty-state
+  *ngIf="!cargando && !errorMensaje && filtrados.length === 0"
+  icon="bi-gear"
+  [title]="items.length === 0 ? 'Sin máquinas' : 'Sin resultados'"
+  [message]="items.length === 0
+    ? 'El catálogo está vacío.'
+    : 'Probá con otro término.'">
+</app-ui-empty-state>
+
+<div *ngIf="!cargando && !errorMensaje && filtrados.length > 0" class="ml__lista">
+  <button
+    *ngFor="let item of filtrados; trackBy: trackById"
+    type="button"
+    class="ml__item"
+    (click)="irADetalle(item.maquina)">
+
+    <div class="ml__item-thumb">
+      <img
+        *ngIf="item.maquina.imagen_url"
+        [src]="item.maquina.imagen_url"
+        [alt]="item.maquina.nombre"
+        loading="lazy" />
+      <i *ngIf="!item.maquina.imagen_url" class="bi bi-gear" aria-hidden="true"></i>
+    </div>
+
+    <div class="ml__item-body">
+      <p class="ml__item-nombre">{{ item.maquina.nombre }}</p>
+      <p class="ml__item-tags">
+        {{ item.maquina.grupos_musculares.join(' · ') }}
+      </p>
+      <p class="ml__item-fecha">{{ getFechaUltima(item.ultimaMantenimiento) }}</p>
+    </div>
+
+    <i class="bi bi-chevron-right ml__item-chevron" aria-hidden="true"></i>
+  </button>
+</div>

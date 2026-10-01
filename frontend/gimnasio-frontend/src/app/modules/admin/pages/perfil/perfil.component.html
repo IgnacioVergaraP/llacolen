@@ -1,0 +1,41 @@
+<div *ngIf="usuario">
+
+  <section class="ap__header">
+    <app-avatar
+      [nombre]="usuario.nombre"
+      [imagenUrl]="usuario.imagen_url"
+      size="lg">
+    </app-avatar>
+
+    <div class="ap__header-info">
+      <h1 class="ap__header-nombre">{{ usuario.nombre }}</h1>
+      <p class="ap__header-email">{{ usuario.email }}</p>
+      <span class="ap__header-rol">Administrador</span>
+    </div>
+  </section>
+
+  <section class="ap__section">
+    <h2 class="ap__section-title">Información</h2>
+    <div class="ap__datos">
+      <div class="ap__dato">
+        <span class="ap__dato-label">Rol</span>
+        <span class="ap__dato-valor">Gimnasio (administrador)</span>
+      </div>
+      <div class="ap__dato">
+        <span class="ap__dato-label">Miembro desde</span>
+        <span class="ap__dato-valor">{{ miembroDesde }}</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="ap__logout">
+    <button
+      type="button"
+      class="ap__logout-btn"
+      (click)="cerrarSesion()">
+      <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
+      Cerrar sesión
+    </button>
+  </section>
+
+</div>

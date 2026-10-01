@@ -1,0 +1,199 @@
+<app-ui-page-header
+  title="Mis rutinas"
+  subtitle="Entrenamientos asignados">
+</app-ui-page-header>
+
+<app-solicitud-rutina-alumno
+  [solicitudes]="solicitudes"
+  (pedirRutina)="abrirSheetSolicitud()"
+  (cancelarSolicitud)="cancelarSolicitud($event)">
+</app-solicitud-rutina-alumno>
+
+<div *ngIf="exitoSolicitud" class="rutinas-lista__exito" role="status">
+  <i class="bi bi-check-circle" aria-hidden="true"></i>
+  <span>{{ exitoSolicitud }}</span>
+</div>
+
+<!-- Toggle archivadas -->
+<div class="rutinas-lista__toggle-wrap">
+  <button
+    type="button"
+    class="rutinas-lista__toggle"
+    [class.rutinas-lista__toggle--active]="mostrarArchivadas"
+    (click)="toggleArchivadas()">
+    <i
+      class="bi"
+      [class.bi-eye]="!mostrarArchivadas"
+      [class.bi-eye-slash]="mostrarArchivadas"
+      aria-hidden="true">
+    </i>
+    {{ mostrarArchivadas ? 'Ocultar archivadas' : 'Mostrar archivadas' }}
+  </button>
+</div>
+
+<div *ngIf="cargando" class="rutinas-lista__loading" aria-live="polite">
+  <span class="spinner" aria-hidden="true"></span>
+  <span>Cargando rutinas…</span>
+</div>
+
+<app-ui-empty-state
+  *ngIf="!cargando && errorMensaje"
+  icon="bi-wifi-off"
+  title="No pudimos cargar tus rutinas"
+  [message]="errorMensaje">
+  <app-ui-button variant="secondary" (clicked)="reintentar()">
+    Reintentar
+  </app-ui-button>
+</app-ui-empty-state>
+
+<app-ui-empty-state
+  *ngIf="!cargando && !errorMensaje && rutinas.length === 0"
+  icon="bi-clipboard-x"
+  title="Sin rutinas asignadas"
+  message="Todavía no tenés rutinas. Podés pedirle una a un profesor.">
+</app-ui-empty-state>
+
+<div *ngIf="!cargando && !errorMensaje && rutinas.length > 0" class="rutinas-lista">
+  <app-rutina-card
+    *ngFor="let r of rutinas; trackBy: trackById"
+    [rutina]="r">
+  </app-rutina-card>
+</div>
+
+<!-- Sheet de solicitud de rutina -->
+<app-ui-sheet
+  [visible]="sheetVisible"
+  title="Pedir una rutina"
+  (closed)="cerrarSheetSolicitud()">
+
+  <form class="srs__form" [formGroup]="form" (ngSubmit)="enviarSolicitud()" novalidate>
+
+    <p class="srs__info">
+      Un profesor va a coordinar con vos para armar la rutina. Si no elegís a nadie,
+      cualquier profesor disponible puede tomarla.
+    </p>
+
+    <!-- Profesor preferido -->
+    <div class="srs__field">
+      <label class="srs__label" for="srs-prof">
+        Profesor <span class="srs__label-opt">(opcional)</span>
+      </label>
+
+      <div *ngIf="cargandoProfesores" class="srs__select-loading">
+        <span class="spinner" aria-hidden="true"></span>
+        <span>Cargando profesores…</span>
+      </div>
+
+      <div *ngIf="!cargandoProfesores" class="srs__select-wrap">
+        <select
+          id="srs-prof"
+          class="srs__select"
+          [value]="profesorSeleccionadoId ?? ''"
+          (change)="onProfesorChange($any($event.target).value)">
+          <option value="">Cualquier profesor disponible</option>
+          <option *ngFor="let p of profesoresOrdenados" [value]="p.id">
+            {{ p.nombre }}<ng-container *ngIf="p.especialidades && p.especialidades.length > 0"> — {{ p.especialidades.join(', ') }}</ng-container>
+          </option>
+        </select>
+        <i class="bi bi-chevron-down srs__select-chevron" aria-hidden="true"></i>
+      </div>
+
+      <span class="srs__field-hint">
+        Si elegís un profesor, solo esa persona podrá tomar tu solicitud.
+      </span>
+    </div>
+
+    <!-- Objetivo -->
+    <div class="srs__field">
+      <label class="srs__label">Objetivo</label>
+      <div class="srs__chips">
+        <button
+          *ngFor="let o of objetivos"
+          type="button"
+          class="srs__chip"
+          [class.srs__chip--active]="objetivoSeleccionado === o.value"
+          (click)="seleccionarObjetivo(o.value)">
+          {{ o.label }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Días por semana -->
+    <div class="srs__field">
+      <label class="srs__label">Días por semana</label>
+      <div class="srs__stepper">
+        <button
+          type="button"
+          class="srs__stepper-btn"
+          [disabled]="diasPorSemana <= 1"
+          (click)="ajustarDias(-1)"
+          aria-label="Restar día">
+          <i class="bi bi-dash-lg" aria-hidden="true"></i>
+        </button>
+        <span class="srs__stepper-valor">{{ diasPorSemana }}</span>
+        <button
+          type="button"
+          class="srs__stepper-btn"
+          [disabled]="diasPorSemana >= 7"
+          (click)="ajustarDias(1)"
+          aria-label="Sumar día">
+          <i class="bi bi-plus-lg" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Grupos de interés -->
+    <div class="srs__field">
+      <label class="srs__label">
+        Grupos de interés <span class="srs__label-opt">(opcional)</span>
+      </label>
+      <div class="srs__chips">
+        <button
+          *ngFor="let g of gruposDisponibles"
+          type="button"
+          class="srs__chip"
+          [class.srs__chip--active]="estaSeleccionado(g)"
+          (click)="toggleGrupo(g)">
+          {{ etiqueta(g) }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Comentarios -->
+    <div class="srs__field">
+      <label class="srs__label" for="srs-com">Comentarios <span class="srs__label-opt">(opcional)</span></label>
+      <textarea
+        id="srs-com"
+        class="srs__textarea"
+        formControlName="comentarios"
+        rows="3"
+        placeholder="Contale al profesor si tenés alguna molestia, preferencia o disponibilidad horaria...">
+      </textarea>
+    </div>
+
+    <div *ngIf="errorSolicitud" class="srs__error" role="alert">
+      <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+      <span>{{ errorSolicitud }}</span>
+    </div>
+
+    <div class="srs__actions">
+      <app-ui-button
+        variant="secondary"
+        type="button"
+        [block]="true"
+        (clicked)="cerrarSheetSolicitud()">
+        Cancelar
+      </app-ui-button>
+      <app-ui-button
+        variant="primary"
+        type="submit"
+        [block]="true"
+        [loading]="guardandoSolicitud"
+        [disabled]="guardandoSolicitud">
+        Enviar solicitud
+      </app-ui-button>
+    </div>
+
+  </form>
+
+</app-ui-sheet>

@@ -1,0 +1,26 @@
+<div class="perfil-header">
+
+  <div class="perfil-header__avatar">
+    <app-avatar
+      [nombre]="usuario.nombre"
+      [imagenUrl]="usuario.imagen_url"
+      size="lg">
+    </app-avatar>
+  </div>
+
+  <div class="perfil-header__info">
+    <h1 class="perfil-header__nombre">{{ usuario.nombre }}</h1>
+    <p class="perfil-header__email">{{ usuario.email }}</p>
+    <span class="perfil-header__rol">{{ rolEtiqueta }}</span>
+  </div>
+
+  <button
+    *ngIf="mostrarEditar"
+    type="button"
+    class="perfil-header__editar"
+    aria-label="Editar perfil"
+    (click)="onEditar()">
+    <i class="bi bi-pencil" aria-hidden="true"></i>
+  </button>
+
+</div>

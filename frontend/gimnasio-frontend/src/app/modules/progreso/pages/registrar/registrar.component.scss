@@ -1,0 +1,192 @@
+@import "tokens";
+
+.registrar__header {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+
+  min-height: $header-height;
+  padding: calc(#{$space-3} + #{$safe-area-top}) $content-padding-x $space-3;
+
+  background: $color-bg;
+  border-bottom: 1px solid $color-border;
+  margin: 0 -#{$content-padding-x};
+}
+
+.registrar__back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 44px;
+  height: 44px;
+  border-radius: $radius-md;
+  color: $color-text;
+
+  &:active { background: $color-bg-hover; }
+
+  i { font-size: 18px; }
+}
+
+.registrar__header-titles {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+}
+
+.registrar__titulo {
+  font-size: $fs-md;
+  font-weight: $fw-semibold;
+  color: $color-text;
+  margin: 0;
+  line-height: 1.3;
+
+  @include truncate;
+}
+
+.registrar__indicador {
+  font-size: $fs-xs;
+  color: $color-text-muted;
+  margin: 2px 0 0;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.registrar__header-spacer { width: 44px; }
+
+.registrar__body {
+  display: flex;
+  flex-direction: column;
+  gap: $space-5;
+  padding-top: $space-5;
+}
+
+.registrar__steppers {
+  display: flex;
+  flex-direction: column;
+  gap: $space-5;
+}
+
+.registrar__error,
+.registrar__exito {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: $fs-sm;
+  line-height: 1.4;
+
+  i { font-size: 15px; margin-top: 1px; }
+}
+
+.registrar__error {
+  border: 1px solid rgba(192, 57, 43, 0.20);
+  background: rgba(192, 57, 43, 0.06);
+  color: $color-danger;
+}
+
+.registrar__exito {
+  border: 1px solid rgba(47, 111, 78, 0.20);
+  background: rgba(47, 111, 78, 0.06);
+  color: $color-primary;
+}
+
+.registrar__series {
+  margin-top: $space-2;
+}
+
+.registrar__series-titulo {
+  font-size: $fs-sm;
+  font-weight: $fw-semibold;
+  color: $color-text;
+  margin: 0 0 $space-2;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.registrar__series-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.registrar__serie {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+
+  padding: 8px 8px 8px 12px;
+  background: #ffffff;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+
+  font-size: $fs-sm;
+  color: $color-text;
+}
+
+.registrar__serie-icon {
+  color: $color-primary;
+  font-size: 15px;
+}
+
+.registrar__serie-num {
+  font-weight: $fw-semibold;
+  color: $color-text-muted;
+  min-width: 28px;
+}
+
+.registrar__serie-resumen {
+  flex: 1;
+  min-width: 0;
+  color: $color-text;
+}
+
+.registrar__serie-editar {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 36px;
+  height: 36px;
+  border-radius: $radius-md;
+  color: $color-text-muted;
+  cursor: pointer;
+
+  transition: background 150ms ease, color 150ms ease;
+
+  @include hover { background: $color-bg-hover; color: $color-text; }
+  &:active { background: $color-bg-hover; color: $color-text; }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
+
+  i { font-size: 15px; }
+}
+
+.registrar__footer {
+  margin-top: $space-4;
+  padding-bottom: $space-6;
+}
+
+// ---------------- Sheet de edición ----------------
+
+.registrar__edicion-info {
+  font-size: $fs-sm;
+  color: $color-text-muted;
+  margin: 0 0 $space-4;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.registrar__edicion-actions {
+  margin-top: $space-5;
+  padding-top: $space-4;
+  border-top: 1px solid $color-border;
+}

@@ -1,0 +1,216 @@
+@import "tokens";
+
+.progreso__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  padding: $space-8 0;
+  color: $color-text-muted;
+  font-size: $fs-sm;
+}
+
+.progreso__evolucion-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+  margin-bottom: $space-4;
+}
+
+.progreso__evolucion-titles { min-width: 0; }
+
+.progreso__evolucion-label {
+  font-size: $fs-xs;
+  color: $color-text-subtle;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 2px;
+}
+
+.progreso__evolucion-ejercicio {
+  font-size: $fs-md;
+  font-weight: $fw-semibold;
+  color: $color-text;
+  margin: 0;
+}
+
+.progreso__evolucion-icon {
+  font-size: 20px;
+  color: $color-primary;
+}
+
+.progreso__evolucion-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 160px;
+}
+
+.progreso__historial {
+  margin-top: $space-6;
+}
+
+.progreso__section-title {
+  font-size: $fs-md;
+  font-weight: $fw-semibold;
+  color: $color-text;
+  margin: 0 0 $space-3;
+}
+
+.progreso__lista {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.progreso__fab {
+  position: fixed;
+  right: $space-4;
+  bottom: calc(#{$bottom-nav-height} + #{$safe-area-bottom} + #{$space-4});
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+
+  background: $color-primary;
+  color: $color-text-inverse;
+  border: 0;
+  cursor: pointer;
+
+  box-shadow: 0 4px 12px rgba(47, 111, 78, 0.28);
+
+  transition: background 150ms ease, transform 100ms ease;
+
+  @include hover { background: $color-primary-hover; }
+  &:active { transform: scale(0.96); }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
+
+  i { font-size: 24px; line-height: 1; }
+
+  @include lg-up {
+    right: calc(50% - #{$content-max-width} / 2 + #{$space-4});
+  }
+}
+
+// ---------------- Sheet de sesión ----------------
+
+.progreso__sesion-loading,
+.progreso__sesion-error {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  padding: $space-3 0;
+  color: $color-text-muted;
+  font-size: $fs-sm;
+}
+
+.progreso__sesion-error {
+  color: $color-danger;
+  i { font-size: 15px; }
+}
+
+.progreso__sesion-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.progreso__sesion-serie {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+
+  padding: 8px 8px 8px 12px;
+  background: #ffffff;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+
+  font-size: $fs-sm;
+  color: $color-text;
+}
+
+.progreso__sesion-serie-num {
+  font-weight: $fw-semibold;
+  color: $color-text-muted;
+  min-width: 28px;
+}
+
+.progreso__sesion-serie-resumen {
+  flex: 1;
+  min-width: 0;
+}
+
+.progreso__sesion-serie-editar {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 36px;
+  height: 36px;
+  border-radius: $radius-md;
+  color: $color-text-muted;
+  cursor: pointer;
+
+  transition: background 150ms ease, color 150ms ease;
+
+  @include hover { background: $color-bg-hover; color: $color-text; }
+  &:active { background: $color-bg-hover; color: $color-text; }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
+
+  i { font-size: 15px; }
+}
+
+.progreso__sesion-editando {
+  font-size: $fs-sm;
+  color: $color-text-muted;
+  margin: 0 0 $space-4;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.progreso__sesion-steppers {
+  display: flex;
+  flex-direction: column;
+  gap: $space-5;
+}
+
+.progreso__sesion-edit-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $space-3;
+  margin-top: $space-5;
+  padding-top: $space-4;
+  border-top: 1px solid $color-border;
+}
+
+// ---------------- Spinner ----------------
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid $color-border-strong;
+  border-top-color: $color-primary;
+  border-radius: 50%;
+  animation: progreso-spin 700ms linear infinite;
+}
+
+@keyframes progreso-spin {
+  to { transform: rotate(360deg); }
+}

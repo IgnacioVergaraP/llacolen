@@ -1,0 +1,1 @@
+"""Validación del módulo auth (vacío: no hay payloads propios)."""

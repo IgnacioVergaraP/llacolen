@@ -1,0 +1,162 @@
+<div class="tp">
+
+  <!-- Botón editar flotante -->
+  <div class="tp__actions">
+    <button
+      type="button"
+      class="tp__editar"
+      (click)="abrirEdicion()">
+      <i class="bi bi-pencil" aria-hidden="true"></i>
+      Editar datos
+    </button>
+  </div>
+
+  <!-- Mensaje de éxito -->
+  <div *ngIf="exitoEdicion" class="tp__exito" role="status">
+    <i class="bi bi-check-circle" aria-hidden="true"></i>
+    <span>{{ exitoEdicion }}</span>
+  </div>
+
+  <!-- Objetivo (si aplica) -->
+  <section class="tp__objetivo" *ngIf="tieneObjetivo">
+    <div class="tp__objetivo-card">
+      <i class="bi bi-bullseye tp__objetivo-icon" aria-hidden="true"></i>
+      <p class="tp__objetivo-texto">{{ textoObjetivo }}</p>
+    </div>
+  </section>
+
+  <!-- Datos físicos -->
+  <section class="tp__section">
+    <h2 class="tp__section-title">Datos físicos</h2>
+
+    <div class="tp__grid">
+      <div class="tp__dato">
+        <span class="tp__dato-label">Altura</span>
+        <span class="tp__dato-valor">
+          {{ alumno.altura != null ? alumno.altura + ' cm' : '—' }}
+        </span>
+      </div>
+
+      <div class="tp__dato">
+        <span class="tp__dato-label">Peso actual</span>
+        <span class="tp__dato-valor">
+          {{ alumno.peso_actual != null ? alumno.peso_actual + ' kg' : '—' }}
+        </span>
+      </div>
+
+      <div class="tp__dato">
+        <span class="tp__dato-label">Peso objetivo</span>
+        <span class="tp__dato-valor">
+          {{ alumno.peso_objetivo != null ? alumno.peso_objetivo + ' kg' : '—' }}
+        </span>
+      </div>
+
+      <div class="tp__dato">
+        <span class="tp__dato-label">IMC</span>
+        <span class="tp__dato-valor">{{ imcTexto }}</span>
+        <span class="tp__dato-hint" *ngIf="tieneImc">Calculado automáticamente</span>
+        <span class="tp__dato-hint" *ngIf="!tieneImc">Falta altura o peso</span>
+      </div>
+
+      <div class="tp__dato tp__dato--ancho">
+        <span class="tp__dato-label">% Grasa</span>
+        <span class="tp__dato-valor">{{ grasaTexto }}</span>
+        <span class="tp__dato-hint">{{ grasaDetalle }}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Notas del profesor -->
+  <section class="tp__section">
+    <h2 class="tp__section-title">Notas internas</h2>
+
+    <div *ngIf="tieneNotas" class="tp__notas">
+      <i class="bi bi-sticky" aria-hidden="true"></i>
+      <p>{{ alumno.notas_profesor }}</p>
+    </div>
+
+    <div *ngIf="!tieneNotas" class="tp__notas-vacio">
+      <p>Sin notas todavía. Tocá "Editar datos" para agregar una nota interna sobre este alumno.</p>
+    </div>
+  </section>
+
+</div>
+
+<!-- Sheet de edición -->
+<app-ui-sheet
+  [visible]="sheetVisible"
+  title="Editar datos del alumno"
+  (closed)="cerrarEdicion()">
+
+  <form class="tp__form" [formGroup]="form" (ngSubmit)="guardarEdicion()" novalidate>
+
+    <p class="tp__form-info">
+      Podés editar el peso, objetivo, % grasa y notas internas. El nombre, email y
+      altura los controla el propio alumno.
+    </p>
+
+    <app-ui-input
+      formControlName="peso_actual"
+      label="Peso actual (kg)"
+      type="number"
+      placeholder="Ej: 74.5"
+      autocomplete="off"
+      [error]="pesoCtrl.touched && pesoCtrl.invalid ? 'Entre 20 y 300 kg' : ''">
+    </app-ui-input>
+
+    <app-ui-input
+      formControlName="peso_objetivo"
+      label="Peso objetivo (kg)"
+      type="number"
+      placeholder="Ej: 70"
+      autocomplete="off"
+      [error]="pesoObjetivoCtrl.touched && pesoObjetivoCtrl.invalid ? 'Entre 20 y 300 kg' : ''">
+    </app-ui-input>
+
+    <app-ui-input
+      formControlName="porcentaje_grasa"
+      label="% Grasa"
+      type="number"
+      placeholder="Ej: 14.5"
+      autocomplete="off"
+      [error]="grasaCtrl.touched && grasaCtrl.invalid ? 'Entre 3 y 70' : ''">
+    </app-ui-input>
+
+    <div class="tp__form-field">
+      <label class="tp__form-label" for="tp-notas">Notas internas</label>
+      <textarea
+        id="tp-notas"
+        class="tp__textarea"
+        formControlName="notas_profesor"
+        rows="4"
+        placeholder="Notas que solo vos vas a ver (molestias, objetivos, observaciones técnicas)...">
+      </textarea>
+      <span class="tp__form-hint">Máximo 1000 caracteres. No las ve el alumno.</span>
+    </div>
+
+    <div *ngIf="errorEdicion" class="tp__form-error" role="alert">
+      <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+      <span>{{ errorEdicion }}</span>
+    </div>
+
+    <div class="tp__form-actions">
+      <app-ui-button
+        variant="secondary"
+        type="button"
+        [block]="true"
+        (clicked)="cerrarEdicion()">
+        Cancelar
+      </app-ui-button>
+      <app-ui-button
+        variant="primary"
+        type="submit"
+        [block]="true"
+        [loading]="guardando"
+        [disabled]="guardando">
+        Guardar cambios
+      </app-ui-button>
+    </div>
+
+  </form>
+
+</app-ui-sheet>

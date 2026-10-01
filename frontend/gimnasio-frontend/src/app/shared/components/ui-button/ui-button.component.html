@@ -1,0 +1,8 @@
+<button
+  [type]="type"
+  [class]="classes"
+  [disabled]="disabled || loading"
+  (click)="onClick($event)">
+  <span class="ui-button__spinner" *ngIf="loading" aria-hidden="true"></span>
+  <span class="ui-button__label"><ng-content></ng-content></span>
+</button>

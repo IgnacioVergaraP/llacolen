@@ -1,0 +1,68 @@
+<div class="login">
+
+  <!-- Detalle decorativo de fondo: círculo verde muy desenfocado, sutil -->
+  <div class="login__bg-blur" aria-hidden="true"></div>
+
+  <div class="login__card">
+
+    <!-- Encabezado -->
+    <header class="login__header">
+      <div class="login__brand" aria-hidden="true">
+        <i class="bi bi-activity"></i>
+      </div>
+      <h1 class="login__title">Campos Deportivos Llacolen</h1>
+      <p class="login__subtitle">Ingresá a tu cuenta para continuar</p>
+    </header>
+
+    <!-- Formulario -->
+    <form class="login__form" [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+
+      <app-ui-input
+        formControlName="email"
+        label="Email"
+        type="email"
+        icon="bi-envelope"
+        placeholder="tu@email.com"
+        autocomplete="email"
+        [error]="emailCtrl.touched && emailCtrl.invalid ? 'Ingresá un email válido' : ''">
+      </app-ui-input>
+
+      <app-ui-input
+        formControlName="password"
+        label="Contraseña"
+        type="password"
+        icon="bi-lock"
+        placeholder="••••••••"
+        autocomplete="current-password"
+        [error]="passwordCtrl.touched && passwordCtrl.invalid ? 'Mínimo 4 caracteres' : ''">
+      </app-ui-input>
+
+      <div *ngIf="errorMensaje" class="login__error" role="alert">
+        <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+        <span>{{ errorMensaje }}</span>
+      </div>
+
+      <app-ui-button
+        type="submit"
+        variant="primary"
+        [block]="true"
+        [loading]="enviando"
+        [disabled]="enviando">
+        {{ enviando ? 'Ingresando…' : 'Ingresar' }}
+      </app-ui-button>
+    </form>
+
+    <!-- Credenciales demo -->
+    <div class="login__demo" role="note">
+      <div class="login__demo-header">
+        <i class="bi bi-info-circle" aria-hidden="true"></i>
+        <span>Cuenta de demostración</span>
+      </div>
+      <div class="login__demo-body">
+        <p><strong>Email:</strong> alumno&#64;gimnasio.com</p>
+        <p><strong>Contraseña:</strong> alumno123</p>
+      </div>
+    </div>
+
+  </div>
+</div>

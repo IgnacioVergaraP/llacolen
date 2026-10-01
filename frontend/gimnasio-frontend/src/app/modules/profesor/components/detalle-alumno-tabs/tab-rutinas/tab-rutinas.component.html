@@ -1,0 +1,114 @@
+<div class="tr">
+
+  <!-- CTA -->
+  <div class="tr__cta">
+    <app-ui-button
+      variant="primary"
+      [block]="true"
+      (clicked)="irANuevaRutina()">
+      <i class="bi bi-plus-lg" aria-hidden="true"></i>
+      Asignar nueva rutina
+    </app-ui-button>
+  </div>
+
+  <!-- Toggle archivadas -->
+  <div class="tr__toggle-wrap">
+    <button
+      type="button"
+      class="tr__toggle"
+      [class.tr__toggle--active]="mostrarArchivadas"
+      (click)="toggleArchivadas()">
+      <i
+        class="bi"
+        [class.bi-eye]="!mostrarArchivadas"
+        [class.bi-eye-slash]="mostrarArchivadas"
+        aria-hidden="true">
+      </i>
+      {{ mostrarArchivadas ? 'Ocultar archivadas' : 'Mostrar archivadas' }}
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="cargando" class="tr__loading" aria-live="polite">
+    <span class="spinner" aria-hidden="true"></span>
+    <span>Cargando rutinas…</span>
+  </div>
+
+  <!-- Error -->
+  <app-ui-empty-state
+    *ngIf="!cargando && errorMensaje"
+    icon="bi-wifi-off"
+    title="No pudimos cargar las rutinas"
+    [message]="errorMensaje">
+    <app-ui-button variant="secondary" (clicked)="reintentar()">
+      Reintentar
+    </app-ui-button>
+  </app-ui-empty-state>
+
+  <!-- Vacío -->
+  <app-ui-empty-state
+    *ngIf="!cargando && !errorMensaje && rutinas.length === 0"
+    icon="bi-clipboard-plus"
+    title="Sin rutinas asignadas"
+    message="Este alumno todavía no tiene rutinas. Asignale una para empezar.">
+  </app-ui-empty-state>
+
+  <!-- Lista -->
+  <div *ngIf="!cargando && !errorMensaje && rutinas.length > 0" class="tr__lista">
+    <app-rutina-card-profesor
+      *ngFor="let r of rutinas; trackBy: trackById"
+      [rutina]="r"
+      [mostrarAlumno]="false"
+      (editar)="editar($event)"
+      (archivar)="archivar($event)"
+      (reactivar)="reactivar($event)"
+      (duplicar)="abrirDuplicar($event)">
+    </app-rutina-card-profesor>
+  </div>
+
+</div>
+
+<!-- Modal duplicar -->
+<div
+  *ngIf="modalDuplicarVisible"
+  class="tr__modal"
+  (click)="cerrarDuplicar()">
+
+  <div class="tr__modal-panel" (click)="$event.stopPropagation()">
+
+    <h2 class="tr__modal-titulo">Duplicar rutina</h2>
+    <p class="tr__modal-subtitulo">
+      Se va a crear una copia de "{{ rutinaADuplicar?.titulo }}" para otro alumno.
+    </p>
+
+    <label class="tr__modal-label" for="tr-alumno">Alumno destinatario</label>
+    <select
+      id="tr-alumno"
+      class="tr__modal-select"
+      [(ngModel)]="nuevoAlumnoId">
+      <option [ngValue]="null">Elegí un alumno...</option>
+      <option *ngFor="let a of alumnos" [ngValue]="a.id">{{ a.nombre }}</option>
+    </select>
+
+    <div *ngIf="errorDuplicar" class="tr__modal-error">
+      <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+      <span>{{ errorDuplicar }}</span>
+    </div>
+
+    <div class="tr__modal-acciones">
+      <app-ui-button variant="secondary" type="button" [block]="true" (clicked)="cerrarDuplicar()">
+        Cancelar
+      </app-ui-button>
+      <app-ui-button
+        variant="primary"
+        type="button"
+        [block]="true"
+        [loading]="duplicando"
+        [disabled]="!nuevoAlumnoId || duplicando"
+        (clicked)="confirmarDuplicar()">
+        Duplicar
+      </app-ui-button>
+    </div>
+
+  </div>
+</div>

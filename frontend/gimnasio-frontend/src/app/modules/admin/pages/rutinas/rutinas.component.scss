@@ -1,0 +1,191 @@
+@import "tokens";
+
+.ad__tabs {
+  display: flex;
+  gap: 4px;
+  margin: $space-3 0;
+  border-bottom: 1px solid $color-border;
+}
+
+.ad__tab {
+  padding: 10px 16px;
+  font-size: $fs-sm;
+  font-weight: $fw-medium;
+  color: $color-text-muted;
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  margin-bottom: -1px;
+  white-space: nowrap;
+
+  transition: color 150ms ease, border-color 150ms ease;
+
+  @include hover { color: $color-text; }
+}
+
+.ad__tab--active {
+  color: $color-primary;
+  border-bottom-color: $color-primary;
+  font-weight: $fw-semibold;
+}
+
+.ad__filtros {
+  display: flex;
+  gap: 8px;
+  margin-bottom: $space-3;
+  overflow-x: auto;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+.ad__chip {
+  flex: 0 0 auto;
+  padding: 6px 14px;
+  min-height: 34px;
+  font-size: $fs-sm;
+  font-weight: $fw-medium;
+  white-space: nowrap;
+  color: $color-text-muted;
+  background: #ffffff;
+  border: 1px solid $color-border;
+  border-radius: $radius-full;
+  cursor: pointer;
+
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+
+  @include hover { border-color: $color-border-strong; color: $color-text; }
+}
+
+.ad__chip--active {
+  background: $color-primary-soft;
+  border-color: rgba(47, 111, 78, 0.30);
+  color: $color-primary;
+  font-weight: $fw-semibold;
+}
+
+.ad__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  padding: $space-8 0;
+  color: $color-text-muted;
+  font-size: $fs-sm;
+}
+
+.ad__lista {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.ad__liberacion-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+
+  padding: $space-2;
+  background: rgba(183, 121, 31, 0.04);
+  border: 1px dashed rgba(183, 121, 31, 0.30);
+  border-radius: $radius-md;
+}
+
+.ad__liberacion-acciones {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $space-2;
+}
+
+.ad__modal {
+  position: fixed;
+  inset: 0;
+  z-index: $z-sheet;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-4;
+  background: rgba(15, 15, 15, 0.42);
+}
+
+.ad__modal-panel {
+  width: 100%;
+  max-width: 460px;
+  padding: $space-5;
+  background: #ffffff;
+  border-radius: $radius-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.ad__modal-titulo {
+  font-size: $fs-lg;
+  font-weight: $fw-semibold;
+  color: $color-text;
+  margin: 0;
+}
+
+.ad__modal-texto {
+  font-size: $fs-sm;
+  color: $color-text-muted;
+  margin: 0;
+  line-height: 1.5;
+
+  strong { color: $color-text; font-weight: $fw-medium; }
+}
+
+.ad__modal-textarea {
+  width: 100%;
+  padding: $space-3;
+  font-family: inherit;
+  font-size: $fs-base;
+  color: $color-text;
+  background: #ffffff;
+  border: 1px solid $color-border;
+  border-radius: 10px;
+  outline: none;
+  resize: vertical;
+  min-height: 96px;
+
+  &::placeholder { color: $color-text-subtle; }
+
+  &:focus {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px rgba(47, 111, 78, 0.10);
+  }
+}
+
+.ad__modal-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(192, 57, 43, 0.06);
+  border: 1px solid rgba(192, 57, 43, 0.18);
+  color: $color-danger;
+  font-size: $fs-sm;
+
+  i { font-size: 14px; margin-top: 1px; }
+}
+
+.ad__modal-acciones {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $space-3;
+  margin-top: $space-3;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid $color-border-strong;
+  border-top-color: $color-primary;
+  border-radius: 50%;
+  animation: ad-spin 700ms linear infinite;
+}
+
+@keyframes ad-spin {
+  to { transform: rotate(360deg); }
+}

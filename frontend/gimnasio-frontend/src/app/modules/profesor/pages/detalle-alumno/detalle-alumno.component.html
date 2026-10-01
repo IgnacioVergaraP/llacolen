@@ -1,0 +1,77 @@
+<div *ngIf="cargando" class="da__loading" aria-live="polite">
+  <span class="spinner" aria-hidden="true"></span>
+  <span>Cargando alumno…</span>
+</div>
+
+<app-ui-empty-state
+  *ngIf="!cargando && errorMensaje"
+  icon="bi-wifi-off"
+  title="No pudimos cargar el alumno"
+  [message]="errorMensaje">
+  <app-ui-button variant="secondary" (clicked)="reintentar()">
+    Reintentar
+  </app-ui-button>
+</app-ui-empty-state>
+
+<ng-container *ngIf="!cargando && !errorMensaje && perfil">
+
+  <app-perfil-header
+    [usuario]="perfil"
+    [mostrarEditar]="false">
+  </app-perfil-header>
+
+  <!-- Tabs -->
+  <div class="da__tabs">
+    <button
+      type="button"
+      class="da__tab"
+      [class.da__tab--active]="tabActiva === 'perfil'"
+      (click)="setTab('perfil')">
+      Perfil
+    </button>
+    <button
+      type="button"
+      class="da__tab"
+      [class.da__tab--active]="tabActiva === 'rutinas'"
+      (click)="setTab('rutinas')">
+      Rutinas
+    </button>
+    <button
+      type="button"
+      class="da__tab"
+      [class.da__tab--active]="tabActiva === 'progreso'"
+      (click)="setTab('progreso')">
+      Progreso
+    </button>
+    <button
+      type="button"
+      class="da__tab"
+      [class.da__tab--active]="tabActiva === 'solicitudes'"
+      (click)="setTab('solicitudes')">
+      Solicitudes
+    </button>
+  </div>
+
+  <!-- Contenido de cada tab -->
+  <app-tab-perfil
+    *ngIf="tabActiva === 'perfil'"
+    [alumno]="perfil"
+    (actualizado)="onPerfilActualizado($event)">
+  </app-tab-perfil>
+
+  <app-tab-rutinas
+    *ngIf="tabActiva === 'rutinas'"
+    [alumno]="perfil">
+  </app-tab-rutinas>
+
+  <app-tab-progreso
+    *ngIf="tabActiva === 'progreso'"
+    [alumno]="perfil">
+  </app-tab-progreso>
+
+  <app-tab-solicitudes
+    *ngIf="tabActiva === 'solicitudes'"
+    [alumno]="perfil">
+  </app-tab-solicitudes>
+
+</ng-container>

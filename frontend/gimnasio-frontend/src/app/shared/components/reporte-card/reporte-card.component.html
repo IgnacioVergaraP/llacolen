@@ -1,0 +1,76 @@
+<div class="reporte-card">
+
+  <div class="reporte-card__header">
+    <div class="reporte-card__titulos">
+      <p class="reporte-card__titulo">
+        {{ tipoLabel }}
+        <span *ngIf="reporte.maquina_nombre" class="reporte-card__maquina">
+          · {{ reporte.maquina_nombre }}
+        </span>
+      </p>
+      <p class="reporte-card__fecha">{{ fechaFormateada }}</p>
+      <p class="reporte-card__reportante">
+        Reportado por <strong>{{ reporte.reportante_nombre }}</strong>
+      </p>
+    </div>
+
+    <app-ui-badge [variant]="badgeVariant">
+      {{ estadoLabel }}
+    </app-ui-badge>
+  </div>
+
+  <p class="reporte-card__descripcion">{{ reporte.descripcion }}</p>
+
+  <div class="reporte-card__meta">
+    <app-ui-badge [variant]="prioridadVariant">
+      <i class="bi bi-flag-fill" aria-hidden="true"></i>
+      {{ prioridadLabel }}
+    </app-ui-badge>
+
+    <span *ngIf="reporte.foto_url" class="reporte-card__foto">
+      <i class="bi bi-image" aria-hidden="true"></i>
+      Con foto
+    </span>
+  </div>
+
+  <!-- Resolución -->
+  <div *ngIf="reporte.estado === 'resuelto' && reporte.resolucion" class="reporte-card__resolucion">
+    <i class="bi bi-check-circle" aria-hidden="true"></i>
+    <span>{{ reporte.resolucion }}</span>
+  </div>
+
+  <p *ngIf="reporte.revisado_por_nombre" class="reporte-card__revisor">
+    Revisado por {{ reporte.revisado_por_nombre }}
+  </p>
+
+  <!-- Acciones admin -->
+  <div *ngIf="mostrarAccionesAdmin && (puedeMarcarEnRevision || puedeResolver)" class="reporte-card__acciones reporte-card__acciones--admin">
+    <app-ui-button
+      *ngIf="puedeMarcarEnRevision"
+      variant="secondary"
+      [block]="true"
+      (clicked)="onMarcarEnRevision()">
+      <i class="bi bi-hourglass-split" aria-hidden="true"></i>
+      En revisión
+    </app-ui-button>
+    <app-ui-button
+      *ngIf="puedeResolver"
+      variant="primary"
+      [block]="true"
+      (clicked)="onResolver()">
+      <i class="bi bi-check-lg" aria-hidden="true"></i>
+      Resolver
+    </app-ui-button>
+  </div>
+
+  <!-- Acciones profesor -->
+  <div *ngIf="puedeCancelarProfesor" class="reporte-card__acciones">
+    <button
+      type="button"
+      class="reporte-card__cancelar"
+      (click)="onCancelar()">
+      Cancelar reporte
+    </button>
+  </div>
+
+</div>

@@ -1,0 +1,52 @@
+<div class="ts">
+
+  <!-- Filtros -->
+  <div class="ts__filtros">
+    <button
+      *ngFor="let f of filtros"
+      type="button"
+      class="ts__chip"
+      [class.ts__chip--active]="filtro === f.value"
+      (click)="setFiltro(f.value)">
+      {{ f.label }}
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="cargando" class="ts__loading" aria-live="polite">
+    <span class="spinner" aria-hidden="true"></span>
+    <span>Cargando solicitudes…</span>
+  </div>
+
+  <!-- Error -->
+  <app-ui-empty-state
+    *ngIf="!cargando && errorMensaje"
+    icon="bi-wifi-off"
+    title="No pudimos cargar las solicitudes"
+    [message]="errorMensaje">
+    <app-ui-button variant="secondary" (clicked)="reintentar()">
+      Reintentar
+    </app-ui-button>
+  </app-ui-empty-state>
+
+  <!-- Vacío -->
+  <app-ui-empty-state
+    *ngIf="!cargando && !errorMensaje && filtradas.length === 0"
+    icon="bi-inbox"
+    [title]="solicitudes.length === 0 ? 'Sin solicitudes' : 'Sin resultados'"
+    [message]="solicitudes.length === 0
+      ? 'Este alumno no pidió rutinas todavía.'
+      : 'Probá con otro filtro.'">
+  </app-ui-empty-state>
+
+  <!-- Lista -->
+  <div *ngIf="!cargando && !errorMensaje && filtradas.length > 0" class="ts__lista">
+    <app-solicitud-rutina-card
+      *ngFor="let s of filtradas; trackBy: trackById"
+      [solicitud]="s"
+      [mostrarAcciones]="false"
+      [modoProfesor]="false">
+    </app-solicitud-rutina-card>
+  </div>
+
+</div>

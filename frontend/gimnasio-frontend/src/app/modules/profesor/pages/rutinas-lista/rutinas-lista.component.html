@@ -1,0 +1,128 @@
+<app-ui-page-header
+  title="Rutinas"
+  subtitle="Rutinas que creaste">
+</app-ui-page-header>
+
+<div class="rl__cta">
+  <app-ui-button variant="primary" [block]="true" (clicked)="irANueva()">
+    <i class="bi bi-plus-lg" aria-hidden="true"></i>
+    Nueva rutina
+  </app-ui-button>
+</div>
+
+<div class="rl__filtros">
+  <button
+    type="button"
+    class="rl__chip"
+    [class.rl__chip--active]="filtro === 'activas'"
+    (click)="setFiltro('activas')">
+    Activas
+  </button>
+  <button
+    type="button"
+    class="rl__chip"
+    [class.rl__chip--active]="filtro === 'archivadas'"
+    (click)="setFiltro('archivadas')">
+    Archivadas
+  </button>
+  <button
+    type="button"
+    class="rl__chip"
+    [class.rl__chip--active]="filtro === 'todas'"
+    (click)="setFiltro('todas')">
+    Todas
+  </button>
+</div>
+
+<div class="rl__buscador">
+  <i class="bi bi-search rl__buscador-icon" aria-hidden="true"></i>
+  <input
+    type="search"
+    class="rl__buscador-input"
+    placeholder="Buscar rutina..."
+    [(ngModel)]="busqueda"
+    (ngModelChange)="onBusquedaChange()" />
+</div>
+
+<div *ngIf="cargando" class="rl__loading" aria-live="polite">
+  <span class="spinner" aria-hidden="true"></span>
+  <span>Cargando rutinas…</span>
+</div>
+
+<app-ui-empty-state
+  *ngIf="!cargando && errorMensaje"
+  icon="bi-wifi-off"
+  title="No pudimos cargar tus rutinas"
+  [message]="errorMensaje">
+  <app-ui-button variant="secondary" (clicked)="reintentar()">
+    Reintentar
+  </app-ui-button>
+</app-ui-empty-state>
+
+<app-ui-empty-state
+  *ngIf="!cargando && !errorMensaje && filtradas.length === 0"
+  icon="bi-clipboard-plus"
+  [title]="rutinas.length === 0 ? 'Sin rutinas todavía' : 'Sin resultados'"
+  [message]="rutinas.length === 0
+    ? 'Creá tu primera rutina para asignar a un alumno.'
+    : 'Probá con otro filtro o búsqueda.'">
+  <app-ui-button *ngIf="rutinas.length === 0" variant="primary" (clicked)="irANueva()">
+    Crear rutina
+  </app-ui-button>
+</app-ui-empty-state>
+
+<div *ngIf="!cargando && !errorMensaje && filtradas.length > 0" class="rl__lista">
+  <app-rutina-card-profesor
+    *ngFor="let r of filtradas; trackBy: trackById"
+    [rutina]="r"
+    (editar)="editar($event)"
+    (archivar)="archivar($event)"
+    (reactivar)="reactivar($event)"
+    (duplicar)="abrirDuplicar($event)">
+  </app-rutina-card-profesor>
+</div>
+
+<!-- Modal duplicar -->
+<div
+  *ngIf="modalDuplicarVisible"
+  class="rl__modal"
+  (click)="cerrarDuplicar()">
+
+  <div class="rl__modal-panel" (click)="$event.stopPropagation()">
+
+    <h2 class="rl__modal-titulo">Duplicar rutina</h2>
+    <p class="rl__modal-subtitulo">
+      Se va a crear una copia de "{{ rutinaADuplicar?.titulo }}" para otro alumno.
+    </p>
+
+    <label class="rl__modal-label" for="rl-alumno">Alumno destinatario</label>
+    <select
+      id="rl-alumno"
+      class="rl__modal-select"
+      [(ngModel)]="nuevoAlumnoId">
+      <option [ngValue]="null">Elegí un alumno...</option>
+      <option *ngFor="let a of alumnos" [ngValue]="a.id">{{ a.nombre }}</option>
+    </select>
+
+    <div *ngIf="errorDuplicar" class="rl__modal-error">
+      <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+      <span>{{ errorDuplicar }}</span>
+    </div>
+
+    <div class="rl__modal-acciones">
+      <app-ui-button variant="secondary" type="button" [block]="true" (clicked)="cerrarDuplicar()">
+        Cancelar
+      </app-ui-button>
+      <app-ui-button
+        variant="primary"
+        type="button"
+        [block]="true"
+        [loading]="duplicando"
+        [disabled]="!nuevoAlumnoId || duplicando"
+        (clicked)="confirmarDuplicar()">
+        Duplicar
+      </app-ui-button>
+    </div>
+
+  </div>
+</div>

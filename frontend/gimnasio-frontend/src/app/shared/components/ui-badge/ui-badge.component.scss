@@ -1,0 +1,46 @@
+@import "tokens";
+
+.ui-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  padding: 2px 8px;
+  border-radius: $radius-full;
+  border: 1px solid transparent;
+
+  font-size: $fs-xs;
+  font-weight: $fw-medium;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+.ui-badge--neutral {
+  background: $color-bg-subtle;
+  color: $color-text-muted;
+  border-color: $color-border;
+}
+
+.ui-badge--primary {
+  background: $color-primary-soft;
+  color: $color-primary;
+  border-color: rgba(47, 111, 78, 0.18);
+}
+
+.ui-badge--success {
+  background: rgba(47, 111, 78, 0.10);
+  color: $color-success;
+  border-color: rgba(47, 111, 78, 0.18);
+}
+
+.ui-badge--warning {
+  background: rgba(183, 121, 31, 0.10);
+  color: $color-warning;
+  border-color: rgba(183, 121, 31, 0.20);
+}
+
+.ui-badge--danger {
+  background: rgba(192, 57, 43, 0.08);
+  color: $color-danger;
+  border-color: rgba(192, 57, 43, 0.20);
+}

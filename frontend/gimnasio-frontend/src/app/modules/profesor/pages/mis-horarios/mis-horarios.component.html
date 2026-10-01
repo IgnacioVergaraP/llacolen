@@ -1,0 +1,30 @@
+<app-ui-page-header
+  title="Mis horarios"
+  subtitle="Tus turnos en el gimnasio">
+</app-ui-page-header>
+
+<div *ngIf="cargando" class="mh__loading" aria-live="polite">
+  <span class="spinner" aria-hidden="true"></span>
+  <span>Cargando horarios…</span>
+</div>
+
+<app-ui-empty-state
+  *ngIf="!cargando && errorMensaje"
+  icon="bi-wifi-off"
+  title="No pudimos cargar tus horarios"
+  [message]="errorMensaje">
+  <app-ui-button variant="secondary" (clicked)="reintentar()">
+    Reintentar
+  </app-ui-button>
+</app-ui-empty-state>
+
+<app-ui-empty-state
+  *ngIf="!cargando && !errorMensaje && horarios.length === 0"
+  icon="bi-calendar3"
+  title="Sin horarios asignados"
+  message="El administrador todavía no te asignó turnos.">
+</app-ui-empty-state>
+
+<div *ngIf="!cargando && !errorMensaje && horarios.length > 0">
+  <app-calendario-lista [horarios]="horarios"></app-calendario-lista>
+</div>

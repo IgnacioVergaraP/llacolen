@@ -1,0 +1,37 @@
+.btn {
+  border-radius: $radius-sm;
+  font-weight: $fw-medium;
+  min-height: $touch-min;
+  padding: 0 $space-4;
+  box-shadow: none;
+
+  &:focus, &:focus-visible {
+    box-shadow: none;
+    @include focus-ring;
+  }
+}
+
+.btn-primary {
+  background: $color-primary;
+  border-color: $color-primary;
+
+  &:active {
+    background: $color-primary-hover;
+    border-color: $color-primary-hover;
+  }
+}
+
+.container, .container-fluid {
+  padding-left: $content-padding-x;
+  padding-right: $content-padding-x;
+}
+
+.text-muted-soft { color: $color-text-muted; }
+.text-subtle     { color: $color-text-subtle; }
+
+.divider {
+  height: 1px;
+  background: $color-border;
+  border: 0;
+  margin: $space-4 0;
+}

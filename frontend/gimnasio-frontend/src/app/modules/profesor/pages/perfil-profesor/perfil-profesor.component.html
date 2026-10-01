@@ -1,0 +1,165 @@
+<div *ngIf="cargando" class="pp__loading" aria-live="polite">
+  <span class="spinner" aria-hidden="true"></span>
+  <span>Cargando tu perfil…</span>
+</div>
+
+<app-ui-empty-state
+  *ngIf="!cargando && errorMensaje"
+  icon="bi-wifi-off"
+  title="No pudimos cargar tu perfil"
+  [message]="errorMensaje">
+  <app-ui-button variant="secondary" (clicked)="reintentar()">
+    Reintentar
+  </app-ui-button>
+</app-ui-empty-state>
+
+<ng-container *ngIf="!cargando && !errorMensaje && usuario">
+
+  <!-- Header del perfil profesional (sin badge de rol, sin botón editar del componente compartido) -->
+  <section class="pp__header">
+    <app-avatar
+      [nombre]="usuario.nombre"
+      [imagenUrl]="usuario.imagen_url"
+      size="lg">
+    </app-avatar>
+
+    <div class="pp__header-info">
+      <h1 class="pp__header-nombre">{{ usuario.nombre }}</h1>
+      <p class="pp__header-email">{{ usuario.email }}</p>
+      <span class="pp__header-rol">Profesor</span>
+    </div>
+
+    <button
+      type="button"
+      class="pp__header-editar"
+      aria-label="Editar perfil"
+      (click)="abrirEdicion()">
+      <i class="bi bi-pencil" aria-hidden="true"></i>
+    </button>
+  </section>
+
+  <!-- Bio -->
+  <section class="pp__section" *ngIf="usuario.bio">
+    <h2 class="pp__section-title">Sobre mí</h2>
+    <p class="pp__bio">{{ usuario.bio }}</p>
+  </section>
+
+  <!-- Datos profesionales -->
+  <section class="pp__section">
+    <h2 class="pp__section-title">Datos profesionales</h2>
+    <div class="pp__datos">
+      <div class="pp__dato">
+        <span class="pp__dato-label">Especialidades</span>
+        <span class="pp__dato-valor">{{ especialidadesTexto }}</span>
+      </div>
+      <div class="pp__dato">
+        <span class="pp__dato-label">Años de experiencia</span>
+        <span class="pp__dato-valor">{{ aniosTexto }}</span>
+      </div>
+      <div class="pp__dato" *ngIf="usuario.telefono">
+        <span class="pp__dato-label">Teléfono</span>
+        <span class="pp__dato-valor">{{ usuario.telefono }}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Metadata -->
+  <section class="pp__meta">
+    <p class="pp__meta-linea">
+      <i class="bi bi-calendar3" aria-hidden="true"></i>
+      En el gimnasio desde {{ miembroDesde }}
+    </p>
+  </section>
+
+  <!-- Logout -->
+  <section class="pp__logout">
+    <button
+      type="button"
+      class="pp__logout-btn"
+      (click)="cerrarSesion()">
+      <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
+      Cerrar sesión
+    </button>
+  </section>
+
+</ng-container>
+
+<!-- Sheet de edición -->
+<app-ui-sheet
+  [visible]="edicionVisible"
+  title="Editar perfil profesional"
+  (closed)="cerrarEdicion()">
+
+  <form class="pp__form" [formGroup]="form" (ngSubmit)="guardarEdicion()" novalidate>
+
+    <app-ui-input
+      formControlName="nombre"
+      label="Nombre"
+      type="text"
+      autocomplete="name"
+      [error]="nombreCtrl.touched && nombreCtrl.invalid ? 'Mínimo 2 caracteres' : ''">
+    </app-ui-input>
+
+    <div class="pp__form-field">
+      <label class="pp__form-label" for="pp-bio">Sobre mí</label>
+      <textarea
+        id="pp-bio"
+        class="pp__form-textarea"
+        formControlName="bio"
+        rows="4"
+        placeholder="Contá brevemente tu experiencia y enfoque como profesor...">
+      </textarea>
+      <span class="pp__form-hint">Máximo 500 caracteres</span>
+    </div>
+
+    <app-ui-input
+      formControlName="especialidades"
+      label="Especialidades (separadas por coma)"
+      type="text"
+      placeholder="Ej: musculación, fuerza, hipertrofia"
+      autocomplete="off">
+    </app-ui-input>
+
+    <app-ui-input
+      formControlName="anios_experiencia"
+      label="Años de experiencia"
+      type="number"
+      placeholder="Ej: 8"
+      autocomplete="off"
+      [error]="aniosCtrl.touched && aniosCtrl.invalid ? 'Entre 0 y 60' : ''">
+    </app-ui-input>
+
+    <app-ui-input
+      formControlName="telefono"
+      label="Teléfono (opcional)"
+      type="text"
+      placeholder="Ej: +54 11 5555-1234"
+      autocomplete="tel">
+    </app-ui-input>
+
+    <div *ngIf="errorEdicion" class="pp__form-error" role="alert">
+      <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+      <span>{{ errorEdicion }}</span>
+    </div>
+
+    <div class="pp__form-actions">
+      <app-ui-button
+        variant="secondary"
+        type="button"
+        [block]="true"
+        (clicked)="cerrarEdicion()">
+        Cancelar
+      </app-ui-button>
+      <app-ui-button
+        variant="primary"
+        type="submit"
+        [block]="true"
+        [loading]="guardandoEdicion"
+        [disabled]="guardandoEdicion">
+        Guardar cambios
+      </app-ui-button>
+    </div>
+
+  </form>
+
+</app-ui-sheet>

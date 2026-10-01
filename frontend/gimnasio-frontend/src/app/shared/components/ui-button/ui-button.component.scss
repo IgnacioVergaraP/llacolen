@@ -1,0 +1,102 @@
+@import "tokens";
+
+.ui-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  min-height: 48px;
+  padding: 0 18px;
+
+  font-size: $fs-base;
+  font-weight: $fw-medium;
+  letter-spacing: 0.01em;
+
+  border-radius: 10px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  user-select: none;
+
+  transition:
+    background 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease,
+    transform 120ms ease,
+    box-shadow 150ms ease;
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  &:not(:disabled):active {
+    transform: scale(0.99);
+  }
+}
+
+.ui-button--block { width: 100%; }
+
+.ui-button--primary {
+  background: $color-primary;
+  color: $color-text-inverse;
+  border-color: $color-primary;
+
+  @include hover {
+    &:not(:disabled) {
+      background: $color-primary-hover;
+      border-color: $color-primary-hover;
+    }
+  }
+}
+
+.ui-button--secondary {
+  background: #ffffff;
+  color: $color-text;
+  border-color: $color-border;
+
+  @include hover {
+    &:not(:disabled) {
+      background: $color-bg-hover;
+      border-color: $color-border-strong;
+    }
+  }
+}
+
+.ui-button--ghost {
+  background: transparent;
+  color: $color-text;
+  border-color: transparent;
+
+  @include hover {
+    &:not(:disabled) {
+      background: $color-bg-hover;
+    }
+  }
+}
+
+.ui-button--danger {
+  background: $color-danger;
+  color: $color-text-inverse;
+  border-color: $color-danger;
+}
+
+.ui-button__label { line-height: 1; }
+
+.ui-button__spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: ui-button-spin 600ms linear infinite;
+}
+
+@keyframes ui-button-spin {
+  to { transform: rotate(360deg); }
+}

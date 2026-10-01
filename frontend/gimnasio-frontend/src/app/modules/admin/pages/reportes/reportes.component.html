@@ -1,0 +1,78 @@
+<app-ui-page-header
+  title="Reportes"
+  subtitle="Problemas reportados por los profesores">
+</app-ui-page-header>
+
+<div class="ad__filtros">
+  <button
+    *ngFor="let f of filtros"
+    type="button"
+    class="ad__chip"
+    [class.ad__chip--active]="filtro === f.value"
+    (click)="setFiltro(f.value)">
+    {{ f.label }}
+  </button>
+</div>
+
+<div *ngIf="cargando" class="ad__loading" aria-live="polite">
+  <span class="spinner" aria-hidden="true"></span>
+  <span>Cargando reportes…</span>
+</div>
+
+<app-ui-empty-state
+  *ngIf="!cargando && errorMensaje"
+  icon="bi-wifi-off"
+  title="No pudimos cargar los reportes"
+  [message]="errorMensaje">
+  <app-ui-button variant="secondary" (clicked)="reintentar()">Reintentar</app-ui-button>
+</app-ui-empty-state>
+
+<app-ui-empty-state
+  *ngIf="!cargando && !errorMensaje && filtrados.length === 0"
+  icon="bi-flag"
+  [title]="reportes.length === 0 ? 'Sin reportes' : 'Sin resultados'"
+  [message]="reportes.length === 0
+    ? 'No hay reportes de los profesores todavía.'
+    : 'Probá con otro filtro.'">
+</app-ui-empty-state>
+
+<div *ngIf="!cargando && !errorMensaje && filtrados.length > 0" class="ad__lista">
+  <app-reporte-card
+    *ngFor="let r of filtrados; trackBy: trackById"
+    [reporte]="r"
+    [mostrarAccionesAdmin]="true"
+    (marcarEnRevision)="marcarEnRevision($event)"
+    (resolver)="abrirResolver($event)">
+  </app-reporte-card>
+</div>
+
+<!-- Modal Resolver -->
+<div *ngIf="modalResolverVisible" class="ad__modal" (click)="cerrarResolver()">
+  <div class="ad__modal-panel" (click)="$event.stopPropagation()">
+    <h2 class="ad__modal-titulo">Resolver reporte</h2>
+    <p class="ad__modal-texto">
+      Reporte: <strong>{{ reporteAResolver?.descripcion }}</strong>
+    </p>
+
+    <textarea
+      class="ad__modal-textarea"
+      [(ngModel)]="resolucion"
+      rows="3"
+      placeholder="Nota de resolución (opcional)...">
+    </textarea>
+
+    <div *ngIf="errorResolver" class="ad__modal-error">
+      <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+      <span>{{ errorResolver }}</span>
+    </div>
+
+    <div class="ad__modal-acciones">
+      <app-ui-button variant="secondary" type="button" [block]="true" (clicked)="cerrarResolver()">
+        Cancelar
+      </app-ui-button>
+      <app-ui-button variant="primary" type="button" [block]="true" [loading]="resolviendo" [disabled]="resolviendo" (clicked)="confirmarResolver()">
+        Resolver
+      </app-ui-button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,7 @@
+// Punto de entrada para variables y mixins dentro de componentes.
+// NO importar acá: reset, typography, components (son global-only).
+
+@import "variables";
+@import "breakpoints";
+@import "spacing";
+@import "mixins";

@@ -1,0 +1,126 @@
+@import "tokens";
+
+.as {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+
+  width: 260px;
+  flex-shrink: 0;
+
+  padding: $space-5 $space-4;
+  height: 100dvh;
+  position: sticky;
+  top: 0;
+  background: $color-bg-subtle;
+  border-right: 1px solid $color-border;
+
+  overflow-y: auto;
+}
+
+.as__header {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  padding-bottom: $space-3;
+  border-bottom: 1px solid $color-border;
+}
+
+.as__user {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+}
+
+.as__avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: $color-primary;
+  color: $color-text-inverse;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $fs-sm;
+  font-weight: $fw-semibold;
+  flex-shrink: 0;
+}
+
+.as__user-info { flex: 1; min-width: 0; }
+
+.as__user-nombre {
+  font-size: $fs-sm;
+  font-weight: $fw-semibold;
+  color: $color-text;
+  margin: 0;
+  line-height: 1.2;
+
+  @include truncate;
+}
+
+.as__user-rol {
+  font-size: $fs-xs;
+  color: $color-text-muted;
+  margin: 2px 0 0;
+}
+
+.as__switch {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  padding: 10px 12px;
+  font-size: $fs-sm;
+  font-weight: $fw-medium;
+  color: $color-primary;
+  background: $color-primary-soft;
+  border: 1px solid rgba(47, 111, 78, 0.20);
+  border-radius: $radius-md;
+  cursor: pointer;
+
+  transition: background 150ms ease, border-color 150ms ease;
+
+  @include hover { background: rgba(47, 111, 78, 0.12); border-color: rgba(47, 111, 78, 0.35); }
+  &:active { transform: scale(0.99); }
+
+  i { font-size: 14px; }
+}
+
+.as__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.as__link {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+
+  padding: 10px 12px;
+  border-radius: $radius-md;
+
+  font-size: $fs-sm;
+  font-weight: $fw-medium;
+  color: $color-text-muted;
+  text-decoration: none;
+
+  transition: background 150ms ease, color 150ms ease;
+
+  @include hover { background: rgba(0,0,0,0.04); color: $color-text; }
+
+  i { font-size: 16px; width: 18px; text-align: center; }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
+}
+
+.as__link--active {
+  background: #ffffff;
+  color: $color-primary;
+  font-weight: $fw-semibold;
+  box-shadow: $shadow-xs;
+}

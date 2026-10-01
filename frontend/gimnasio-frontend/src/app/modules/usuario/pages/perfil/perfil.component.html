@@ -1,0 +1,199 @@
+<div *ngIf="cargando" class="perfil__loading" aria-live="polite">
+  <span class="spinner" aria-hidden="true"></span>
+  <span>Cargando tu perfil…</span>
+</div>
+
+<app-ui-empty-state
+  *ngIf="!cargando && errorMensaje"
+  icon="bi-wifi-off"
+  title="No pudimos cargar tu perfil"
+  [message]="errorMensaje">
+  <app-ui-button variant="secondary" (clicked)="reintentar()">
+    Reintentar
+  </app-ui-button>
+</app-ui-empty-state>
+
+<ng-container *ngIf="!cargando && !errorMensaje && usuario">
+
+  <app-perfil-header
+    [usuario]="usuario"
+    (editar)="abrirEdicion()">
+  </app-perfil-header>
+
+  <!-- Métricas -->
+  <section class="perfil__resumen" *ngIf="resumen">
+    <div class="perfil__resumen-grid">
+      <app-metrica-card
+        icono="bi-clipboard-check"
+        label="Rutinas activas"
+        [valor]="resumen.rutinas_activas">
+      </app-metrica-card>
+
+      <app-metrica-card
+        icono="bi-calendar-check"
+        label="Sesiones este mes"
+        [valor]="resumen.sesiones_mes">
+      </app-metrica-card>
+
+      <app-metrica-card
+        icono="bi-fire"
+        label="Racha actual"
+        [valor]="resumen.racha_actual"
+        sufijo="d">
+      </app-metrica-card>
+    </div>
+  </section>
+
+  <!-- Objetivo -->
+  <section class="perfil__objetivo" *ngIf="tieneObjetivo">
+    <div class="perfil__objetivo-card">
+      <i class="bi bi-bullseye perfil__objetivo-icon" aria-hidden="true"></i>
+      <p class="perfil__objetivo-texto">{{ textoObjetivo }}</p>
+    </div>
+  </section>
+
+  <!-- Datos físicos -->
+  <section class="perfil__datos">
+    <h2 class="perfil__section-title">Datos físicos</h2>
+
+    <div class="perfil__datos-grid">
+
+      <div class="perfil__dato">
+        <span class="perfil__dato-label">Altura</span>
+        <span class="perfil__dato-valor">
+          {{ usuario.altura != null ? usuario.altura + ' cm' : '—' }}
+        </span>
+        <span class="perfil__dato-hint" *ngIf="usuario.altura == null">
+          Completá tu altura
+        </span>
+      </div>
+
+      <div class="perfil__dato">
+        <span class="perfil__dato-label">Peso actual</span>
+        <span class="perfil__dato-valor">
+          {{ usuario.peso_actual != null ? usuario.peso_actual + ' kg' : '—' }}
+        </span>
+        <span class="perfil__dato-hint" *ngIf="usuario.peso_actual == null">
+          Completá tu peso
+        </span>
+      </div>
+
+      <div class="perfil__dato">
+        <span class="perfil__dato-label">IMC</span>
+        <span class="perfil__dato-valor">{{ imcTexto }}</span>
+        <span class="perfil__dato-hint" *ngIf="tieneImc">
+          Calculado automáticamente
+        </span>
+        <span class="perfil__dato-hint" *ngIf="!tieneImc">
+          Completá altura y peso
+        </span>
+      </div>
+
+      <div class="perfil__dato">
+        <span class="perfil__dato-label">% Grasa</span>
+        <span class="perfil__dato-valor">{{ grasaTexto }}</span>
+        <span class="perfil__dato-hint">{{ grasaDetalle }}</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Metadata -->
+  <section class="perfil__meta">
+    <p class="perfil__meta-linea">
+      <i class="bi bi-calendar3" aria-hidden="true"></i>
+      Miembro desde {{ miembroDesde }}
+    </p>
+  </section>
+
+  <!-- Logout -->
+  <section class="perfil__logout">
+    <button
+      type="button"
+      class="perfil__logout-btn"
+      (click)="cerrarSesion()">
+      <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
+      Cerrar sesión
+    </button>
+  </section>
+
+</ng-container>
+
+<!-- Sheet de edición -->
+<app-ui-sheet
+  [visible]="edicionVisible"
+  title="Editar perfil"
+  (closed)="cerrarEdicion()">
+
+  <form class="perfil__form" [formGroup]="form" (ngSubmit)="guardarEdicion()" novalidate>
+
+    <app-ui-input
+      formControlName="nombre"
+      label="Nombre"
+      type="text"
+      autocomplete="name"
+      [error]="nombreCtrl.touched && nombreCtrl.invalid ? 'Mínimo 2 caracteres' : ''">
+    </app-ui-input>
+
+    <app-ui-input
+      formControlName="altura"
+      label="Altura (cm)"
+      type="number"
+      placeholder="Ej: 178"
+      autocomplete="off"
+      [error]="alturaCtrl.touched && alturaCtrl.invalid ? 'Entre 50 y 250 cm' : ''">
+    </app-ui-input>
+
+    <app-ui-input
+      formControlName="peso_actual"
+      label="Peso actual (kg)"
+      type="number"
+      placeholder="Ej: 74.5"
+      autocomplete="off"
+      [error]="pesoCtrl.touched && pesoCtrl.invalid ? 'Entre 20 y 300 kg' : ''">
+    </app-ui-input>
+
+    <app-ui-input
+      formControlName="peso_objetivo"
+      label="Peso objetivo (kg)"
+      type="number"
+      placeholder="Ej: 70"
+      autocomplete="off"
+      [error]="pesoObjetivoCtrl.touched && pesoObjetivoCtrl.invalid ? 'Entre 20 y 300 kg' : ''">
+    </app-ui-input>
+
+    <app-ui-input
+      formControlName="porcentaje_grasa"
+      label="% Grasa (opcional)"
+      type="number"
+      placeholder="Ej: 15.5"
+      autocomplete="off"
+      [error]="grasaCtrl.touched && grasaCtrl.invalid ? 'Entre 3 y 70' : ''">
+    </app-ui-input>
+
+    <div *ngIf="errorEdicion" class="perfil__form-error" role="alert">
+      <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+      <span>{{ errorEdicion }}</span>
+    </div>
+
+    <div class="perfil__form-actions">
+      <app-ui-button
+        variant="secondary"
+        type="button"
+        [block]="true"
+        (clicked)="cerrarEdicion()">
+        Cancelar
+      </app-ui-button>
+      <app-ui-button
+        variant="primary"
+        type="submit"
+        [block]="true"
+        [loading]="guardandoEdicion"
+        [disabled]="guardandoEdicion">
+        Guardar cambios
+      </app-ui-button>
+    </div>
+
+  </form>
+
+</app-ui-sheet>

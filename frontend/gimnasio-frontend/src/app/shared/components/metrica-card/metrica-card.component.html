@@ -1,0 +1,7 @@
+<div class="metrica-card">
+  <i class="bi {{ icono }} metrica-card__icon" aria-hidden="true"></i>
+  <p class="metrica-card__valor">
+    {{ valor }}<span *ngIf="sufijo" class="metrica-card__sufijo">{{ sufijo }}</span>
+  </p>
+  <p class="metrica-card__label">{{ label }}</p>
+</div>

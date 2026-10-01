@@ -1,0 +1,147 @@
+<div *ngIf="cargando" class="md__loading" aria-live="polite">
+  <span class="spinner" aria-hidden="true"></span>
+  <span>Cargando…</span>
+</div>
+
+<app-ui-empty-state
+  *ngIf="!cargando && errorMensaje"
+  icon="bi-wifi-off"
+  title="No pudimos cargar la máquina"
+  [message]="errorMensaje">
+  <app-ui-button variant="secondary" (clicked)="reintentar()">
+    Reintentar
+  </app-ui-button>
+</app-ui-empty-state>
+
+<ng-container *ngIf="!cargando && !errorMensaje && data">
+
+  <app-ui-page-header [title]="data.maquina.nombre"></app-ui-page-header>
+
+  <section class="md__info">
+    <div class="md__tags">
+      <app-ui-badge
+        *ngFor="let g of data.maquina.grupos_musculares"
+        variant="primary">
+        {{ g }}
+      </app-ui-badge>
+    </div>
+    <p class="md__descripcion">{{ data.maquina.descripcion }}</p>
+  </section>
+
+  <section class="md__section">
+    <div class="md__section-header">
+      <h2 class="md__section-title">Historial de mantenciones ({{ data.mantenimientos.length }})</h2>
+      <button
+        type="button"
+        class="md__agregar-inline"
+        (click)="abrirSheet()">
+        <i class="bi bi-plus-lg" aria-hidden="true"></i>
+        Registrar
+      </button>
+    </div>
+
+    <app-ui-empty-state
+      *ngIf="data.mantenimientos.length === 0"
+      icon="bi-tools"
+      title="Sin mantenciones"
+      message="Esta máquina no tiene mantenciones registradas.">
+    </app-ui-empty-state>
+
+    <div *ngIf="data.mantenimientos.length > 0" class="md__lista">
+      <app-mantenimiento-card
+        *ngFor="let m of data.mantenimientos; trackBy: trackById"
+        [mantenimiento]="m"
+        [mostrarEliminar]="true"
+        (eliminar)="confirmarEliminar($event)">
+      </app-mantenimiento-card>
+    </div>
+  </section>
+
+</ng-container>
+
+<!-- FAB fuera del ng-container, siempre visible -->
+<button
+  *ngIf="!cargando && !errorMensaje"
+  type="button"
+  class="md__fab"
+  aria-label="Registrar mantención"
+  (click)="abrirSheet()">
+  <i class="bi bi-plus-lg" aria-hidden="true"></i>
+</button>
+
+<!-- Sheet agregar mantenimiento -->
+<app-ui-sheet
+  [visible]="sheetVisible"
+  title="Registrar mantención"
+  (closed)="cerrarSheet()">
+
+  <form class="md__form" [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+
+    <div class="md__form-field">
+      <label class="md__form-label">Tipo</label>
+      <div class="md__tipos">
+        <button
+          *ngFor="let t of tipos"
+          type="button"
+          class="md__tipo"
+          [class.md__tipo--active]="tipoSeleccionado === t.value"
+          (click)="seleccionarTipo(t.value)">
+          {{ t.label }}
+        </button>
+      </div>
+    </div>
+
+    <div class="md__form-field">
+      <label class="md__form-label" for="md-fecha">Fecha</label>
+      <input
+        id="md-fecha"
+        type="date"
+        class="md__input"
+        formControlName="fecha"
+        [max]="hoy" />
+    </div>
+
+    <div class="md__form-field">
+      <label class="md__form-label" for="md-notas">Notas (opcional)</label>
+      <textarea
+        id="md-notas"
+        class="md__textarea"
+        formControlName="notas"
+        rows="3"
+        placeholder="Detalles del mantenimiento...">
+      </textarea>
+    </div>
+
+    <div *ngIf="errorSheet" class="md__form-error" role="alert">
+      <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+      <span>{{ errorSheet }}</span>
+    </div>
+
+    <div class="md__form-acciones">
+      <app-ui-button variant="secondary" type="button" [block]="true" (clicked)="cerrarSheet()">
+        Cancelar
+      </app-ui-button>
+      <app-ui-button variant="primary" type="submit" [block]="true" [loading]="guardando" [disabled]="!puedeGuardar">
+        Registrar
+      </app-ui-button>
+    </div>
+
+  </form>
+
+</app-ui-sheet>
+
+<!-- Modal eliminar -->
+<div *ngIf="modalEliminarVisible" class="md__modal" (click)="cerrarEliminar()">
+  <div class="md__modal-panel" (click)="$event.stopPropagation()">
+    <h2 class="md__modal-titulo">Eliminar mantenimiento</h2>
+    <p class="md__modal-texto">¿Confirmás eliminar este registro?</p>
+    <div class="md__modal-acciones">
+      <app-ui-button variant="secondary" type="button" [block]="true" (clicked)="cerrarEliminar()">
+        Cancelar
+      </app-ui-button>
+      <app-ui-button variant="primary" type="button" [block]="true" [loading]="eliminando" [disabled]="eliminando" (clicked)="eliminar()">
+        Eliminar
+      </app-ui-button>
+    </div>
+  </div>
+</div>

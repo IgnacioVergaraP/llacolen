@@ -1,0 +1,32 @@
+<div class="mc">
+
+  <div class="mc__header">
+    <div class="mc__titulos">
+      <app-ui-badge [variant]="badgeVariant">
+        {{ tipoLabel }}
+      </app-ui-badge>
+      <span *ngIf="mantenimiento.origen === 'auto'" class="mc__auto-badge">
+        <i class="bi bi-gear-wide-connected" aria-hidden="true"></i>
+        Auto
+      </span>
+    </div>
+
+    <button
+      *ngIf="mostrarEliminar"
+      type="button"
+      class="mc__eliminar"
+      aria-label="Eliminar mantenimiento"
+      (click)="onEliminar()">
+      <i class="bi bi-trash3" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <p class="mc__fecha">{{ fechaFormateada }}</p>
+
+  <p *ngIf="mantenimiento.notas" class="mc__notas">{{ mantenimiento.notas }}</p>
+
+  <p *ngIf="mantenimiento.realizado_por_nombre" class="mc__realizado">
+    Realizado por {{ mantenimiento.realizado_por_nombre }}
+  </p>
+
+</div>

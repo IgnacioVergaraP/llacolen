@@ -1,0 +1,22 @@
+<div class="cl">
+  <div *ngFor="let d of dias" class="cl__dia">
+    <h3 class="cl__dia-titulo">{{ d.nombre }}</h3>
+
+    <div *ngIf="d.horarios.length === 0" class="cl__dia-vacio">
+      Sin horarios cargados
+    </div>
+
+    <button
+      *ngFor="let h of d.horarios"
+      type="button"
+      class="cl__slot"
+      (click)="onHorarioClick(h)">
+      <div class="cl__slot-info">
+        <p class="cl__slot-hora">{{ h.hora_inicio }} - {{ h.hora_fin }}</p>
+        <p class="cl__slot-prof">{{ h.profesor_nombre }}</p>
+        <p *ngIf="h.notas" class="cl__slot-notas">{{ h.notas }}</p>
+      </div>
+      <i class="bi bi-chevron-right cl__slot-chevron" aria-hidden="true"></i>
+    </button>
+  </div>
+</div>

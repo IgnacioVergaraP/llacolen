@@ -1,0 +1,57 @@
+<div class="stepper">
+
+  <p *ngIf="label" class="stepper__label">{{ label }}</p>
+
+  <div class="stepper__row">
+
+    <button
+      type="button"
+      class="stepper__btn"
+      [disabled]="!puedeRestar"
+      (click)="restar()"
+      [attr.aria-label]="'Restar ' + label">
+      <i class="bi bi-dash-lg" aria-hidden="true"></i>
+    </button>
+
+    <div class="stepper__valor-wrap">
+      <button
+        *ngIf="!editando"
+        type="button"
+        class="stepper__valor"
+        (click)="abrirEdicion()"
+        [attr.aria-label]="'Editar ' + label">
+        {{ valor }}
+        <span *ngIf="sufijo" class="stepper__sufijo">{{ sufijo }}</span>
+      </button>
+
+      <div *ngIf="editando" class="stepper__edit">
+        <input
+          type="number"
+          class="stepper__input"
+          [(ngModel)]="valorInput"
+          [attr.inputmode]="'decimal'"
+          [attr.step]="paso"
+          (keydown.enter)="confirmarEdicion()"
+          (keydown.escape)="cancelarEdicion()"
+          autofocus />
+        <button
+          type="button"
+          class="stepper__edit-ok"
+          (click)="confirmarEdicion()"
+          aria-label="Confirmar">
+          <i class="bi bi-check-lg" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      class="stepper__btn"
+      [disabled]="!puedeSumar"
+      (click)="sumar()"
+      [attr.aria-label]="'Sumar ' + label">
+      <i class="bi bi-plus-lg" aria-hidden="true"></i>
+    </button>
+
+  </div>
+</div>

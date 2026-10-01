@@ -1,0 +1,88 @@
+<div class="sr-card">
+
+  <div class="sr-card__header">
+    <div class="sr-card__titulos">
+      <p class="sr-card__alumno">{{ solicitud.alumno_nombre }}</p>
+      <p class="sr-card__fecha">{{ fechaFormateada }}</p>
+    </div>
+
+    <app-ui-badge [variant]="badgeVariant">
+      {{ estadoLabel }}
+    </app-ui-badge>
+  </div>
+
+  <div class="sr-card__detalle">
+    <div class="sr-card__dato">
+      <span class="sr-card__dato-label">Objetivo</span>
+      <span class="sr-card__dato-valor">{{ objetivoLabel }}</span>
+    </div>
+    <div class="sr-card__dato">
+      <span class="sr-card__dato-label">Días/semana</span>
+      <span class="sr-card__dato-valor">{{ solicitud.dias_por_semana }}</span>
+    </div>
+  </div>
+
+  <div *ngIf="solicitud.profesor_preferido_nombre && solicitud.estado === 'pendiente'" class="sr-card__preferido">
+    <i class="bi bi-person-check" aria-hidden="true"></i>
+    <span>Dirigida a {{ solicitud.profesor_preferido_nombre }}</span>
+  </div>
+
+  <div *ngIf="solicitud.profesor_nombre" class="sr-card__asignada">
+    <i class="bi bi-person-fill" aria-hidden="true"></i>
+    <span>Tomada por {{ solicitud.profesor_nombre }}</span>
+  </div>
+
+  <p *ngIf="solicitud.comentarios" class="sr-card__comentarios">
+    "{{ solicitud.comentarios }}"
+  </p>
+
+  <div *ngIf="solicitud.grupos_interes && solicitud.grupos_interes.length > 0" class="sr-card__tags">
+    <app-ui-badge
+      *ngFor="let g of solicitud.grupos_interes"
+      variant="neutral">
+      {{ g }}
+    </app-ui-badge>
+  </div>
+
+  <div *ngIf="solicitud.estado === 'resuelta' && solicitud.mensaje_resolucion" class="sr-card__resolucion">
+    <i class="bi bi-check-circle" aria-hidden="true"></i>
+    <span>{{ solicitud.mensaje_resolucion }}</span>
+  </div>
+
+  <div *ngIf="solicitud.estado === 'rechazada' && solicitud.motivo_rechazo" class="sr-card__rechazo">
+    <i class="bi bi-x-circle" aria-hidden="true"></i>
+    <span>{{ solicitud.motivo_rechazo }}</span>
+  </div>
+
+  <div *ngIf="liberacionSolicitada" class="sr-card__liberacion">
+    <i class="bi bi-hourglass-split" aria-hidden="true"></i>
+    <span>Liberación pendiente de aprobación del admin</span>
+  </div>
+
+  <div *ngIf="puedeTomar" class="sr-card__acciones">
+    <app-ui-button variant="primary" [block]="true" (clicked)="onTomar()">
+      <i class="bi bi-hand-index" aria-hidden="true"></i>
+      Tomar solicitud
+    </app-ui-button>
+  </div>
+
+  <div *ngIf="puedeResolver" class="sr-card__acciones sr-card__acciones--multi">
+    <app-ui-button variant="primary" [block]="true" (clicked)="onResolver()">
+      <i class="bi bi-check2" aria-hidden="true"></i>
+      Resolver
+    </app-ui-button>
+
+    <app-ui-button variant="secondary" [block]="true" (clicked)="onRechazar()">
+      Rechazar
+    </app-ui-button>
+
+    <button
+      *ngIf="!liberacionSolicitada"
+      type="button"
+      class="sr-card__liberar"
+      (click)="onSolicitarLiberacion()">
+      Pedir liberación al admin
+    </button>
+  </div>
+
+</div>

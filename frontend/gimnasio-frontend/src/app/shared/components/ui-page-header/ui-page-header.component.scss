@@ -1,0 +1,30 @@
+@import "tokens";
+
+.ui-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $space-3;
+
+  padding: $space-4 0 $space-3;
+  margin-bottom: $space-3;
+}
+
+.ui-page-header__titles { min-width: 0; flex: 1; }
+
+.ui-page-header__title {
+  font-size: $fs-xl;
+  font-weight: $fw-semibold;
+  letter-spacing: -0.01em;
+  color: $color-text;
+  margin: 0;
+}
+
+.ui-page-header__subtitle {
+  font-size: $fs-sm;
+  color: $color-text-muted;
+  margin: 4px 0 0;
+  line-height: 1.4;
+}
+
+.ui-page-header__actions:empty { display: none; }

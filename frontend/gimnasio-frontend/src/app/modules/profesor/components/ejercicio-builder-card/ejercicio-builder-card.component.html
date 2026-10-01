@@ -1,0 +1,169 @@
+<div class="ebc" [class.ebc--minimizado]="ejercicio.minimizado">
+
+  <!-- HEADER siempre visible -->
+  <div class="ebc__header">
+    <span class="ebc__num">{{ indice }}</span>
+
+    <!-- Modo minimizado: título compacto -->
+    <div *ngIf="ejercicio.minimizado" class="ebc__header-compacto">
+      <p class="ebc__nombre-compacto">{{ nombreVisible }}</p>
+      <p class="ebc__resumen-compacto">{{ resumenSeries }}</p>
+    </div>
+
+    <!-- Modo expandido: controles -->
+    <div *ngIf="!ejercicio.minimizado" class="ebc__orden">
+      <button
+        type="button"
+        class="ebc__orden-btn"
+        [disabled]="esPrimero"
+        (click)="onSubir()"
+        aria-label="Subir">
+        <i class="bi bi-arrow-up" aria-hidden="true"></i>
+      </button>
+      <button
+        type="button"
+        class="ebc__orden-btn"
+        [disabled]="esUltimo"
+        (click)="onBajar()"
+        aria-label="Bajar">
+        <i class="bi bi-arrow-down" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <!-- Toggle minimizar/expandir -->
+    <button
+      type="button"
+      class="ebc__toggle"
+      (click)="onToggleMin()"
+      [attr.aria-label]="ejercicio.minimizado ? 'Expandir' : 'Minimizar'">
+      <i
+        class="bi"
+        [class.bi-chevron-down]="ejercicio.minimizado"
+        [class.bi-chevron-up]="!ejercicio.minimizado"
+        aria-hidden="true">
+      </i>
+    </button>
+
+    <!-- Eliminar (solo expandido) -->
+    <button
+      *ngIf="!ejercicio.minimizado"
+      type="button"
+      class="ebc__eliminar"
+      (click)="onEliminar()"
+      aria-label="Eliminar ejercicio">
+      <i class="bi bi-trash3" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <!-- CUERPO (solo expandido) -->
+  <ng-container *ngIf="!ejercicio.minimizado">
+
+    <!-- Tipo -->
+    <div class="ebc__tipos">
+      <button
+        type="button"
+        class="ebc__tipo"
+        [class.ebc__tipo--active]="ejercicio.tipo === 'maquina'"
+        (click)="cambiarTipo('maquina')">
+        Máquina
+      </button>
+      <button
+        type="button"
+        class="ebc__tipo"
+        [class.ebc__tipo--active]="ejercicio.tipo === 'libre'"
+        (click)="cambiarTipo('libre')">
+        Libre
+      </button>
+    </div>
+
+    <!-- Máquina -->
+    <div *ngIf="ejercicio.tipo === 'maquina'" class="ebc__field">
+      <label class="ebc__label">Máquina</label>
+      <app-maquina-picker
+        [maquinaSeleccionada]="maquinaSeleccionada"
+        (maquinaChange)="onMaquinaChange($event)">
+      </app-maquina-picker>
+    </div>
+
+    <!-- Libre -->
+    <div *ngIf="ejercicio.tipo === 'libre'" class="ebc__field">
+      <label class="ebc__label" [for]="'ebc-nombre-' + indice">Nombre del ejercicio</label>
+      <input
+        [id]="'ebc-nombre-' + indice"
+        type="text"
+        class="ebc__input"
+        [value]="ejercicio.nombre ?? ''"
+        (input)="onNombreChange($any($event.target).value)"
+        placeholder="Ej: Face pull con banda" />
+
+      <label class="ebc__label ebc__label--mt" [for]="'ebc-desc-' + indice">Descripción (opcional)</label>
+      <textarea
+        [id]="'ebc-desc-' + indice"
+        class="ebc__textarea"
+        rows="2"
+        [value]="ejercicio.descripcion ?? ''"
+        (input)="onDescripcionChange($any($event.target).value)"
+        placeholder="Breve descripción del ejercicio...">
+      </textarea>
+    </div>
+
+    <!-- Series / Reps -->
+    <div class="ebc__grid">
+      <div class="ebc__field">
+        <label class="ebc__label">Series</label>
+        <div class="ebc__stepper">
+          <button
+            type="button"
+            class="ebc__stepper-btn"
+            [disabled]="ejercicio.series <= 1"
+            (click)="ajustarSeries(-1)"
+            aria-label="Restar serie">
+            <i class="bi bi-dash-lg" aria-hidden="true"></i>
+          </button>
+          <span class="ebc__stepper-valor">{{ ejercicio.series }}</span>
+          <button
+            type="button"
+            class="ebc__stepper-btn"
+            [disabled]="ejercicio.series >= 20"
+            (click)="ajustarSeries(1)"
+            aria-label="Sumar serie">
+            <i class="bi bi-plus-lg" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="ebc__field">
+        <label class="ebc__label" [for]="'ebc-reps-' + indice">Repeticiones</label>
+        <input
+          [id]="'ebc-reps-' + indice"
+          type="text"
+          class="ebc__input"
+          [value]="ejercicio.repeticiones"
+          (input)="onRepsChange($any($event.target).value)"
+          placeholder="Ej: 8-10" />
+      </div>
+    </div>
+
+    <!-- Peso obligatorio -->
+    <div class="ebc__field">
+      <label class="ebc__label" [for]="'ebc-peso-' + indice">
+        Peso sugerido <span class="ebc__label-obligatorio">(obligatorio)</span>
+      </label>
+      <input
+        [id]="'ebc-peso-' + indice"
+        type="text"
+        class="ebc__input"
+        [class.ebc__input--error]="!ejercicio.peso_sugerido.trim()"
+        [value]="ejercicio.peso_sugerido"
+        (input)="onPesoChange($any($event.target).value)"
+        placeholder='Ej: "40 kg", "corporal", "Banda media"' />
+      <span
+        *ngIf="!ejercicio.peso_sugerido.trim()"
+        class="ebc__input-error">
+        El peso es obligatorio
+      </span>
+    </div>
+
+  </ng-container>
+
+</div>
