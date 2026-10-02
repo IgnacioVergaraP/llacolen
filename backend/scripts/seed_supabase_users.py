@@ -162,14 +162,18 @@ def main():
                 continue
 
         # Actualizar el perfil en public.profiles con los datos extra
-        perfil_update = {
+                # Upsert del perfil en public.profiles con los datos extra
+        perfil_data = {
+            "id": user_id,
+            "email": u["email"],
             "nombre": u["nombre"],
             "rol": u["rol"],
+            "activo": True,
             **u.get("perfil", {}),
         }
         try:
-            sb.table("profiles").update(perfil_update).eq("id", user_id).execute()
-            print(f"  Perfil actualizado.")
+            sb.table("profiles").upsert(perfil_data, on_conflict="id").execute()
+            print(f"  Perfil creado/actualizado.")
         except Exception as e:
             print(f"  ERROR actualizando perfil: {e}")
 

@@ -6,13 +6,13 @@ from collections import Counter
 from app.errors import AuthError
 from app.domain.models import Horario, Mantenimiento
 from app.repositories.mock_horarios import MockHorariosRepository
-from app.repositories.mock_usuarios import MockUsuariosRepository
+from app.repositories.supabase_usuarios import SupabaseUsuariosRepository
 from app.repositories.mock_maquinas import MockMaquinasRepository
 from app.repositories.mock_mantenimientos import MockMantenimientosRepository
 
 
 _horarios_repo = MockHorariosRepository()
-_usuarios_repo = MockUsuariosRepository()
+_usuarios_repo = SupabaseUsuariosRepository()
 _maquinas_repo = MockMaquinasRepository()
 _mantenimientos_repo = MockMantenimientosRepository()
 

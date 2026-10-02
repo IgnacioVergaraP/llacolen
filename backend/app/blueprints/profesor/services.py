@@ -7,7 +7,7 @@ from app.errors import AuthError
 from app.domain.models import (
     SolicitudEjercicio, Reporte, SolicitudRutina, Rutina, Ejercicio,
 )
-from app.repositories.mock_usuarios import MockUsuariosRepository
+from app.repositories.supabase_usuarios import SupabaseUsuariosRepository
 from app.repositories.mock_progreso import MockProgresoRepository
 from app.repositories.mock_solicitudes import MockSolicitudesRepository
 from app.repositories.mock_reportes import MockReportesRepository
@@ -21,7 +21,7 @@ from app.blueprints.rutinas import services as rutinas_services
 
 logger = logging.getLogger(__name__)
 
-_usuarios_repo = MockUsuariosRepository()
+_usuarios_repo = SupabaseUsuariosRepository()
 _progreso_repo = MockProgresoRepository()
 _solicitudes_repo = MockSolicitudesRepository()
 _reportes_repo = MockReportesRepository()

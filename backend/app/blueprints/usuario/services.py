@@ -3,12 +3,12 @@ from datetime import datetime, timedelta, timezone, date
 from typing import List, Optional
 
 from app.domain.models import Usuario, RegistroSerie
-from app.repositories.mock_usuarios import MockUsuariosRepository
+from app.repositories.supabase_usuarios import SupabaseUsuariosRepository
 from app.repositories.mock_rutinas import MockRutinasRepository
 from app.repositories.mock_progreso import MockProgresoRepository
 
 
-_usuarios_repo = MockUsuariosRepository()
+_usuarios_repo = SupabaseUsuariosRepository()
 _rutinas_repo = MockRutinasRepository()
 _progreso_repo = MockProgresoRepository()
 

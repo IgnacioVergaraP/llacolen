@@ -1,8 +1,7 @@
 export const environment = {
-  production: true,
-  apiUrl: 'https://api.gimnasio.example.com/api',       // TODO: cambiar al desplegar
+  production: false,
+  apiUrl: 'http://localhost:5000/api',
 
-  // Supabase
   supabaseUrl: 'https://acwbnnnrkuqrsaqzbjxe.supabase.co',
-  supabaseAnonKey: 'PEGAR_AQUI_LA_ANON_PUBLIC_KEY',
+  supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFjd2Jubm5ya3VxcnNhcXpianhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4Njg5MTYsImV4cCI6MjEwNjQ0NDkxNn0.Aq4q263dSdypuVSQKbBdeluNCLaTbwz4PaSQU2OciXA',
 };

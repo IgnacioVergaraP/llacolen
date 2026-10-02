@@ -1,46 +1,64 @@
 """
 Validación de JWT emitidos por Supabase.
 
-Supabase firma los tokens con HS256 usando el JWT Secret del proyecto
-(disponible en Settings → API → JWT Settings). Este módulo:
-  - Verifica la firma y la expiración.
-  - Devuelve el payload decodificado (con 'sub', 'email', 'app_metadata', etc.).
+Supabase firma los tokens con ES256 (ECDSA) usando una clave asimétrica
+rotativa identificada por 'kid'. La clave pública se expone en el JWKS:
+
+    {SUPABASE_URL}/auth/v1/.well-known/jwks.json
+
+Usamos PyJWKClient de PyJWT para:
+  - Descargar el JWKS una vez (con cache interno).
+  - Elegir la clave pública correcta según el 'kid' del token.
+  - Verificar firma y expiración.
 """
 from typing import Optional
 import jwt
+from jwt import PyJWKClient
 from flask import current_app
 
 from app.errors import AuthError
 
 
-def decodificar_token(token: str) -> dict:
-    """
-    Decodifica y valida un JWT de Supabase. Lanza AuthError si es inválido o expiró.
-    """
-    secret = current_app.config.get("SUPABASE_JWT_SECRET")
-    if not secret:
+# Cache de clientes por URL de JWKS. Se inicializa en el primer uso.
+_jwk_clients: dict[str, PyJWKClient] = {}
+
+
+def _get_jwk_client() -> PyJWKClient:
+    url = current_app.config.get("SUPABASE_JWKS_URL")
+    if not url:
         raise AuthError(
             500,
             "ServerMisconfigured",
-            "El servidor no tiene configurado el JWT secret de Supabase.",
+            "El servidor no tiene configurado SUPABASE_URL.",
         )
+    client = _jwk_clients.get(url)
+    if client is None:
+        client = PyJWKClient(url, cache_keys=True, lifespan=3600)
+        _jwk_clients[url] = client
+    return client
 
-    algorithm = current_app.config.get("SUPABASE_JWT_ALGORITHM", "HS256")
 
+def decodificar_token(token: str) -> dict:
+    """
+    Decodifica y valida un JWT de Supabase contra su JWKS público.
+    Lanza AuthError si es inválido o expiró.
+    """
     try:
+        client = _get_jwk_client()
+        signing_key = client.get_signing_key_from_jwt(token)
         payload = jwt.decode(
             token,
-            secret,
-            algorithms=[algorithm],
-            # Supabase incluye 'aud' = 'authenticated' para usuarios logueados.
-            # No lo exigimos rígidamente para permitir tokens de otros flujos.
+            signing_key.key,
+            algorithms=["ES256", "RS256", "HS256"],
             options={"verify_aud": False},
         )
         return payload
     except jwt.ExpiredSignatureError:
         raise AuthError(401, "TokenExpired", "El token expiró.")
-    except jwt.InvalidTokenError:
-        raise AuthError(401, "InvalidToken", "Token inválido.")
+    except jwt.InvalidTokenError as e:
+        raise AuthError(401, "InvalidToken", f"Token inválido: {e}")
+    except Exception as e:
+        raise AuthError(401, "InvalidToken", f"Token inválido: {e}")
 
 
 def extraer_token_de_header(header_value: Optional[str]) -> str:
@@ -54,9 +72,6 @@ def extraer_token_de_header(header_value: Optional[str]) -> str:
 
 
 def extraer_rol_del_payload(payload: dict) -> Optional[str]:
-    """
-    Devuelve el rol desde app_metadata del JWT.
-    Formato esperado: payload['app_metadata']['rol'].
-    """
+    """Devuelve el rol desde app_metadata del JWT."""
     app_metadata = payload.get("app_metadata") or {}
     return app_metadata.get("rol")

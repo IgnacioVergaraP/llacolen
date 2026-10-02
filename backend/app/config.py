@@ -17,6 +17,7 @@ class Config:
 
     # -------- Supabase --------
     SUPABASE_URL = os.getenv("SUPABASE_URL", "")
+    SUPABASE_JWKS_URL = f"{SUPABASE_URL}/auth/v1/.well-known/jwks.json" if SUPABASE_URL else ""
     SUPABASE_JWT_SECRET = os.getenv("SUPABASE_JWT_SECRET", "")
     SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "")
     SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY", "")

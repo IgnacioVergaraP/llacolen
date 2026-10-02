@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { finalize } from 'rxjs/operators';
 
 import { AuthService } from '../../services/auth.service';
 
@@ -31,26 +32,40 @@ export class LoginComponent {
   get passwordCtrl() { return this.form.get('password')!; }
 
   onSubmit(): void {
-  this.errorMensaje = null;
+    this.errorMensaje = null;
 
-  if (this.form.invalid) {
-    this.form.markAllAsTouched();
-    return;
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    this.enviando = true;
+    const { email, password } = this.form.value;
+
+    this.auth
+      .login(email, password)
+      .pipe(finalize(() => (this.enviando = false)))
+      .subscribe({
+        next: () => {
+          const redirect = this.route.snapshot.queryParamMap.get('redirect');
+          const defaultRoute = this.auth.usuarioActual?.rol === 'gimnasio' ? '/admin' : '/maquinas';
+          this.router.navigateByUrl(redirect || defaultRoute);
+        },
+        error: (err: any) => {
+          // Supabase devuelve un mensaje en err.message
+          this.errorMensaje = this.parseError(err);
+        },
+      });
   }
 
-  this.enviando = true;
-
-  this.auth.login(this.form.value).subscribe({
-    next: () => {
-      this.enviando = false;
-      const redirect = this.route.snapshot.queryParamMap.get('redirect');
-      const defaultRoute = this.auth.usuarioActual?.rol === 'gimnasio' ? '/admin' : '/maquinas';
-      this.router.navigateByUrl(redirect || defaultRoute);
-    },
-    error: err => {
-      this.enviando = false;
-      this.errorMensaje = err?.error?.error?.message ?? 'No se pudo iniciar sesión.';
-    },
-  });
-}
+  private parseError(err: any): string {
+    const msg = err?.message ?? '';
+    if (msg.toLowerCase().includes('invalid login credentials')) {
+      return 'Email o contraseña incorrectos.';
+    }
+    if (msg.toLowerCase().includes('email not confirmed')) {
+      return 'Confirmá tu email antes de ingresar.';
+    }
+    return msg || 'No se pudo iniciar sesión.';
+  }
 }

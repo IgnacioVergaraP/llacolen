@@ -9,27 +9,28 @@ import {
 import { catchError, throwError } from 'rxjs';
 
 import { AuthService } from '../services/auth.service';
-import { TokenStorageService } from '../../../shared/services/token-storage.service';
 
 export const authInterceptor: HttpInterceptorFn = (
   req: HttpRequest<unknown>,
   next: HttpHandlerFn,
 ) => {
-  const tokenStorage = inject(TokenStorageService);
   const auth = inject(AuthService);
 
-  const token = tokenStorage.getToken();
+  // No tocamos requests a Supabase directamente.
+  // Solo agregamos el token a nuestras llamadas al backend Flask.
+  const esLlamadaANuestroBackend = req.url.includes('/api/');
+  const esAuthEndpointDeSupabase = req.url.includes('/auth/v1/');
 
-  // Clonamos la request agregando headers:
-  //   1. Authorization: Bearer <token> (excepto en /auth/login)
-  //   2. ngrok-skip-browser-warning: evita la interstitial de ngrok free
-  const esLogin = req.url.includes('/auth/login');
+  if (!esLlamadaANuestroBackend || esAuthEndpointDeSupabase) {
+    return next(req);
+  }
 
+  const token = auth.accessToken;
   const headers: Record<string, string> = {
     'ngrok-skip-browser-warning': 'true',
   };
 
-  if (token && !esLogin) {
+  if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
@@ -37,7 +38,8 @@ export const authInterceptor: HttpInterceptorFn = (
 
   return next(autenticada).pipe(
     catchError((err: HttpErrorResponse) => {
-      if (err.status === 401 && !esLogin) {
+      // 401 en endpoints nuestros → cerrar sesión
+      if (err.status === 401 && esLlamadaANuestroBackend) {
         auth.logout(true);
       }
       return throwError(() => err);

@@ -1,39 +1,58 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, map, tap } from 'rxjs';
+import { Session, User as SupabaseUser } from '@supabase/supabase-js';
+import { BehaviorSubject, Observable, from, of } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs/operators';
 
-import { environment } from '../../../../environments/environment';
-import {
-  LoginRequest,
-  LoginResponse,
-  User,
-  UserRole,
-} from '../../../shared/models/user.model';
-import { TokenStorageService } from '../../../shared/services/token-storage.service';
-
-interface ApiResponse<T> {
-  data: T;
-}
+import { SupabaseService } from '../../../core/services/supabase.service';
+import { User, UserRole } from '../../../shared/models/user.model';
+import { ApiHttpService } from '../../../core/services/api-http.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class AuthService {
+export class AuthService implements OnDestroy {
 
-  private readonly baseUrl = `${environment.apiUrl}/auth`;
-
+  // Estado reactivo de sesión
   private readonly _usuario$ = new BehaviorSubject<User | null>(null);
   readonly usuario$ = this._usuario$.asObservable();
 
   private readonly _inicializado$ = new BehaviorSubject<boolean>(false);
   readonly inicializado$ = this._inicializado$.asObservable();
 
+  private readonly _session$ = new BehaviorSubject<Session | null>(null);
+  readonly session$ = this._session$.asObservable();
+
+  private readonly _authListener: { data: { subscription: { unsubscribe: () => void } } };
+
   constructor(
-    private http: HttpClient,
-    private tokenStorage: TokenStorageService,
+    private supabaseService: SupabaseService,
+    private apiHttp: ApiHttpService,
     private router: Router,
-  ) {}
+  ) {
+    // Escuchar cambios de sesión de Supabase
+    const { data } = this.supabaseService.client.auth.onAuthStateChange(
+      (event, session) => {
+        this._session$.next(session);
+        if (session?.access_token) {
+          this.cargarPerfilDesdeBackend();
+        } else {
+          this._usuario$.next(null);
+          this._inicializado$.next(true);
+        }
+      },
+    );
+    this._authListener = { data };
+
+    // Bootstrap inicial: si hay sesión persistida, cargar perfil
+    this.bootstrap();
+  }
+
+  ngOnDestroy(): void {
+    this._authListener.data.subscription.unsubscribe();
+  }
+
+  // -------- Getters síncronos --------
 
   get usuarioActual(): User | null {
     return this._usuario$.value;
@@ -44,7 +63,7 @@ export class AuthService {
   }
 
   get tieneToken(): boolean {
-    return !!this.tokenStorage.getToken();
+    return !!this._session$.value?.access_token;
   }
 
   tieneRol(...roles: UserRole[]): boolean {
@@ -52,34 +71,49 @@ export class AuthService {
     return !!u && roles.includes(u.rol);
   }
 
-  login(credentials: LoginRequest): Observable<LoginResponse> {
-    return this.http
-      .post<ApiResponse<LoginResponse>>(`${this.baseUrl}/login`, credentials)
-      .pipe(
-        map(res => res.data),
-        tap(data => {
-          this.tokenStorage.setToken(data.token);
-          this._usuario$.next(data.usuario);
-          this._inicializado$.next(true);
-        }),
-      );
+  get accessToken(): string | null {
+    return this._session$.value?.access_token ?? null;
   }
 
-  restaurarSesion(): Observable<User> {
-    return this.http.get<ApiResponse<User>>(`${this.baseUrl}/me`).pipe(
-      map(res => res.data),
-      tap({
-        next: user => {
-          this._usuario$.next(user);
-          this._inicializado$.next(true);
-        },
-        error: () => {
-          // Si falla, limpiamos y marcamos inicializado.
-          this.tokenStorage.clear();
-          this._usuario$.next(null);
-          this._inicializado$.next(true);
-        },
+  // -------- Acciones --------
+
+  login(email: string, password: string): Observable<void> {
+    return from(
+      this.supabaseService.client.auth.signInWithPassword({ email, password }),
+    ).pipe(
+      switchMap(({ data, error }) => {
+        if (error) throw error;
+        if (!data.session) throw new Error('No se obtuvo sesión.');
+        // El listener de onAuthStateChange ya dispara cargarPerfilDesdeBackend
+        // pero esperamos acá para devolver cuando esté listo.
+        return this.cargarPerfilDesdeBackend();
       }),
+      map(() => void 0),
+    );
+  }
+
+  logout(redirect = true): void {
+    from(this.supabaseService.client.auth.signOut()).subscribe({
+      next: () => {
+        this._usuario$.next(null);
+        this._session$.next(null);
+        if (redirect) this.router.navigate(['/auth']);
+      },
+      error: () => {
+        this._usuario$.next(null);
+        this._session$.next(null);
+        if (redirect) this.router.navigate(['/auth']);
+      },
+    });
+  }
+
+  /**
+   * Fuerza un refresco del perfil desde el backend.
+   * Útil cuando se edita el perfil y queremos reflejar los cambios.
+   */
+  restaurarSesion(): Observable<User> {
+    return this.cargarPerfilDesdeBackend().pipe(
+      map(() => this._usuario$.value!),
     );
   }
 
@@ -87,11 +121,37 @@ export class AuthService {
     this._inicializado$.next(true);
   }
 
-  logout(redirect = true): void {
-    this.tokenStorage.clear();
-    this._usuario$.next(null);
-    if (redirect) {
-      this.router.navigate(['/auth']);
-    }
+  // -------- Helpers internos --------
+
+  private bootstrap(): void {
+    from(this.supabaseService.client.auth.getSession()).subscribe({
+      next: ({ data }) => {
+        this._session$.next(data.session);
+        if (data.session?.access_token) {
+          this.cargarPerfilDesdeBackend().subscribe({ error: () => {} });
+        } else {
+          this._inicializado$.next(true);
+        }
+      },
+      error: () => {
+        this._inicializado$.next(true);
+      },
+    });
+  }
+
+  private cargarPerfilDesdeBackend(): Observable<User> {
+    return this.apiHttp.get<User>('/auth/me').pipe(
+      tap({
+        next: (user) => {
+          this._usuario$.next(user);
+          this._inicializado$.next(true);
+        },
+        error: () => {
+          // Si falla, limpiamos la sesión (token vencido, perfil inexistente)
+          this._usuario$.next(null);
+          this._inicializado$.next(true);
+        },
+      }),
+    );
   }
 }

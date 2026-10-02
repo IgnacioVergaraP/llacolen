@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { Observable, combineLatest } from 'rxjs';
 import { filter, map, startWith } from 'rxjs/operators';
@@ -10,7 +10,7 @@ import { AuthService } from './modules/auth/services/auth.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
 
   mostrarBottomNav$: Observable<boolean>;
   mostrarSidebar$: Observable<boolean>;
@@ -40,8 +40,6 @@ export class AppComponent implements OnInit {
       }),
     );
 
-    // Banner "Estás en modo admin" → cuando el admin está en /admin
-    // (en mobile, porque en desktop ya tiene el sidebar con el switch)
     this.mostrarBannerAdmin$ = combineLatest([navEnd$, this.auth.usuario$]).pipe(
       map(([_, usuario]) => {
         const url = this.router.url;
@@ -52,7 +50,6 @@ export class AppComponent implements OnInit {
       }),
     );
 
-    // Banner "Estás en modo profesor" → cuando el admin está en /profesor/*
     this.mostrarBannerProfesor$ = combineLatest([navEnd$, this.auth.usuario$]).pipe(
       map(([_, usuario]) => {
         const url = this.router.url;
@@ -61,14 +58,6 @@ export class AppComponent implements OnInit {
         return enProfesor && esGimnasio;
       }),
     );
-  }
-
-  ngOnInit(): void {
-    if (this.auth.tieneToken) {
-      this.auth.restaurarSesion().subscribe({ error: () => {} });
-    } else {
-      this.auth.marcarInicializado();
-    }
   }
 
   irAModoProfesor(): void {
