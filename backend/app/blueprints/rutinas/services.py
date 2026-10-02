@@ -1,12 +1,13 @@
 """Lógica de negocio del módulo rutinas (vista alumno)."""
 from typing import List
 from app.errors import AuthError
-from app.repositories.mock_rutinas import MockRutinasRepository
-from app.repositories.mock_maquinas import MockMaquinasRepository
+from app.repositories.supabase_rutinas import SupabaseRutinasRepository
+from app.repositories.supabase_maquinas import SupabaseMaquinasRepository
 
 
-_rutinas_repo = MockRutinasRepository()
-_maquinas_repo = MockMaquinasRepository()
+
+_rutinas_repo = SupabaseRutinasRepository()
+_maquinas_repo = SupabaseMaquinasRepository()
 
 
 def listar_rutinas(alumno_id: str, incluir_inactivas: bool = False) -> List[dict]:

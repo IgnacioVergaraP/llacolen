@@ -31,3 +31,7 @@ class SolicitudesRutinaRepository(ABC):
     @abstractmethod
     def listar_por_profesor(self, profesor_id: str) -> List[SolicitudRutina]:
         ...
+
+    @abstractmethod
+    def actualizar(self, solicitud_id: str, data: dict) -> Optional[SolicitudRutina]:
+        ...

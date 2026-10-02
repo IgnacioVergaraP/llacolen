@@ -2,10 +2,10 @@
 from typing import List
 from app.errors import AuthError
 from app.domain.models import Maquina
-from app.repositories.mock_maquinas import MockMaquinasRepository
+from app.repositories.supabase_maquinas import SupabaseMaquinasRepository
 
 
-_repo = MockMaquinasRepository()
+_repo = SupabaseMaquinasRepository()
 
 
 def listar_maquinas(musculo: str | None = None) -> List[dict]:

@@ -1,10 +1,6 @@
-def _login(client, email="profesor@gimnasio.com", password="profe123"):
-    resp = client.post("/api/auth/login", json={"email": email, "password": password})
-    return resp.get_json()["data"]["token"]
-
-
-def _headers(client, email="profesor@gimnasio.com", password="profe123"):
-    return {"Authorization": f"Bearer {_login(client, email, password)}"}
+"""
+Tests del blueprint profesor: reportes de problemas.
+"""
 
 
 _PAYLOAD = {
@@ -23,18 +19,17 @@ def test_crear_sin_token(client):
     assert resp.status_code == 401
 
 
-def test_crear_como_alumno_403(client):
-    token = _login(client, "alumno@gimnasio.com", "alumno123")
+def test_crear_como_alumno_403(client, mock_auth):
     resp = client.post(
         "/api/profesor/reportes",
         json=_PAYLOAD,
-        headers={"Authorization": f"Bearer {token}"},
+        headers=mock_auth.as_alumno(),
     )
     assert resp.status_code == 403
 
 
-def test_crear_ok(client):
-    resp = client.post("/api/profesor/reportes", json=_PAYLOAD, headers=_headers(client))
+def test_crear_ok(client, mock_auth):
+    resp = client.post("/api/profesor/reportes", json=_PAYLOAD, headers=mock_auth.as_profesor())
     assert resp.status_code == 201
     data = resp.get_json()["data"]
     assert data["estado"] == "abierto"
@@ -45,43 +40,43 @@ def test_crear_ok(client):
     assert data["reportante_id"] == "u-pro-001"
 
 
-def test_crear_sin_maquina(client):
+def test_crear_sin_maquina(client, mock_auth):
     payload = {**_PAYLOAD, "maquina_id": None}
-    resp = client.post("/api/profesor/reportes", json=payload, headers=_headers(client))
+    resp = client.post("/api/profesor/reportes", json=payload, headers=mock_auth.as_profesor())
     assert resp.status_code == 201
     data = resp.get_json()["data"]
     assert data["maquina_id"] is None
     assert data["maquina_nombre"] is None
 
 
-def test_crear_maquina_inexistente(client):
+def test_crear_maquina_inexistente(client, mock_auth):
     payload = {**_PAYLOAD, "maquina_id": "mq-999"}
-    resp = client.post("/api/profesor/reportes", json=payload, headers=_headers(client))
+    resp = client.post("/api/profesor/reportes", json=payload, headers=mock_auth.as_profesor())
     assert resp.status_code == 400
 
 
-def test_crear_tipo_invalido(client):
+def test_crear_tipo_invalido(client, mock_auth):
     payload = {**_PAYLOAD, "tipo": "inventado"}
-    resp = client.post("/api/profesor/reportes", json=payload, headers=_headers(client))
+    resp = client.post("/api/profesor/reportes", json=payload, headers=mock_auth.as_profesor())
     assert resp.status_code == 400
 
 
-def test_crear_prioridad_invalida(client):
+def test_crear_prioridad_invalida(client, mock_auth):
     payload = {**_PAYLOAD, "prioridad": "super-urgente"}
-    resp = client.post("/api/profesor/reportes", json=payload, headers=_headers(client))
+    resp = client.post("/api/profesor/reportes", json=payload, headers=mock_auth.as_profesor())
     assert resp.status_code == 400
 
 
-def test_crear_descripcion_corta(client):
+def test_crear_descripcion_corta(client, mock_auth):
     payload = {**_PAYLOAD, "descripcion": "corto"}
-    resp = client.post("/api/profesor/reportes", json=payload, headers=_headers(client))
+    resp = client.post("/api/profesor/reportes", json=payload, headers=mock_auth.as_profesor())
     assert resp.status_code == 400
 
 
 # -------- Listar míos --------
 
-def test_mis_reportes(client):
-    resp = client.get("/api/profesor/reportes/mios", headers=_headers(client))
+def test_mis_reportes(client, mock_auth):
+    resp = client.get("/api/profesor/reportes/mios", headers=mock_auth.as_profesor())
     assert resp.status_code == 200
     data = resp.get_json()["data"]
     assert isinstance(data, list)
@@ -92,40 +87,39 @@ def test_mis_reportes(client):
 
 # -------- Cancelar --------
 
-def test_cancelar_abierto_ok(client):
-    creado = client.post("/api/profesor/reportes", json=_PAYLOAD, headers=_headers(client)).get_json()["data"]
+def test_cancelar_abierto_ok(client, mock_auth):
+    creado = client.post(
+        "/api/profesor/reportes", json=_PAYLOAD, headers=mock_auth.as_profesor()
+    ).get_json()["data"]
     resp = client.post(
         f"/api/profesor/reportes/{creado['id']}/cancelar",
-        headers=_headers(client),
+        headers=mock_auth.as_profesor(),
     )
     assert resp.status_code == 200
     assert resp.get_json()["data"]["estado"] == "cancelado"
 
 
-def test_cancelar_resuelto_falla(client):
-    """El reporte precargado rep-0002 está resuelto, no se puede cancelar."""
+def test_cancelar_resuelto_falla(client, mock_auth):
+    """rep-0002 está resuelto."""
     resp = client.post(
         "/api/profesor/reportes/rep-0002/cancelar",
-        headers=_headers(client),
+        headers=mock_auth.as_profesor(),
     )
     assert resp.status_code == 400
 
 
-def test_cancelar_ajeno_404(client):
+def test_cancelar_ajeno_404(client, mock_auth):
     resp = client.post(
         "/api/profesor/reportes/rep-0001/cancelar",
-        headers=_headers(client, "admin@gimnasio.com", "admin123"),
+        headers=mock_auth.as_admin(),
     )
     assert resp.status_code == 404
 
 
 # -------- Admin --------
 
-def test_admin_count(client):
-    resp = client.get(
-        "/api/profesor/admin/reportes/count",
-        headers=_headers(client, "admin@gimnasio.com", "admin123"),
-    )
+def test_admin_count(client, mock_auth):
+    resp = client.get("/api/profesor/admin/reportes/count", headers=mock_auth.as_admin())
     assert resp.status_code == 200
     data = resp.get_json()["data"]
     assert "abiertos" in data
@@ -134,33 +128,34 @@ def test_admin_count(client):
     assert "total_pendientes" in data
 
 
-def test_admin_listar(client):
-    resp = client.get(
-        "/api/profesor/admin/reportes",
-        headers=_headers(client, "admin@gimnasio.com", "admin123"),
-    )
+def test_admin_listar(client, mock_auth):
+    resp = client.get("/api/profesor/admin/reportes", headers=mock_auth.as_admin())
     assert resp.status_code == 200
     data = resp.get_json()["data"]
     assert isinstance(data, list)
     assert len(data) >= 2
 
 
-def test_admin_marcar_en_revision(client):
-    creado = client.post("/api/profesor/reportes", json=_PAYLOAD, headers=_headers(client)).get_json()["data"]
+def test_admin_marcar_en_revision(client, mock_auth):
+    creado = client.post(
+        "/api/profesor/reportes", json=_PAYLOAD, headers=mock_auth.as_profesor()
+    ).get_json()["data"]
     resp = client.post(
         f"/api/profesor/admin/reportes/{creado['id']}/en-revision",
-        headers=_headers(client, "admin@gimnasio.com", "admin123"),
+        headers=mock_auth.as_admin(),
     )
     assert resp.status_code == 200
     assert resp.get_json()["data"]["estado"] == "en_revision"
 
 
-def test_admin_resolver_con_nota(client):
-    creado = client.post("/api/profesor/reportes", json=_PAYLOAD, headers=_headers(client)).get_json()["data"]
+def test_admin_resolver_con_nota(client, mock_auth):
+    creado = client.post(
+        "/api/profesor/reportes", json=_PAYLOAD, headers=mock_auth.as_profesor()
+    ).get_json()["data"]
     resp = client.post(
         f"/api/profesor/admin/reportes/{creado['id']}/resolver",
         json={"resolucion": "Se reemplazó el cable dañado."},
-        headers=_headers(client, "admin@gimnasio.com", "admin123"),
+        headers=mock_auth.as_admin(),
     )
     assert resp.status_code == 200
     data = resp.get_json()["data"]
@@ -169,22 +164,23 @@ def test_admin_resolver_con_nota(client):
     assert data["revisado_por_nombre"] == "Admin Gimnasio"
 
 
-def test_admin_resolver_sin_nota(client):
-    creado = client.post("/api/profesor/reportes", json=_PAYLOAD, headers=_headers(client)).get_json()["data"]
+def test_admin_resolver_sin_nota(client, mock_auth):
+    creado = client.post(
+        "/api/profesor/reportes", json=_PAYLOAD, headers=mock_auth.as_profesor()
+    ).get_json()["data"]
     resp = client.post(
         f"/api/profesor/admin/reportes/{creado['id']}/resolver",
         json={},
-        headers=_headers(client, "admin@gimnasio.com", "admin123"),
+        headers=mock_auth.as_admin(),
     )
     assert resp.status_code == 200
     assert resp.get_json()["data"]["resolucion"] is None
 
 
-def test_admin_resolver_ya_resuelto_falla(client):
-    """rep-0002 ya está resuelto."""
+def test_admin_resolver_ya_resuelto_falla(client, mock_auth):
     resp = client.post(
         "/api/profesor/admin/reportes/rep-0002/resolver",
         json={},
-        headers=_headers(client, "admin@gimnasio.com", "admin123"),
+        headers=mock_auth.as_admin(),
     )
     assert resp.status_code == 400

@@ -23,3 +23,7 @@ class ReportesRepository(ABC):
     @abstractmethod
     def listar_todos(self) -> List[Reporte]:
         ...
+        
+    @abstractmethod
+    def actualizar(self, reporte_id: str, data: dict) -> Optional[Reporte]:
+        ...

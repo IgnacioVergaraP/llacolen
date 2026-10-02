@@ -98,3 +98,12 @@ class MockSolicitudesRutinaRepository(SolicitudesRutinaRepository):
         result = [s for s in self._solicitudes if s.profesor_id == profesor_id]
         result.sort(key=lambda s: s.fecha_creacion, reverse=True)
         return result
+    
+    def actualizar(self, solicitud_id: str, data: dict) -> Optional[SolicitudRutina]:
+        solicitud = self.find_by_id(solicitud_id)
+        if not solicitud:
+            return None
+        for key, value in data.items():
+            if hasattr(solicitud, key):
+                setattr(solicitud, key, value)
+        return solicitud

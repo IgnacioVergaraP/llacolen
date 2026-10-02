@@ -1,37 +1,13 @@
-def test_login_ok_alumno(client):
-    resp = client.post("/api/auth/login", json={
-        "email": "alumno@gimnasio.com",
-        "password": "alumno123",
-    })
-    assert resp.status_code == 200
-    body = resp.get_json()["data"]
-    assert "token" in body
-    assert body["usuario"]["rol"] == "alumno"
-    assert "password_hash" not in body["usuario"]
+"""
+Tests del blueprint auth.
+
+Con Supabase Auth:
+  - Ya no hay POST /login (el login lo hace el frontend contra Supabase).
+  - Solo existe GET /me, que valida el JWT y devuelve el perfil filtrado por rol.
+"""
 
 
-def test_login_credenciales_invalidas(client):
-    resp = client.post("/api/auth/login", json={
-        "email": "alumno@gimnasio.com",
-        "password": "incorrecta",
-    })
-    assert resp.status_code == 401
-    body = resp.get_json()
-    assert body["error"]["name"] == "InvalidCredentials"
-
-
-def test_login_email_inexistente(client):
-    resp = client.post("/api/auth/login", json={
-        "email": "nadie@gimnasio.com",
-        "password": "cualquiera",
-    })
-    assert resp.status_code == 401
-
-
-def test_login_payload_invalido(client):
-    resp = client.post("/api/auth/login", json={"email": "no-email"})
-    assert resp.status_code == 400
-
+# -------- /api/auth/me --------
 
 def test_me_sin_token(client):
     resp = client.get("/api/auth/me")
@@ -39,19 +15,51 @@ def test_me_sin_token(client):
     assert resp.get_json()["error"]["name"] == "MissingToken"
 
 
-def test_me_con_token_valido(client):
-    login = client.post("/api/auth/login", json={
-        "email": "profesor@gimnasio.com",
-        "password": "profe123",
-    }).get_json()["data"]
-    token = login["token"]
-
-    resp = client.get("/api/auth/me", headers={"Authorization": f"Bearer {token}"})
-    assert resp.status_code == 200
-    assert resp.get_json()["data"]["rol"] == "profesor"
-
-
-def test_me_token_invalido(client):
-    resp = client.get("/api/auth/me", headers={"Authorization": "Bearer no-es-un-jwt"})
+def test_me_token_malformado(client):
+    resp = client.get(
+        "/api/auth/me",
+        headers={"Authorization": "no-es-bearer"},
+    )
     assert resp.status_code == 401
-    assert resp.get_json()["error"]["name"] == "InvalidToken"
+    assert resp.get_json()["error"]["name"] == "InvalidAuthHeader"
+
+
+def test_me_como_alumno(client, mock_auth):
+    resp = client.get("/api/auth/me", headers=mock_auth.as_alumno())
+    assert resp.status_code == 200
+    data = resp.get_json()["data"]
+    assert data["email"] == "alumno@gimnasio.com"
+    assert data["rol"] == "alumno"
+    # Filtrado de notas_profesor:
+    assert "notas_profesor" not in data
+    # Sin password_hash (campo ya eliminado)
+    assert "password_hash" not in data
+
+
+def test_me_como_profesor(client, mock_auth):
+    resp = client.get("/api/auth/me", headers=mock_auth.as_profesor())
+    assert resp.status_code == 200
+    data = resp.get_json()["data"]
+    assert data["rol"] == "profesor"
+    # El profesor no tiene notas_profesor propias (es un campo del alumno)
+    assert data.get("notas_profesor") is None
+
+
+def test_me_como_admin(client, mock_auth):
+    resp = client.get("/api/auth/me", headers=mock_auth.as_admin())
+    assert resp.status_code == 200
+    data = resp.get_json()["data"]
+    assert data["rol"] == "gimnasio"
+
+
+def test_me_usuario_inexistente(client, mock_auth):
+    """Simular un token válido pero para un usuario que no existe en el repo."""
+    # Forzamos un payload con un sub inválido
+    headers = mock_auth._headers_con_payload({
+        "sub": "u-no-existe",
+        "email": "ghost@gimnasio.com",
+        "app_metadata": {"rol": "alumno"},
+    })
+    resp = client.get("/api/auth/me", headers=headers)
+    assert resp.status_code == 401
+    assert resp.get_json()["error"]["name"] == "UserNotFound"

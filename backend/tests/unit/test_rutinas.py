@@ -1,256 +1,59 @@
-def _login(client, email="profesor@gimnasio.com", password="profe123"):
-    resp = client.post("/api/auth/login", json={"email": email, "password": password})
-    return resp.get_json()["data"]["token"]
+"""
+Tests del blueprint rutinas (vista alumno).
+"""
 
-
-def _headers(client, email="profesor@gimnasio.com", password="profe123"):
-    return {"Authorization": f"Bearer {_login(client, email, password)}"}
-
-
-_PAYLOAD_RUTINA = {
-    "alumno_id": "u-alu-001",
-    "titulo": "Rutina de prueba",
-    "grupos_musculares": ["pecho", "triceps"],
-    "ejercicios": [
-        {
-            "tipo": "maquina",
-            "maquina_id": "mq-001",
-            "series": 4,
-            "repeticiones": "10",
-            "peso_sugerido": "60 kg",
-        },
-        {
-            "tipo": "libre",
-            "nombre": "Fondos en paralelas",
-            "descripcion": "Ejercicio de empuje.",
-            "series": 3,
-            "repeticiones": "Al fallo",
-            "peso_sugerido": "Corporal",
-        },
-    ],
-}
-
-
-# -------- Listar --------
 
 def test_listar_sin_token(client):
-    resp = client.get("/api/profesor/rutinas")
+    resp = client.get("/api/rutinas")
     assert resp.status_code == 401
 
 
-def test_listar_como_alumno_403(client):
-    token = _login(client, "alumno@gimnasio.com", "alumno123")
-    resp = client.get(
-        "/api/profesor/rutinas",
-        headers={"Authorization": f"Bearer {token}"},
-    )
-    assert resp.status_code == 403
-
-
-def test_listar_como_profesor(client):
-    resp = client.get("/api/profesor/rutinas", headers=_headers(client))
+def test_listar_como_alumno(client, mock_auth):
+    resp = client.get("/api/rutinas", headers=mock_auth.as_alumno())
     assert resp.status_code == 200
     data = resp.get_json()["data"]
     assert isinstance(data, list)
-    assert len(data) >= 5
+    assert len(data) >= 3
     for r in data:
-        assert r["profesor_id"] == "u-pro-001"
+        assert {"id", "titulo", "grupos_musculares", "alumno_id", "ejercicios"} <= set(r.keys())
 
 
-# -------- Crear --------
-
-def test_crear_ok(client):
-    resp = client.post("/api/profesor/rutinas", json=_PAYLOAD_RUTINA, headers=_headers(client))
-    assert resp.status_code == 201
-    data = resp.get_json()["data"]
-    assert data["titulo"] == "Rutina de prueba"
-    assert data["alumno_id"] == "u-alu-001"
-    assert data["profesor_id"] == "u-pro-001"
-    assert data["activa"] is True
-    assert len(data["ejercicios"]) == 2
-    assert data["ejercicios"][0]["maquina"]["nombre"] == "Press de banca"
+def test_listar_como_profesor_vacio(client, mock_auth):
+    """El profesor no tiene rutinas mockeadas propias → array vacío."""
+    resp = client.get("/api/rutinas", headers=mock_auth.as_profesor())
+    assert resp.status_code == 200
+    assert resp.get_json()["data"] == []
 
 
-def test_crear_sin_ejercicios_falla(client):
-    payload = {**_PAYLOAD_RUTINA, "ejercicios": []}
-    resp = client.post("/api/profesor/rutinas", json=payload, headers=_headers(client))
-    assert resp.status_code == 400
-
-
-def test_crear_alumno_inexistente(client):
-    payload = {**_PAYLOAD_RUTINA, "alumno_id": "u-alu-999"}
-    resp = client.post("/api/profesor/rutinas", json=payload, headers=_headers(client))
-    assert resp.status_code == 400
-
-
-def test_crear_maquina_inexistente_en_ejercicio(client):
-    payload = {
-        **_PAYLOAD_RUTINA,
-        "ejercicios": [
-            {"tipo": "maquina", "maquina_id": "mq-999", "series": 3, "repeticiones": "10"},
-        ],
-    }
-    resp = client.post("/api/profesor/rutinas", json=payload, headers=_headers(client))
-    # No valida existencia de máquina en el schema, así que se guarda igual.
-    # Solo validamos que no rompe.
-    assert resp.status_code == 201
-
-
-# -------- Editar --------
-
-def test_editar_ok(client):
-    creada = client.post("/api/profesor/rutinas", json=_PAYLOAD_RUTINA, headers=_headers(client)).get_json()["data"]
-
-    payload_edit = {
-        "titulo": "Rutina editada",
-        "grupos_musculares": ["pecho"],
-        "ejercicios": [
-            {"tipo": "maquina", "maquina_id": "mq-002", "series": 5, "repeticiones": "8"},
-        ],
-    }
-    resp = client.put(
-        f"/api/profesor/rutinas/{creada['id']}",
-        json=payload_edit,
-        headers=_headers(client),
-    )
+def test_detalle_ok(client, mock_auth):
+    resp = client.get("/api/rutinas/rt-001", headers=mock_auth.as_alumno())
     assert resp.status_code == 200
     data = resp.get_json()["data"]
-    assert data["titulo"] == "Rutina editada"
-    assert len(data["ejercicios"]) == 1
-
-
-def test_editar_ajena_404(client):
-    """El admin no puede editar rutinas del profesor Martínez."""
-    resp = client.put(
-        "/api/profesor/rutinas/rt-001",
-        json={"titulo": "X", "grupos_musculares": [], "ejercicios": [{"tipo": "libre", "nombre": "X", "series": 1, "repeticiones": "1"}]},
-        headers=_headers(client, "admin@gimnasio.com", "admin123"),
-    )
-    assert resp.status_code == 404
-
-
-# -------- Archivar / Reactivar --------
-
-def test_archivar_ok(client):
-    creada = client.post("/api/profesor/rutinas", json=_PAYLOAD_RUTINA, headers=_headers(client)).get_json()["data"]
-    resp = client.patch(f"/api/profesor/rutinas/{creada['id']}/archivar", headers=_headers(client))
-    assert resp.status_code == 200
-    assert resp.get_json()["data"]["activa"] is False
-
-
-def test_reactivar_ok(client):
-    creada = client.post("/api/profesor/rutinas", json=_PAYLOAD_RUTINA, headers=_headers(client)).get_json()["data"]
-    client.patch(f"/api/profesor/rutinas/{creada['id']}/archivar", headers=_headers(client))
-    resp = client.patch(f"/api/profesor/rutinas/{creada['id']}/reactivar", headers=_headers(client))
-    assert resp.status_code == 200
-    assert resp.get_json()["data"]["activa"] is True
-
-
-# -------- Duplicar --------
-
-def test_duplicar_ok(client):
-    resp = client.post(
-        "/api/profesor/rutinas/rt-001/duplicar",
-        json={"nuevo_alumno_id": "u-alu-004"},
-        headers=_headers(client),
-    )
-    assert resp.status_code == 201
-    data = resp.get_json()["data"]
-    assert data["alumno_id"] == "u-alu-004"
-    assert data["titulo"] == "Rutina de espalda y bíceps"
-    assert data["profesor_id"] == "u-pro-001"
+    assert data["id"] == "rt-001"
     assert len(data["ejercicios"]) == 4
+    ej0 = data["ejercicios"][0]
+    assert ej0["tipo"] == "maquina"
+    assert ej0["maquina_id"] == "mq-004"
+    assert ej0["maquina"] is not None
+    assert "nombre" in ej0["maquina"]
 
 
-def test_duplicar_a_alumno_inexistente(client):
-    resp = client.post(
-        "/api/profesor/rutinas/rt-001/duplicar",
-        json={"nuevo_alumno_id": "u-alu-999"},
-        headers=_headers(client),
-    )
-    assert resp.status_code == 400
-
-
-# -------- Rutinas de un alumno --------
-
-def test_rutinas_de_alumno(client):
-    resp = client.get(
-        "/api/profesor/alumnos/u-alu-001/rutinas",
-        headers=_headers(client),
-    )
-    assert resp.status_code == 200
+def test_detalle_con_ejercicio_libre(client, mock_auth):
+    resp = client.get("/api/rutinas/rt-003", headers=mock_auth.as_alumno())
     data = resp.get_json()["data"]
-    assert len(data) == 3
+    libres = [e for e in data["ejercicios"] if e["tipo"] == "libre"]
+    assert len(libres) == 2
+    assert libres[0]["nombre"]
+    assert "maquina" not in libres[0] or libres[0].get("maquina") is None
 
 
-def test_rutinas_de_alumno_incluir_inactivas(client):
-    # Archivo rt-001 y verifico que aparece con incluir_inactivas=true
-    client.patch("/api/profesor/rutinas/rt-001/archivar", headers=_headers(client))
-    resp = client.get(
-        "/api/profesor/alumnos/u-alu-001/rutinas?incluir_inactivas=true",
-        headers=_headers(client),
-    )
-    assert resp.status_code == 200
-    data = resp.get_json()["data"]
-    assert len(data) == 3
-
-
-# -------- Editar datos del alumno --------
-
-def test_editar_datos_alumno(client):
-    resp = client.patch(
-        "/api/profesor/alumnos/u-alu-001/perfil",
-        json={
-            "peso_actual": 74.0,
-            "porcentaje_grasa": 13.8,
-            "notas_profesor": "Excelente progreso este mes.",
-        },
-        headers=_headers(client),
-    )
-    assert resp.status_code == 200
-    data = resp.get_json()["data"]
-    assert data["peso_actual"] == 74.0
-    assert data["porcentaje_grasa"] == 13.8
-    assert data["notas_profesor"] == "Excelente progreso este mes."
-    # Verificamos que se marca como medido por profesor
-    assert data["origen_grasa"] == "profesor"
-    assert data["cargado_por_id"] == "u-pro-001"
-
-
-def test_editar_datos_alumno_inexistente(client):
-    resp = client.patch(
-        "/api/profesor/alumnos/u-alu-999/perfil",
-        json={"peso_actual": 74.0},
-        headers=_headers(client),
-    )
+def test_detalle_rutina_ajena_404(client, mock_auth):
+    """El profesor no es dueño de las rutinas → 404."""
+    resp = client.get("/api/rutinas/rt-001", headers=mock_auth.as_profesor())
     assert resp.status_code == 404
+    assert resp.get_json()["error"]["name"] == "NotFound"
 
 
-def test_editar_datos_alumno_no_permite_nombre(client):
-    """El schema ignora campos no permitidos, así que pasar 'nombre' no lo cambia."""
-    resp = client.patch(
-        "/api/profesor/alumnos/u-alu-001/perfil",
-        json={"nombre": "Hackeado"},
-        headers=_headers(client),
-    )
-    # El schema no acepta "nombre" en el payload → error EmptyPayload
-    assert resp.status_code == 400
-
-
-# -------- Integración con solicitud de rutina --------
-
-def test_crear_rutina_resuelve_solicitud_activa(client):
-    """Si el alumno tiene una solicitud activa, se resuelve al crear la rutina."""
-    # Lucía tiene srt-0002 pendiente
-    payload = {**_PAYLOAD_RUTINA, "alumno_id": "u-alu-004"}
-    resp = client.post("/api/profesor/rutinas", json=payload, headers=_headers(client))
-    assert resp.status_code == 201
-    rutina = resp.get_json()["data"]
-
-    # Verifico que la solicitud quedó resuelta
-    solicitudes = client.get(
-        "/api/profesor/solicitudes-rutina/tomadas",
-        headers=_headers(client),
-    ).get_json()["data"]
-    resueltas = [s for s in solicitudes if s["estado"] == "resuelta" and s["rutina_id"] == rutina["id"]]
-    assert len(resueltas) >= 1
+def test_detalle_no_existe_404(client, mock_auth):
+    resp = client.get("/api/rutinas/rt-999", headers=mock_auth.as_alumno())
+    assert resp.status_code == 404

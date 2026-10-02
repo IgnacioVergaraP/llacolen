@@ -23,3 +23,7 @@ class SolicitudesRepository(ABC):
     @abstractmethod
     def listar_pendientes(self) -> List[SolicitudEjercicio]:
         ...
+
+    @abstractmethod
+    def actualizar(self, solicitud_id: str, data: dict) -> Optional[SolicitudEjercicio]:
+        ...

@@ -4,13 +4,13 @@ from typing import List, Optional
 
 from app.domain.models import Usuario, RegistroSerie
 from app.repositories.supabase_usuarios import SupabaseUsuariosRepository
-from app.repositories.mock_rutinas import MockRutinasRepository
-from app.repositories.mock_progreso import MockProgresoRepository
+from app.repositories.supabase_rutinas import SupabaseRutinasRepository
+from app.repositories.supabase_progreso import SupabaseProgresoRepository
 
 
 _usuarios_repo = SupabaseUsuariosRepository()
-_rutinas_repo = MockRutinasRepository()
-_progreso_repo = MockProgresoRepository()
+_rutinas_repo = SupabaseRutinasRepository()
+_progreso_repo = SupabaseProgresoRepository()
 
 
 def _calcular_imc(altura_cm, peso_kg) -> Optional[float]:

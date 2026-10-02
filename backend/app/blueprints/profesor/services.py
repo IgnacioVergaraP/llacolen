@@ -1,19 +1,20 @@
 """Lógica de negocio del módulo profesor."""
 import logging
 from datetime import datetime, timedelta, timezone, date
-from typing import List
+from typing import List, Optional
 
 from app.errors import AuthError
 from app.domain.models import (
     SolicitudEjercicio, Reporte, SolicitudRutina, Rutina, Ejercicio,
 )
 from app.repositories.supabase_usuarios import SupabaseUsuariosRepository
-from app.repositories.mock_progreso import MockProgresoRepository
-from app.repositories.mock_solicitudes import MockSolicitudesRepository
-from app.repositories.mock_reportes import MockReportesRepository
-from app.repositories.mock_solicitudes_rutina import MockSolicitudesRutinaRepository
-from app.repositories.mock_maquinas import MockMaquinasRepository
-from app.repositories.mock_rutinas import MockRutinasRepository
+from app.repositories.supabase_maquinas import SupabaseMaquinasRepository
+from app.repositories.supabase_rutinas import SupabaseRutinasRepository
+from app.repositories.supabase_progreso import SupabaseProgresoRepository
+from app.repositories.supabase_solicitudes import SupabaseSolicitudesRepository
+from app.repositories.supabase_reportes import SupabaseReportesRepository
+
+from app.repositories.supabase_solicitudes_rutina import SupabaseSolicitudesRutinaRepository
 from app.blueprints.usuario import services as usuario_services
 from app.blueprints.progreso import services as progreso_services
 from app.blueprints.rutinas import services as rutinas_services
@@ -22,12 +23,12 @@ from app.blueprints.rutinas import services as rutinas_services
 logger = logging.getLogger(__name__)
 
 _usuarios_repo = SupabaseUsuariosRepository()
-_progreso_repo = MockProgresoRepository()
-_solicitudes_repo = MockSolicitudesRepository()
-_reportes_repo = MockReportesRepository()
-_solicitudes_rutina_repo = MockSolicitudesRutinaRepository()
-_maquinas_repo = MockMaquinasRepository()
-_rutinas_repo = MockRutinasRepository()
+_progreso_repo = SupabaseProgresoRepository()
+_rutinas_repo = SupabaseRutinasRepository()
+_maquinas_repo = SupabaseMaquinasRepository()
+_solicitudes_repo = SupabaseSolicitudesRepository()
+_reportes_repo = SupabaseReportesRepository()
+_solicitudes_rutina_repo = SupabaseSolicitudesRutinaRepository()
 
 
 def _es_alumno(usuario) -> bool:
@@ -42,7 +43,9 @@ def _todos_los_profesores():
     return [u for u in _usuarios_repo.listar_todos() if u.rol in ("profesor", "gimnasio") and u.activo]
 
 
-# -------- Dashboard --------
+# ============================================================
+# Dashboard
+# ============================================================
 
 def obtener_dashboard() -> dict:
     alumnos = _todos_los_alumnos()
@@ -76,7 +79,9 @@ def obtener_dashboard() -> dict:
     }
 
 
-# -------- Alumnos --------
+# ============================================================
+# Alumnos
+# ============================================================
 
 def listar_alumnos() -> List[dict]:
     alumnos = _todos_los_alumnos()
@@ -133,7 +138,6 @@ def editar_datos_alumno(profesor, alumno_id: str, payload: dict) -> dict:
     if not _es_alumno(usuario):
         raise AuthError(404, "NotFound", f"No existe un alumno con id '{alumno_id}'.")
 
-    # Si viene porcentaje_grasa, marcamos origen como profesor y fecha hoy
     fecha_medicion_grasa = None
     origen_grasa = None
     cargado_por_id = None
@@ -154,14 +158,15 @@ def editar_datos_alumno(profesor, alumno_id: str, payload: dict) -> dict:
     )
     if not actualizado:
         raise AuthError(500, "UnexpectedError", "No se pudo actualizar el alumno.")
-    return actualizado.to_profesor_view_dict()
+    return actualizado.to_public_dict_for(profesor.rol)
 
 
-# -------- Rutinas (builder del profesor) --------
+# ============================================================
+# Rutinas (builder del profesor)
+# ============================================================
 
 def listar_rutinas_del_profesor(profesor_id: str, incluir_inactivas: bool = False) -> List[dict]:
     rutinas = _rutinas_repo.listar_por_profesor(profesor_id, incluir_inactivas=incluir_inactivas)
-    # Ordenar por fecha de creación descendente
     rutinas.sort(key=lambda r: r.fecha_creacion or "", reverse=True)
     return [r.to_dict() for r in rutinas]
 
@@ -174,7 +179,6 @@ def listar_rutinas_de_alumno(alumno_id: str, incluir_inactivas: bool = False) ->
 
 
 def obtener_rutina_para_profesor(rutina_id: str) -> dict:
-    """Detalle resuelto de una rutina (para el builder). No valida pertenencia."""
     data = rutinas_services.obtener_rutina_resuelta(rutina_id)
     if not data:
         raise AuthError(404, "NotFound", f"No existe una rutina con id '{rutina_id}'.")
@@ -214,19 +218,21 @@ def crear_rutina(profesor, payload: dict) -> dict:
     logger.info("[RUTINA CREADA] %s por %s para alumno %s",
                 creada.id, profesor.nombre, alumno.nombre)
 
-    # Si el alumno tiene una solicitud de rutina activa, la resolvemos automáticamente
+    # Resolver solicitud de rutina activa si existe
     solicitudes_activas = [
         s for s in _solicitudes_rutina_repo.listar_por_alumno(payload["alumno_id"])
         if s.estado in ("pendiente", "en_proceso")
     ]
     if solicitudes_activas:
         s = solicitudes_activas[0]
-        s.estado = "resuelta"
-        s.rutina_id = creada.id
-        s.profesor_id = profesor.id
-        s.profesor_nombre = profesor.nombre
-        s.mensaje_resolucion = f"Te armé la rutina '{creada.titulo}'. Ya la podés ver en la app."
-        s.fecha_revision = datetime.now(timezone.utc).isoformat()
+        _solicitudes_rutina_repo.actualizar(s.id, {
+            "estado": "resuelta",
+            "rutina_id": creada.id,
+            "profesor_id": profesor.id,
+            "profesor_nombre": profesor.nombre,
+            "mensaje_resolucion": f"Te armé la rutina '{creada.titulo}'. Ya la podés ver en la app.",
+            "fecha_revision": datetime.now(timezone.utc).isoformat(),
+        })
 
     return creada.to_dict_resuelto(_maquinas_dict_para(creada))
 
@@ -294,7 +300,6 @@ def duplicar_rutina(profesor, rutina_id: str, nuevo_alumno_id: str) -> dict:
 
 
 def _maquinas_dict_para(rutina: Rutina) -> dict:
-    """Resuelve el dict de máquinas para pasar a to_dict_resuelto."""
     maquinas_por_id = {}
     for ej in rutina.ejercicios:
         if ej.tipo == "maquina" and ej.maquina_id:
@@ -304,14 +309,21 @@ def _maquinas_dict_para(rutina: Rutina) -> dict:
     return maquinas_por_id
 
 
-# -------- Solicitudes de ejercicio --------
+# ============================================================
+# Solicitudes de ejercicio (profesor → admin)
+# ============================================================
 
 def crear_solicitud(profesor, payload: dict) -> dict:
     solicitud = SolicitudEjercicio(
-        id="", tipo_solicitud="crear", estado="pendiente",
-        solicitante_id=profesor.id, solicitante_nombre=profesor.nombre,
-        nombre=payload["nombre"], grupos_musculares=payload["grupos_musculares"],
-        descripcion=payload["descripcion"], video_url=payload["video_url"],
+        id="",
+        tipo_solicitud="crear",
+        estado="pendiente",
+        solicitante_id=profesor.id,
+        solicitante_nombre=profesor.nombre,
+        nombre=payload["nombre"],
+        grupos_musculares=payload["grupos_musculares"],
+        descripcion=payload["descripcion"],
+        video_url=payload["video_url"],
         imagen_url=payload["imagen_url"],
     )
     creada = _solicitudes_repo.crear(solicitud)
@@ -330,9 +342,14 @@ def cancelar_solicitud(profesor_id: str, solicitud_id: str) -> dict:
         raise AuthError(404, "NotFound", f"No existe una solicitud con id '{solicitud_id}'.")
     if solicitud.estado != "pendiente":
         raise AuthError(400, "InvalidState", "Solo se pueden cancelar solicitudes pendientes.")
-    solicitud.estado = "cancelada"
-    solicitud.fecha_revision = datetime.now(timezone.utc).isoformat()
-    return solicitud.to_dict()
+
+    actualizada = _solicitudes_repo.actualizar(solicitud_id, {
+        "estado": "cancelada",
+        "fecha_revision": datetime.now(timezone.utc).isoformat(),
+    })
+    if not actualizada:
+        raise AuthError(500, "UnexpectedError", "No se pudo cancelar la solicitud.")
+    return actualizada.to_dict()
 
 
 def listar_pendientes() -> List[dict]:
@@ -349,20 +366,32 @@ def aprobar_solicitud(admin, solicitud_id: str) -> dict:
         raise AuthError(404, "NotFound", f"No existe una solicitud con id '{solicitud_id}'.")
     if solicitud.estado != "pendiente":
         raise AuthError(400, "InvalidState", "Solo se pueden aprobar solicitudes pendientes.")
+
     if solicitud.tipo_solicitud == "crear":
         maquina = _maquinas_repo.crear(
-            nombre=solicitud.nombre, grupos_musculares=solicitud.grupos_musculares,
-            descripcion=solicitud.descripcion, video_url=solicitud.video_url,
+            nombre=solicitud.nombre,
+            grupos_musculares=solicitud.grupos_musculares,
+            descripcion=solicitud.descripcion,
+            video_url=solicitud.video_url,
             imagen_url=solicitud.imagen_url,
         )
-        solicitud.maquina_id_creado = maquina.id
+        maquina_id_creado = maquina.id
     else:
         raise AuthError(400, "NotSupported", f"Tipo de solicitud '{solicitud.tipo_solicitud}' no soportado todavía.")
-    solicitud.estado = "aprobada"
-    solicitud.revisado_por_id = admin.id
-    solicitud.revisado_por_nombre = admin.nombre
-    solicitud.fecha_revision = datetime.now(timezone.utc).isoformat()
-    return solicitud.to_dict()
+
+    actualizada = _solicitudes_repo.actualizar(solicitud_id, {
+        "estado": "aprobada",
+        "revisado_por_id": admin.id,
+        "revisado_por_nombre": admin.nombre,
+        "maquina_id_creado": maquina_id_creado,
+        "fecha_revision": datetime.now(timezone.utc).isoformat(),
+    })
+    if not actualizada:
+        raise AuthError(500, "UnexpectedError", "No se pudo aprobar la solicitud.")
+
+    logger.info("[APROBACIÓN] Solicitud %s aprobada por %s → máquina %s creada",
+                solicitud.id, admin.nombre, maquina_id_creado)
+    return actualizada.to_dict()
 
 
 def rechazar_solicitud(admin, solicitud_id: str, motivo: str) -> dict:
@@ -371,15 +400,29 @@ def rechazar_solicitud(admin, solicitud_id: str, motivo: str) -> dict:
         raise AuthError(404, "NotFound", f"No existe una solicitud con id '{solicitud_id}'.")
     if solicitud.estado != "pendiente":
         raise AuthError(400, "InvalidState", "Solo se pueden rechazar solicitudes pendientes.")
-    solicitud.estado = "rechazada"
-    solicitud.motivo_rechazo = motivo
-    solicitud.revisado_por_id = admin.id
-    solicitud.revisado_por_nombre = admin.nombre
-    solicitud.fecha_revision = datetime.now(timezone.utc).isoformat()
-    return solicitud.to_dict()
+
+    actualizada = _solicitudes_repo.actualizar(solicitud_id, {
+        "estado": "rechazada",
+        "motivo_rechazo": motivo,
+        "revisado_por_id": admin.id,
+        "revisado_por_nombre": admin.nombre,
+        "fecha_revision": datetime.now(timezone.utc).isoformat(),
+    })
+    if not actualizada:
+        raise AuthError(500, "UnexpectedError", "No se pudo rechazar la solicitud.")
+
+    logger.info("[RECHAZO] Solicitud %s rechazada por %s. Motivo: %s",
+                solicitud.id, admin.nombre, motivo)
+    return actualizada.to_dict()
 
 
-# -------- Reportes --------
+# ============================================================
+# Reportes
+# ============================================================
+
+# ============================================================
+# Reportes
+# ============================================================
 
 def crear_reporte(profesor, payload: dict) -> dict:
     maquina_id = payload.get("maquina_id")
@@ -396,6 +439,8 @@ def crear_reporte(profesor, payload: dict) -> dict:
         maquina_nombre=maquina_nombre, foto_url=payload.get("foto_url"),
     )
     creado = _reportes_repo.crear(reporte)
+    logger.info("[NOTIFICACIÓN ADMIN] Nuevo reporte %s creado por %s (prioridad=%s, tipo=%s)",
+                creado.id, profesor.nombre, creado.prioridad, creado.tipo)
     return creado.to_dict()
 
 
@@ -409,9 +454,14 @@ def cancelar_reporte(profesor_id: str, reporte_id: str) -> dict:
         raise AuthError(404, "NotFound", f"No existe un reporte con id '{reporte_id}'.")
     if reporte.estado != "abierto":
         raise AuthError(400, "InvalidState", "Solo se pueden cancelar reportes en estado 'abierto'.")
-    reporte.estado = "cancelado"
-    reporte.fecha_revision = datetime.now(timezone.utc).isoformat()
-    return reporte.to_dict()
+
+    actualizado = _reportes_repo.actualizar(reporte_id, {
+        "estado": "cancelado",
+        "fecha_revision": datetime.now(timezone.utc).isoformat(),
+    })
+    if not actualizado:
+        raise AuthError(500, "UnexpectedError", "No se pudo cancelar el reporte.")
+    return actualizado.to_dict()
 
 
 def listar_todos_reportes() -> List[dict]:
@@ -437,11 +487,16 @@ def marcar_reporte_en_revision(admin, reporte_id: str) -> dict:
         raise AuthError(404, "NotFound", f"No existe un reporte con id '{reporte_id}'.")
     if reporte.estado != "abierto":
         raise AuthError(400, "InvalidState", "Solo se pueden marcar en revisión reportes en estado 'abierto'.")
-    reporte.estado = "en_revision"
-    reporte.revisado_por_id = admin.id
-    reporte.revisado_por_nombre = admin.nombre
-    reporte.fecha_revision = datetime.now(timezone.utc).isoformat()
-    return reporte.to_dict()
+
+    actualizado = _reportes_repo.actualizar(reporte_id, {
+        "estado": "en_revision",
+        "revisado_por_id": admin.id,
+        "revisado_por_nombre": admin.nombre,
+        "fecha_revision": datetime.now(timezone.utc).isoformat(),
+    })
+    if not actualizado:
+        raise AuthError(500, "UnexpectedError", "No se pudo marcar en revisión.")
+    return actualizado.to_dict()
 
 
 def resolver_reporte(admin, reporte_id: str, resolucion: str | None) -> dict:
@@ -450,24 +505,30 @@ def resolver_reporte(admin, reporte_id: str, resolucion: str | None) -> dict:
         raise AuthError(404, "NotFound", f"No existe un reporte con id '{reporte_id}'.")
     if reporte.estado not in ("abierto", "en_revision"):
         raise AuthError(400, "InvalidState", "Solo se pueden resolver reportes abiertos o en revisión.")
-    reporte.estado = "resuelto"
-    reporte.resolucion = resolucion
-    reporte.revisado_por_id = admin.id
-    reporte.revisado_por_nombre = admin.nombre
-    reporte.fecha_revision = datetime.now(timezone.utc).isoformat()
 
-    # Auto-generar mantenimiento si el tipo lo amerita
+    actualizado = _reportes_repo.actualizar(reporte_id, {
+        "estado": "resuelto",
+        "resolucion": resolucion,
+        "revisado_por_id": admin.id,
+        "revisado_por_nombre": admin.nombre,
+        "fecha_revision": datetime.now(timezone.utc).isoformat(),
+    })
+    if not actualizado:
+        raise AuthError(500, "UnexpectedError", "No se pudo resolver el reporte.")
+
+    # Auto-generar mantenimiento si aplica
     try:
         from app.blueprints.admin import services as admin_services
-        admin_services.registrar_mantenimiento_auto(reporte, admin)
+        admin_services.registrar_mantenimiento_auto(actualizado, admin)
     except Exception:
-        # No rompemos la resolución si falla la generación del mantenimiento
         logger.exception("Error generando mantenimiento automático")
 
-    return reporte.to_dict()
+    return actualizado.to_dict()
 
 
-# -------- Solicitudes de rutina --------
+# ============================================================
+# Solicitudes de rutina
+# ============================================================
 
 def _solicitudes_activas_de_alumno(alumno_id: str) -> List[SolicitudRutina]:
     return [
@@ -481,6 +542,7 @@ def crear_solicitud_rutina(alumno, payload: dict) -> dict:
     if activas:
         raise AuthError(400, "SolicitudActiva",
                         "Ya tenés una solicitud de rutina activa. Cancelala antes de crear otra.")
+
     profesor_preferido_id = payload.get("profesor_preferido_id")
     profesor_preferido_nombre = None
     if profesor_preferido_id:
@@ -488,6 +550,7 @@ def crear_solicitud_rutina(alumno, payload: dict) -> dict:
         if not profe or profe.rol not in ("profesor", "gimnasio"):
             raise AuthError(400, "InvalidProfesor", f"No existe un profesor con id '{profesor_preferido_id}'.")
         profesor_preferido_nombre = profe.nombre
+
     solicitud = SolicitudRutina(
         id="", estado="pendiente", alumno_id=alumno.id, alumno_nombre=alumno.nombre,
         objetivo=payload["objetivo"], dias_por_semana=payload["dias_por_semana"],
@@ -510,9 +573,14 @@ def cancelar_solicitud_rutina(alumno_id: str, solicitud_id: str) -> dict:
         raise AuthError(404, "NotFound", f"No existe una solicitud con id '{solicitud_id}'.")
     if solicitud.estado not in ("pendiente", "en_proceso"):
         raise AuthError(400, "InvalidState", "Solo se pueden cancelar solicitudes pendientes o en proceso.")
-    solicitud.estado = "cancelada"
-    solicitud.fecha_revision = datetime.now(timezone.utc).isoformat()
-    return solicitud.to_dict()
+
+    actualizada = _solicitudes_rutina_repo.actualizar(solicitud_id, {
+        "estado": "cancelada",
+        "fecha_revision": datetime.now(timezone.utc).isoformat(),
+    })
+    if not actualizada:
+        raise AuthError(500, "UnexpectedError", "No se pudo cancelar la solicitud.")
+    return actualizada.to_dict()
 
 
 def listar_solicitudes_rutina_disponibles(profesor) -> List[dict]:
@@ -532,6 +600,13 @@ def listar_todas_solicitudes_rutina() -> List[dict]:
     return [s.to_dict() for s in _solicitudes_rutina_repo.listar_todas()]
 
 
+def listar_solicitudes_rutina_de_alumno(alumno_id: str) -> List[dict]:
+    usuario = _usuarios_repo.find_by_id(alumno_id)
+    if not _es_alumno(usuario):
+        raise AuthError(404, "NotFound", f"No existe un alumno con id '{alumno_id}'.")
+    return [s.to_dict() for s in _solicitudes_rutina_repo.listar_por_alumno(alumno_id)]
+
+
 def tomar_solicitud_rutina(profesor, solicitud_id: str) -> dict:
     solicitud = _solicitudes_rutina_repo.find_by_id(solicitud_id)
     if not solicitud:
@@ -540,11 +615,16 @@ def tomar_solicitud_rutina(profesor, solicitud_id: str) -> dict:
         raise AuthError(400, "InvalidState", "Solo se pueden tomar solicitudes pendientes.")
     if solicitud.profesor_preferido_id and solicitud.profesor_preferido_id != profesor.id:
         raise AuthError(403, "Forbidden", "Esta solicitud está dirigida a otro profesor.")
-    solicitud.estado = "en_proceso"
-    solicitud.profesor_id = profesor.id
-    solicitud.profesor_nombre = profesor.nombre
-    solicitud.fecha_tomada = datetime.now(timezone.utc).isoformat()
-    return solicitud.to_dict()
+
+    actualizada = _solicitudes_rutina_repo.actualizar(solicitud_id, {
+        "estado": "en_proceso",
+        "profesor_id": profesor.id,
+        "profesor_nombre": profesor.nombre,
+        "fecha_tomada": datetime.now(timezone.utc).isoformat(),
+    })
+    if not actualizada:
+        raise AuthError(500, "UnexpectedError", "No se pudo tomar la solicitud.")
+    return actualizada.to_dict()
 
 
 def resolver_solicitud_rutina(profesor, solicitud_id: str, mensaje: str, rutina_id: str | None) -> dict:
@@ -555,11 +635,16 @@ def resolver_solicitud_rutina(profesor, solicitud_id: str, mensaje: str, rutina_
         raise AuthError(403, "Forbidden", "Solo el profesor que tomó la solicitud puede resolverla.")
     if solicitud.estado != "en_proceso":
         raise AuthError(400, "InvalidState", "Solo se pueden resolver solicitudes en proceso.")
-    solicitud.estado = "resuelta"
-    solicitud.mensaje_resolucion = mensaje
-    solicitud.rutina_id = rutina_id
-    solicitud.fecha_revision = datetime.now(timezone.utc).isoformat()
-    return solicitud.to_dict()
+
+    actualizada = _solicitudes_rutina_repo.actualizar(solicitud_id, {
+        "estado": "resuelta",
+        "mensaje_resolucion": mensaje,
+        "rutina_id": rutina_id,
+        "fecha_revision": datetime.now(timezone.utc).isoformat(),
+    })
+    if not actualizada:
+        raise AuthError(500, "UnexpectedError", "No se pudo resolver la solicitud.")
+    return actualizada.to_dict()
 
 
 def rechazar_solicitud_rutina(profesor, solicitud_id: str, motivo: str) -> dict:
@@ -570,10 +655,15 @@ def rechazar_solicitud_rutina(profesor, solicitud_id: str, motivo: str) -> dict:
         raise AuthError(403, "Forbidden", "Solo el profesor que tomó la solicitud puede rechazarla.")
     if solicitud.estado != "en_proceso":
         raise AuthError(400, "InvalidState", "Solo se pueden rechazar solicitudes en proceso.")
-    solicitud.estado = "rechazada"
-    solicitud.motivo_rechazo = motivo
-    solicitud.fecha_revision = datetime.now(timezone.utc).isoformat()
-    return solicitud.to_dict()
+
+    actualizada = _solicitudes_rutina_repo.actualizar(solicitud_id, {
+        "estado": "rechazada",
+        "motivo_rechazo": motivo,
+        "fecha_revision": datetime.now(timezone.utc).isoformat(),
+    })
+    if not actualizada:
+        raise AuthError(500, "UnexpectedError", "No se pudo rechazar la solicitud.")
+    return actualizada.to_dict()
 
 
 def solicitar_liberacion(profesor, solicitud_id: str) -> dict:
@@ -586,9 +676,14 @@ def solicitar_liberacion(profesor, solicitud_id: str) -> dict:
         raise AuthError(400, "InvalidState", "Solo se puede pedir liberación de solicitudes en proceso.")
     if solicitud.estado_liberacion == "solicitada":
         raise AuthError(400, "InvalidState", "Ya pediste la liberación de esta solicitud.")
-    solicitud.estado_liberacion = "solicitada"
-    solicitud.fecha_liberacion_solicitada = datetime.now(timezone.utc).isoformat()
-    return solicitud.to_dict()
+
+    actualizada = _solicitudes_rutina_repo.actualizar(solicitud_id, {
+        "estado_liberacion": "solicitada",
+        "fecha_liberacion_solicitada": datetime.now(timezone.utc).isoformat(),
+    })
+    if not actualizada:
+        raise AuthError(500, "UnexpectedError", "No se pudo pedir la liberación.")
+    return actualizada.to_dict()
 
 
 def listar_liberaciones_pendientes() -> List[dict]:
@@ -605,14 +700,19 @@ def aprobar_liberacion(admin, solicitud_id: str) -> dict:
         raise AuthError(404, "NotFound", f"No existe una solicitud con id '{solicitud_id}'.")
     if solicitud.estado != "en_proceso" or solicitud.estado_liberacion != "solicitada":
         raise AuthError(400, "InvalidState", "La solicitud no tiene una liberación pendiente.")
-    solicitud.estado = "pendiente"
-    solicitud.profesor_id = None
-    solicitud.profesor_nombre = None
-    solicitud.fecha_tomada = None
-    solicitud.estado_liberacion = "aprobada"
-    solicitud.liberacion_revisada_por_id = admin.id
-    solicitud.liberacion_revisada_por_nombre = admin.nombre
-    return solicitud.to_dict()
+
+    actualizada = _solicitudes_rutina_repo.actualizar(solicitud_id, {
+        "estado": "pendiente",
+        "profesor_id": None,
+        "profesor_nombre": None,
+        "fecha_tomada": None,
+        "estado_liberacion": "aprobada",
+        "liberacion_revisada_por_id": admin.id,
+        "liberacion_revisada_por_nombre": admin.nombre,
+    })
+    if not actualizada:
+        raise AuthError(500, "UnexpectedError", "No se pudo aprobar la liberación.")
+    return actualizada.to_dict()
 
 
 def rechazar_liberacion(admin, solicitud_id: str, motivo: str) -> dict:
@@ -621,23 +721,22 @@ def rechazar_liberacion(admin, solicitud_id: str, motivo: str) -> dict:
         raise AuthError(404, "NotFound", f"No existe una solicitud con id '{solicitud_id}'.")
     if solicitud.estado != "en_proceso" or solicitud.estado_liberacion != "solicitada":
         raise AuthError(400, "InvalidState", "La solicitud no tiene una liberación pendiente.")
-    solicitud.estado_liberacion = "rechazada"
-    solicitud.liberacion_motivo_rechazo = motivo
-    solicitud.liberacion_revisada_por_id = admin.id
-    solicitud.liberacion_revisada_por_nombre = admin.nombre
-    return solicitud.to_dict()
 
-def listar_solicitudes_rutina_de_alumno(alumno_id: str) -> List[dict]:
-    """Todas las solicitudes de rutina de un alumno (cualquier estado)."""
-    usuario = _usuarios_repo.find_by_id(alumno_id)
-    if not _es_alumno(usuario):
-        raise AuthError(404, "NotFound", f"No existe un alumno con id '{alumno_id}'.")
-    return [s.to_dict() for s in _solicitudes_rutina_repo.listar_por_alumno(alumno_id)]
+    actualizada = _solicitudes_rutina_repo.actualizar(solicitud_id, {
+        "estado_liberacion": "rechazada",
+        "liberacion_motivo_rechazo": motivo,
+        "liberacion_revisada_por_id": admin.id,
+        "liberacion_revisada_por_nombre": admin.nombre,
+    })
+    if not actualizada:
+        raise AuthError(500, "UnexpectedError", "No se pudo rechazar la liberación.")
+    return actualizada.to_dict()
+
+# ============================================================
+# Horarios
+# ============================================================
 
 def listar_mis_horarios(profesor_id: str) -> List[dict]:
     """Horarios del profesor autenticado."""
-    from app.repositories.mock_horarios import MockHorariosRepository
-    repo = MockHorariosRepository()
-    horarios = repo.listar(profesor_id)
-    horarios.sort(key=lambda h: (h.dia_semana, h.hora_inicio))
-    return [h.to_dict() for h in horarios]
+    from app.blueprints.admin import services as admin_services
+    return admin_services.listar_horarios(profesor_id)

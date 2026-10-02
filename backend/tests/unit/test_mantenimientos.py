@@ -1,10 +1,6 @@
-def _login(client, email="admin@gimnasio.com", password="admin123"):
-    resp = client.post("/api/auth/login", json={"email": email, "password": password})
-    return resp.get_json()["data"]["token"]
-
-
-def _headers(client, email="admin@gimnasio.com", password="admin123"):
-    return {"Authorization": f"Bearer {_login(client, email, password)}"}
+"""
+Tests de mantenciones (blueprint admin).
+"""
 
 
 _PAYLOAD = {
@@ -21,27 +17,23 @@ def test_listar_sin_token(client):
     assert resp.status_code == 401
 
 
-def test_listar_como_profesor_403(client):
-    token = _login(client, "profesor@gimnasio.com", "profe123")
-    resp = client.get(
-        "/api/admin/mantenimientos",
-        headers={"Authorization": f"Bearer {token}"},
-    )
+def test_listar_como_profesor_403(client, mock_auth):
+    resp = client.get("/api/admin/mantenimientos", headers=mock_auth.as_profesor())
     assert resp.status_code == 403
 
 
-def test_listar_como_admin(client):
-    resp = client.get("/api/admin/mantenimientos", headers=_headers(client))
+def test_listar_como_admin(client, mock_auth):
+    resp = client.get("/api/admin/mantenimientos", headers=mock_auth.as_admin())
     assert resp.status_code == 200
     data = resp.get_json()["data"]
     assert isinstance(data, list)
     assert len(data) >= 5
 
 
-def test_listar_por_maquina(client):
+def test_listar_por_maquina(client, mock_auth):
     resp = client.get(
         "/api/admin/maquinas/mq-004/mantenimientos",
-        headers=_headers(client),
+        headers=mock_auth.as_admin(),
     )
     assert resp.status_code == 200
     data = resp.get_json()["data"]
@@ -49,18 +41,18 @@ def test_listar_por_maquina(client):
     assert len(data["mantenimientos"]) >= 1
 
 
-def test_listar_por_maquina_inexistente(client):
+def test_listar_por_maquina_inexistente(client, mock_auth):
     resp = client.get(
         "/api/admin/maquinas/mq-999/mantenimientos",
-        headers=_headers(client),
+        headers=mock_auth.as_admin(),
     )
     assert resp.status_code == 404
 
 
 # -------- Crear --------
 
-def test_crear_ok(client):
-    resp = client.post("/api/admin/mantenimientos", json=_PAYLOAD, headers=_headers(client))
+def test_crear_ok(client, mock_auth):
+    resp = client.post("/api/admin/mantenimientos", json=_PAYLOAD, headers=mock_auth.as_admin())
     assert resp.status_code == 201
     data = resp.get_json()["data"]
     assert data["maquina_id"] == "mq-001"
@@ -69,48 +61,50 @@ def test_crear_ok(client):
     assert data["realizado_por_nombre"] == "Admin Gimnasio"
 
 
-def test_crear_maquina_inexistente(client):
+def test_crear_maquina_inexistente(client, mock_auth):
     payload = {**_PAYLOAD, "maquina_id": "mq-999"}
-    resp = client.post("/api/admin/mantenimientos", json=payload, headers=_headers(client))
+    resp = client.post("/api/admin/mantenimientos", json=payload, headers=mock_auth.as_admin())
     assert resp.status_code == 400
 
 
-def test_crear_tipo_invalido(client):
+def test_crear_tipo_invalido(client, mock_auth):
     payload = {**_PAYLOAD, "tipo": "inventado"}
-    resp = client.post("/api/admin/mantenimientos", json=payload, headers=_headers(client))
+    resp = client.post("/api/admin/mantenimientos", json=payload, headers=mock_auth.as_admin())
     assert resp.status_code == 400
 
 
-def test_crear_sin_notas(client):
+def test_crear_sin_notas(client, mock_auth):
     payload = {**_PAYLOAD}
     payload.pop("notas")
-    resp = client.post("/api/admin/mantenimientos", json=payload, headers=_headers(client))
+    resp = client.post("/api/admin/mantenimientos", json=payload, headers=mock_auth.as_admin())
     assert resp.status_code == 201
     assert resp.get_json()["data"]["notas"] is None
 
 
 # -------- Eliminar --------
 
-def test_eliminar_ok(client):
-    creado = client.post("/api/admin/mantenimientos", json=_PAYLOAD, headers=_headers(client)).get_json()["data"]
-    resp = client.delete(f"/api/admin/mantenimientos/{creado['id']}", headers=_headers(client))
+def test_eliminar_ok(client, mock_auth):
+    creado = client.post(
+        "/api/admin/mantenimientos", json=_PAYLOAD, headers=mock_auth.as_admin()
+    ).get_json()["data"]
+    resp = client.delete(
+        f"/api/admin/mantenimientos/{creado['id']}",
+        headers=mock_auth.as_admin(),
+    )
     assert resp.status_code == 200
     assert resp.get_json()["data"]["eliminado"] is True
 
 
-def test_eliminar_inexistente(client):
-    resp = client.delete("/api/admin/mantenimientos/mant-999", headers=_headers(client))
+def test_eliminar_inexistente(client, mock_auth):
+    resp = client.delete("/api/admin/mantenimientos/mant-999", headers=mock_auth.as_admin())
     assert resp.status_code == 404
 
 
 # -------- Auto-generación --------
 
-def test_resolver_reporte_rota_genera_mantenimiento(client):
-    """Crear un reporte tipo rota, resolverlo, verificar que se generó el mantenimiento."""
-    token_prof = _login(client, "profesor@gimnasio.com", "profe123")
-    token_admin = _login(client, "admin@gimnasio.com", "admin123")
-
-    # Crear reporte
+def test_resolver_reporte_rota_genera_mantenimiento(client, mock_auth):
+    """Crear un reporte tipo rota, resolverlo, verificar mantenimiento auto."""
+    # Crear reporte como profesor
     reporte = client.post(
         "/api/profesor/reportes",
         json={
@@ -119,32 +113,32 @@ def test_resolver_reporte_rota_genera_mantenimiento(client):
             "descripcion": "La máquina no enciende.",
             "maquina_id": "mq-001",
         },
-        headers={"Authorization": f"Bearer {token_prof}"},
+        headers=mock_auth.as_profesor(),
     ).get_json()["data"]
 
-    # Resolver
+    # Resolver como admin
     client.post(
         f"/api/profesor/admin/reportes/{reporte['id']}/resolver",
         json={"resolucion": "Se reemplazó el motor."},
-        headers={"Authorization": f"Bearer {token_admin}"},
+        headers=mock_auth.as_admin(),
     )
 
     # Verificar mantenimiento auto-generado
     resp = client.get(
         "/api/admin/maquinas/mq-001/mantenimientos",
-        headers={"Authorization": f"Bearer {token_admin}"},
+        headers=mock_auth.as_admin(),
     )
     data = resp.get_json()["data"]
-    autos = [m for m in data["mantenimientos"] if m["origen"] == "auto" and m["reporte_id"] == reporte["id"]]
+    autos = [
+        m for m in data["mantenimientos"]
+        if m["origen"] == "auto" and m["reporte_id"] == reporte["id"]
+    ]
     assert len(autos) == 1
     assert autos[0]["tipo"] == "correctivo"
 
 
-def test_resolver_reporte_limpieza_no_genera(client):
+def test_resolver_reporte_limpieza_no_genera(client, mock_auth):
     """Un reporte de limpieza no genera mantenimiento automático."""
-    token_prof = _login(client, "profesor@gimnasio.com", "profe123")
-    token_admin = _login(client, "admin@gimnasio.com", "admin123")
-
     reporte = client.post(
         "/api/profesor/reportes",
         json={
@@ -153,19 +147,22 @@ def test_resolver_reporte_limpieza_no_genera(client):
             "descripcion": "La máquina está sucia.",
             "maquina_id": "mq-002",
         },
-        headers={"Authorization": f"Bearer {token_prof}"},
+        headers=mock_auth.as_profesor(),
     ).get_json()["data"]
 
     client.post(
         f"/api/profesor/admin/reportes/{reporte['id']}/resolver",
         json={"resolucion": "Se limpió."},
-        headers={"Authorization": f"Bearer {token_admin}"},
+        headers=mock_auth.as_admin(),
     )
 
     resp = client.get(
         "/api/admin/maquinas/mq-002/mantenimientos",
-        headers={"Authorization": f"Bearer {token_admin}"},
+        headers=mock_auth.as_admin(),
     )
     data = resp.get_json()["data"]
-    autos = [m for m in data["mantenimientos"] if m["origen"] == "auto" and m["reporte_id"] == reporte["id"]]
+    autos = [
+        m for m in data["mantenimientos"]
+        if m["origen"] == "auto" and m["reporte_id"] == reporte["id"]
+    ]
     assert len(autos) == 0

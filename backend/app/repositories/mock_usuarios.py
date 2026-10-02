@@ -1,5 +1,13 @@
 """
-Implementación mock del repositorio de usuarios.
+Mock de usuarios para TESTS UNITARIOS.
+
+Este repositorio ya NO se usa en producción (el runtime usa
+SupabaseUsuariosRepository). Se mantiene acá porque los tests
+unitarios necesitan una fuente de usuarios en memoria que no
+dependa de red.
+
+La fixture `mock_auth` de tests/conftest.py lo inyecta en el
+módulo de decoradores para simular la autenticación.
 """
 from typing import Optional, List
 from app.domain.models import Usuario
@@ -11,7 +19,6 @@ _USUARIOS_MOCK: List[Usuario] = [
         id="u-gim-001",
         email="admin@gimnasio.com",
         nombre="Admin Gimnasio",
-        password_hash="admin123",
         rol="gimnasio",
         fecha_alta="2024-01-15",
     ),
@@ -19,7 +26,6 @@ _USUARIOS_MOCK: List[Usuario] = [
         id="u-pro-001",
         email="profesor@gimnasio.com",
         nombre="Prof. Martínez",
-        password_hash="profe123",
         rol="profesor",
         bio="Especialista en hipertrofia y fuerza. 8 años acompañando alumnos en su progreso.",
         especialidades=["musculación", "fuerza", "hipertrofia"],
@@ -31,7 +37,6 @@ _USUARIOS_MOCK: List[Usuario] = [
         id="u-alu-001",
         email="alumno@gimnasio.com",
         nombre="Juan Pérez",
-        password_hash="alumno123",
         rol="alumno",
         altura=178.0,
         peso_actual=74.5,
@@ -47,7 +52,6 @@ _USUARIOS_MOCK: List[Usuario] = [
         id="u-alu-002",
         email="maria.gonzalez@gimnasio.com",
         nombre="María González",
-        password_hash="maria123",
         rol="alumno",
         altura=165.0,
         peso_actual=58.0,
@@ -62,7 +66,6 @@ _USUARIOS_MOCK: List[Usuario] = [
         id="u-alu-003",
         email="carlos.rodriguez@gimnasio.com",
         nombre="Carlos Rodríguez",
-        password_hash="carlos123",
         rol="alumno",
         altura=182.0,
         peso_actual=88.0,
@@ -77,7 +80,6 @@ _USUARIOS_MOCK: List[Usuario] = [
         id="u-alu-004",
         email="lucia.fernandez@gimnasio.com",
         nombre="Lucía Fernández",
-        password_hash="lucia123",
         rol="alumno",
         altura=170.0,
         peso_actual=62.0,
@@ -126,32 +128,18 @@ class MockUsuariosRepository(UsuariosRepository):
         usuario = self.find_by_id(user_id)
         if not usuario:
             return None
-        if nombre is not None:
-            usuario.nombre = nombre
-        if altura is not None:
-            usuario.altura = altura
-        if peso_actual is not None:
-            usuario.peso_actual = peso_actual
-        if peso_objetivo is not None:
-            usuario.peso_objetivo = peso_objetivo
-        if imagen_url is not None:
-            usuario.imagen_url = imagen_url
-        if porcentaje_grasa is not None:
-            usuario.porcentaje_grasa = porcentaje_grasa
-        if fecha_medicion_grasa is not None:
-            usuario.fecha_medicion_grasa = fecha_medicion_grasa
-        if origen_grasa is not None:
-            usuario.origen_grasa = origen_grasa
-        if cargado_por_id is not None:
-            usuario.cargado_por_id = cargado_por_id
-        if bio is not None:
-            usuario.bio = bio
-        if especialidades is not None:
-            usuario.especialidades = list(especialidades)
-        if anios_experiencia is not None:
-            usuario.anios_experiencia = anios_experiencia
-        if telefono is not None:
-            usuario.telefono = telefono
-        if notas_profesor is not None:
-            usuario.notas_profesor = notas_profesor
+        if nombre is not None: usuario.nombre = nombre
+        if altura is not None: usuario.altura = altura
+        if peso_actual is not None: usuario.peso_actual = peso_actual
+        if peso_objetivo is not None: usuario.peso_objetivo = peso_objetivo
+        if imagen_url is not None: usuario.imagen_url = imagen_url
+        if porcentaje_grasa is not None: usuario.porcentaje_grasa = porcentaje_grasa
+        if fecha_medicion_grasa is not None: usuario.fecha_medicion_grasa = fecha_medicion_grasa
+        if origen_grasa is not None: usuario.origen_grasa = origen_grasa
+        if cargado_por_id is not None: usuario.cargado_por_id = cargado_por_id
+        if bio is not None: usuario.bio = bio
+        if especialidades is not None: usuario.especialidades = list(especialidades)
+        if anios_experiencia is not None: usuario.anios_experiencia = anios_experiencia
+        if telefono is not None: usuario.telefono = telefono
+        if notas_profesor is not None: usuario.notas_profesor = notas_profesor
         return usuario

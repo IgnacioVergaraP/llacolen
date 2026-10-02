@@ -5,12 +5,12 @@ from collections import defaultdict
 
 from app.errors import AuthError
 from app.domain.models import RegistroSerie
-from app.repositories.mock_progreso import MockProgresoRepository
-from app.repositories.mock_maquinas import MockMaquinasRepository
+from app.repositories.supabase_progreso import SupabaseProgresoRepository
+from app.repositories.supabase_maquinas import SupabaseMaquinasRepository
 
 
-_progreso_repo = MockProgresoRepository()
-_maquinas_repo = MockMaquinasRepository()
+_progreso_repo = SupabaseProgresoRepository()
+_maquinas_repo = SupabaseMaquinasRepository()
 
 
 def _key_de_registro(r: RegistroSerie) -> str:
@@ -25,7 +25,6 @@ def _nombre_visible(r: RegistroSerie) -> str:
 
 
 def _peso_numerico(peso_str: str) -> float | None:
-    """Intenta parsear '40 kg' → 40.0. Devuelve None si no es numérico."""
     try:
         return float(peso_str.strip().lower().replace("kg", "").strip())
     except (ValueError, AttributeError):
@@ -138,7 +137,6 @@ def obtener_evolucion(alumno_id: str, ejercicio_key: str) -> dict:
             "cantidad_series": len(series),
         })
 
-    # PR histórico = máximo numérico de TODOS los registros de este ejercicio
     pr_historico = _peso_max_numerico(registros)
 
     return {

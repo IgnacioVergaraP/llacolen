@@ -5,22 +5,22 @@ from collections import Counter
 
 from app.errors import AuthError
 from app.domain.models import Horario, Mantenimiento
-from app.repositories.mock_horarios import MockHorariosRepository
+from app.repositories.supabase_horarios import SupabaseHorariosRepository
 from app.repositories.supabase_usuarios import SupabaseUsuariosRepository
-from app.repositories.mock_maquinas import MockMaquinasRepository
-from app.repositories.mock_mantenimientos import MockMantenimientosRepository
+from app.repositories.supabase_maquinas import SupabaseMaquinasRepository
+from app.repositories.supabase_mantenimientos import SupabaseMantenimientosRepository   
 
 
-_horarios_repo = MockHorariosRepository()
+_horarios_repo = SupabaseHorariosRepository()
 _usuarios_repo = SupabaseUsuariosRepository()
-_maquinas_repo = MockMaquinasRepository()
-_mantenimientos_repo = MockMantenimientosRepository()
+_maquinas_repo = SupabaseMaquinasRepository()
+_mantenimientos_repo = SupabaseMantenimientosRepository()
 
 
 def _progreso_repo():
     """Import perezoso para evitar ciclos."""
-    from app.repositories.mock_progreso import MockProgresoRepository
-    return MockProgresoRepository()
+    from app.repositories.supabase_progreso import SupabaseProgresoRepository
+    return SupabaseProgresoRepository()
 
 
 # -------- Profesores --------

@@ -90,3 +90,12 @@ class MockReportesRepository(ReportesRepository):
         result = list(self._reportes)
         result.sort(key=lambda r: r.fecha_creacion, reverse=True)
         return result
+    
+    def actualizar(self, reporte_id: str, data: dict) -> Optional[Reporte]:
+        reporte = self.find_by_id(reporte_id)
+        if not reporte:
+            return None
+        for key, value in data.items():
+            if hasattr(reporte, key):
+                setattr(reporte, key, value)
+        return reporte

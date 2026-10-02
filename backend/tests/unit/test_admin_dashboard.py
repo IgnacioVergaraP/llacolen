@@ -1,10 +1,6 @@
-def _login(client, email="admin@gimnasio.com", password="admin123"):
-    resp = client.post("/api/auth/login", json={"email": email, "password": password})
-    return resp.get_json()["data"]["token"]
-
-
-def _headers(client, email="admin@gimnasio.com", password="admin123"):
-    return {"Authorization": f"Bearer {_login(client, email, password)}"}
+"""
+Tests del dashboard de uso del admin (analytics de máquinas).
+"""
 
 
 def test_dashboard_sin_token(client):
@@ -12,17 +8,16 @@ def test_dashboard_sin_token(client):
     assert resp.status_code == 401
 
 
-def test_dashboard_como_profesor_403(client):
-    token = _login(client, "profesor@gimnasio.com", "profe123")
+def test_dashboard_como_profesor_403(client, mock_auth):
     resp = client.get(
         "/api/admin/dashboard/uso",
-        headers={"Authorization": f"Bearer {token}"},
+        headers=mock_auth.as_profesor(),
     )
     assert resp.status_code == 403
 
 
-def test_dashboard_default(client):
-    resp = client.get("/api/admin/dashboard/uso", headers=_headers(client))
+def test_dashboard_default(client, mock_auth):
+    resp = client.get("/api/admin/dashboard/uso", headers=mock_auth.as_admin())
     assert resp.status_code == 200
     data = resp.get_json()["data"]
     assert data["rango"] == "30d"
@@ -33,12 +28,12 @@ def test_dashboard_default(client):
     assert isinstance(data["top_usadas"], list)
 
 
-def test_dashboard_rango_7d(client):
-    resp = client.get("/api/admin/dashboard/uso?rango=7d", headers=_headers(client))
+def test_dashboard_rango_7d(client, mock_auth):
+    resp = client.get("/api/admin/dashboard/uso?rango=7d", headers=mock_auth.as_admin())
     assert resp.status_code == 200
     assert resp.get_json()["data"]["dias"] == 7
 
 
-def test_dashboard_rango_invalido(client):
-    resp = client.get("/api/admin/dashboard/uso?rango=1y", headers=_headers(client))
+def test_dashboard_rango_invalido(client, mock_auth):
+    resp = client.get("/api/admin/dashboard/uso?rango=1y", headers=mock_auth.as_admin())
     assert resp.status_code == 400
