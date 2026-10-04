@@ -1,6 +1,9 @@
 *, *::before, *::after { box-sizing: border-box; }
 
 html, body {
+  width: 100%;
+  max-width: 100%;
+  min-height: 100%;
   margin: 0;
   padding: 0;
   background: $color-bg;
@@ -8,7 +11,13 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
   overscroll-behavior-y: none;
+}
+
+body {
+  min-height: 100dvh;
+  -webkit-overflow-scrolling: touch;
 }
 
 button {

@@ -10,7 +10,7 @@
   gap: $space-3;
 
   min-height: $header-height;
-  padding: calc(#{$space-3} + #{$safe-area-top}) $content-padding-x $space-3;
+  padding: calc(#{$space-3} + #{$safe-area-top}) max(#{$space-4}, #{$safe-area-right}) $space-3 max(#{$space-4}, #{$safe-area-left});
 
   background: $color-bg;
   border-bottom: 1px solid $color-border;

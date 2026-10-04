@@ -1,6 +1,7 @@
 @import "tokens";
 
 .app-shell {
+  width: 100%;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
@@ -15,6 +16,7 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
+  width: 100%;
 }
 
 // -------- Banners de modo --------
@@ -25,7 +27,7 @@
   justify-content: space-between;
   gap: $space-3;
 
-  padding: $space-2 $content-padding-x;
+  padding: $space-2 max(#{$space-4}, #{$safe-area-left}) $space-2 max(#{$space-4}, #{$safe-area-right});
 
   border-bottom: 1px solid transparent;
 }
@@ -106,7 +108,7 @@
   width: 100%;
   max-width: $content-max-width;
   margin: 0 auto;
-  padding: $space-4 $content-padding-x;
+  padding: $space-4 max(#{$space-4}, #{$safe-area-right}) $space-4 max(#{$space-4}, #{$safe-area-left});
   padding-bottom: calc(#{$bottom-nav-height} + #{$safe-area-bottom} + #{$space-4});
 }
 

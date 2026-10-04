@@ -16,6 +16,10 @@
   --color-primary: #{$color-primary-default};
   --color-primary-hover: #{$color-primary-hover-default};
   --color-primary-soft: #{$color-primary-soft-default};
+  --safe-area-top: #{$safe-area-top};
+  --safe-area-right: #{$safe-area-right};
+  --safe-area-bottom: #{$safe-area-bottom};
+  --safe-area-left: #{$safe-area-left};
 }
 
 .app-gym-brand {
@@ -23,9 +27,36 @@
   align-items: center;
   gap: 10px;
   min-height: 44px;
-  padding: 7px $content-padding-x;
+  padding: 7px max(#{$space-4}, #{$safe-area-left}) 7px max(#{$space-4}, #{$safe-area-right});
   background: $color-bg;
   border-bottom: 1px solid $color-border;
+}
+
+.app-gym-brand {
+  padding-left: max(#{$space-4}, #{$safe-area-left});
+  padding-right: max(#{$space-4}, #{$safe-area-right});
+}
+
+.ad__filtros,
+.ts__filtros,
+.rep__filtros,
+.rl__filtros,
+.srp__filtros,
+.musculo-filter {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+
+.ad__filtros::-webkit-scrollbar,
+.ts__filtros::-webkit-scrollbar,
+.rep__filtros::-webkit-scrollbar,
+.rl__filtros::-webkit-scrollbar,
+.srp__filtros::-webkit-scrollbar,
+.musculo-filter::-webkit-scrollbar {
+  display: none;
 }
 
 .app-gym-brand img,
