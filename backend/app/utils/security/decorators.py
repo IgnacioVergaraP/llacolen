@@ -21,7 +21,8 @@ from app.utils.security.jwt_handler import (
 from app.repositories.supabase_usuarios import SupabaseUsuariosRepository
 
 
-_repo = SupabaseUsuariosRepository()
+def _get_repo() -> SupabaseUsuariosRepository:
+    return SupabaseUsuariosRepository()
 
 
 def requiere_auth(fn):
@@ -36,7 +37,8 @@ def requiere_auth(fn):
         if not user_id:
             raise AuthError(401, "InvalidToken", "El token no tiene 'sub'.")
 
-        usuario = _repo.find_by_id(user_id)
+        repo = _get_repo()
+        usuario = repo.find_by_id(user_id)
         if not usuario or not usuario.activo:
             raise AuthError(401, "UserNotFound", "Usuario no encontrado o inactivo.")
 
