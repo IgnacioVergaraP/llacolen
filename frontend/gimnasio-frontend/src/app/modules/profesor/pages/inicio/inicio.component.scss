@@ -273,16 +273,3 @@
   font-size: 14px;
   color: $color-text-subtle;
 }
-
-.spinner {
-  width: 16px;
-  height: 16px;
-  border: 2px solid $color-border-strong;
-  border-top-color: $color-primary;
-  border-radius: 50%;
-  animation: inicio-spin 700ms linear infinite;
-}
-
-@keyframes inicio-spin {
-  to { transform: rotate(360deg); }
-}

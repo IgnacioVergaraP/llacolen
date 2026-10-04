@@ -1,8 +1,5 @@
 """
 Interfaz del repositorio de usuarios.
-
-Contrato que debe cumplir cualquier implementación concreta
-(actualmente Supabase; antes MockUsuariosRepository).
 """
 from abc import ABC, abstractmethod
 from typing import List, Optional
@@ -16,11 +13,15 @@ class UsuariosRepository(ABC):
         ...
 
     @abstractmethod
-    def find_by_id(self, user_id: str) -> Optional[Usuario]:
+    def find_by_id(self, user_id: str, gimnasio_id: Optional[str] = None) -> Optional[Usuario]:
         ...
 
     @abstractmethod
     def listar_todos(self) -> List[Usuario]:
+        ...
+
+    @abstractmethod
+    def listar_por_gimnasio(self, gimnasio_id: str) -> List[Usuario]:
         ...
 
     @abstractmethod

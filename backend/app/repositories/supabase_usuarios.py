@@ -1,8 +1,5 @@
 """
-Implementación del repositorio de usuarios contra Supabase (tabla public.profiles).
-
-El backend usa el service_role key, así que ignora RLS. Las reglas de negocio
-se aplican en la capa de services.
+Implementación del repositorio de usuarios contra Supabase.
 """
 from typing import List, Optional
 from app.domain.models import Usuario
@@ -11,7 +8,7 @@ from app.extensions import get_supabase
 
 
 _COLUMNS = (
-    "id,email,nombre,rol,activo,"
+    "id,email,nombre,rol,gimnasio_id,activo,"
     "altura,peso_actual,peso_objetivo,imagen_url,"
     "porcentaje_grasa,fecha_medicion_grasa,origen_grasa,cargado_por_id,"
     "bio,especialidades,anios_experiencia,telefono,"
@@ -20,13 +17,13 @@ _COLUMNS = (
 
 
 def _row_a_usuario(row: dict) -> Usuario:
-    """Mapea una fila de public.profiles a un Usuario."""
     fecha = row.get("fecha_alta")
     return Usuario(
         id=row["id"],
         email=row["email"],
         nombre=row["nombre"],
         rol=row["rol"],
+        gimnasio_id=row["gimnasio_id"],
         activo=row.get("activo", True),
         altura=float(row["altura"]) if row.get("altura") is not None else None,
         peso_actual=float(row["peso_actual"]) if row.get("peso_actual") is not None else None,
@@ -63,14 +60,15 @@ class SupabaseUsuariosRepository(UsuariosRepository):
             return None
         return _row_a_usuario(resp.data[0])
 
-    def find_by_id(self, user_id: str) -> Optional[Usuario]:
-        resp = (
+    def find_by_id(self, user_id: str, gimnasio_id: Optional[str] = None) -> Optional[Usuario]:
+        query = (
             self._sb.table("profiles")
             .select(_COLUMNS)
             .eq("id", user_id)
-            .limit(1)
-            .execute()
         )
+        if gimnasio_id is not None:
+            query = query.eq("gimnasio_id", gimnasio_id)
+        resp = query.limit(1).execute()
         if not resp.data:
             return None
         return _row_a_usuario(resp.data[0])
@@ -79,6 +77,16 @@ class SupabaseUsuariosRepository(UsuariosRepository):
         resp = (
             self._sb.table("profiles")
             .select(_COLUMNS)
+            .order("nombre")
+            .execute()
+        )
+        return [_row_a_usuario(row) for row in (resp.data or [])]
+
+    def listar_por_gimnasio(self, gimnasio_id: str) -> List[Usuario]:
+        resp = (
+            self._sb.table("profiles")
+            .select(_COLUMNS)
+            .eq("gimnasio_id", gimnasio_id)
             .order("nombre")
             .execute()
         )
@@ -102,7 +110,6 @@ class SupabaseUsuariosRepository(UsuariosRepository):
         telefono: Optional[str] = None,
         notas_profesor: Optional[str] = None,
     ) -> Optional[Usuario]:
-        # Solo mandamos al update los campos que no son None
         update_data: dict = {}
         if nombre is not None: update_data["nombre"] = nombre
         if altura is not None: update_data["altura"] = altura
@@ -120,7 +127,6 @@ class SupabaseUsuariosRepository(UsuariosRepository):
         if notas_profesor is not None: update_data["notas_profesor"] = notas_profesor
 
         if not update_data:
-            # Nada para actualizar: devolvemos el usuario tal cual
             return self.find_by_id(user_id)
 
         resp = (

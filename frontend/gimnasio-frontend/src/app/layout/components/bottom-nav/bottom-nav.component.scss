@@ -50,7 +50,7 @@
 }
 
 .bottom-nav__item--active {
-  color: $color-primary;
+  color: var(--color-primary, #{$color-primary});
 }
 
 .bottom-nav__label {

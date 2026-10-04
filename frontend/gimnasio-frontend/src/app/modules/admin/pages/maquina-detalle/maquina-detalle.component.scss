@@ -28,6 +28,13 @@
   margin: 0;
 }
 
+.md__muscles-title {
+  margin: $space-4 0 $space-2;
+  color: $color-text-muted;
+  font-size: $fs-sm;
+  font-weight: $fw-semibold;
+}
+
 .md__section {
   margin-top: $space-5;
   padding-bottom: $space-16;
@@ -85,6 +92,10 @@
   }
 
   i { font-size: 24px; line-height: 1; }
+
+  @include md-up {
+    bottom: $space-6;
+  }
 
   @include lg-up {
     right: calc(50% - #{$content-max-width} / 2 + #{$space-4});
@@ -228,19 +239,6 @@
   margin-top: $space-3;
 }
 
-.spinner {
-  width: 16px;
-  height: 16px;
-  border: 2px solid $color-border-strong;
-  border-top-color: $color-primary;
-  border-radius: 50%;
-  animation: md-spin 700ms linear infinite;
-}
-
-@keyframes md-spin {
-  to { transform: rotate(360deg); }
-}
-
 .md__input {
   width: 100%;
   min-height: 44px;
@@ -290,46 +288,4 @@
   &:active { transform: scale(0.98); }
 
   i { font-size: 13px; }
-}
-
-// FAB
-.md__fab {
-  position: fixed;
-  right: $space-4;
-  bottom: calc(#{$bottom-nav-height} + #{$safe-area-bottom} + #{$space-4});
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-
-  background: $color-primary;
-  color: $color-text-inverse;
-  border: 0;
-  cursor: pointer;
-
-  box-shadow: 0 4px 12px rgba(47, 111, 78, 0.28);
-  transition: background 150ms ease, transform 100ms ease;
-
-  @include hover { background: $color-primary-hover; }
-  &:active { transform: scale(0.96); }
-
-  &:focus-visible {
-    outline: 2px solid $color-primary;
-    outline-offset: 2px;
-  }
-
-  i { font-size: 24px; line-height: 1; }
-
-  // En pantallas grandes no hay bottom nav
-  @include md-up {
-    bottom: $space-6;
-  }
-
-  @include lg-up {
-    right: calc(50% - #{$content-max-width} / 2 + #{$space-4});
-  }
 }

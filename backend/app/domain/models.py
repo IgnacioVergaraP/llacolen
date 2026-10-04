@@ -3,51 +3,64 @@ from typing import List, Optional
 
 
 @dataclass
+class Gimnasio:
+    id: str
+    nombre: str
+    slug: str
+    color_primario: str = "#2f6f4e"
+    logo_url: Optional[str] = None
+    tabs_habilitadas: Optional[List[str]] = None
+    activo: bool = True
+    fecha_creacion: Optional[str] = None
+
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "nombre": self.nombre,
+            "slug": self.slug,
+            "color_primario": self.color_primario,
+            "logo_url": self.logo_url,
+            "tabs_habilitadas": list(self.tabs_habilitadas) if self.tabs_habilitadas else [],
+            "activo": self.activo,
+            "fecha_creacion": self.fecha_creacion,
+        }
+
+
+@dataclass
 class Usuario:
     id: str
     email: str
     nombre: str
     rol: str
+    gimnasio_id: str
     activo: bool = True
 
-    # Perfil físico (alumnos)
     altura: Optional[float] = None
     peso_actual: Optional[float] = None
     peso_objetivo: Optional[float] = None
     imagen_url: Optional[str] = None
 
-    # Medición de grasa corporal
     porcentaje_grasa: Optional[float] = None
     fecha_medicion_grasa: Optional[str] = None
     origen_grasa: Optional[str] = None
     cargado_por_id: Optional[str] = None
 
-    # Perfil profesional (profesores)
     bio: Optional[str] = None
     especialidades: Optional[List[str]] = None
     anios_experiencia: Optional[int] = None
     telefono: Optional[str] = None
 
-    # Notas internas (solo visibles a profesor/admin)
     notas_profesor: Optional[str] = None
 
-    # Metadata
     fecha_alta: Optional[str] = None
 
     def to_public_dict(self) -> dict:
-        """Shape completo (incluye notas_profesor). Usar con cuidado."""
         return self._to_dict_con_notas(True)
 
     def to_profesor_view_dict(self) -> dict:
-        """Alias semántico: el profesor/admin ve todo."""
         return self._to_dict_con_notas(True)
 
     def to_public_dict_for(self, rol_solicitante: str) -> dict:
-        """
-        Shape filtrado según quién consulta.
-        - Solicitante alumno → nunca incluye notas_profesor.
-        - Solicitante profesor/gimnasio → incluye notas_profesor.
-        """
         incluir_notas = rol_solicitante in ("profesor", "gimnasio")
         return self._to_dict_con_notas(incluir_notas)
 
@@ -57,6 +70,7 @@ class Usuario:
             "email": self.email,
             "nombre": self.nombre,
             "rol": self.rol,
+            "gimnasio_id": self.gimnasio_id,
             "activo": self.activo,
             "altura": self.altura,
             "peso_actual": self.peso_actual,
@@ -84,6 +98,7 @@ class Maquina:
     grupos_musculares: List[str]
     descripcion: str
     video_url: str
+    gimnasio_id: str
     imagen_url: str = ""
 
     def to_dict(self) -> dict:
@@ -94,6 +109,7 @@ class Maquina:
             "descripcion": self.descripcion,
             "video_url": self.video_url,
             "imagen_url": self.imagen_url,
+            "gimnasio_id": self.gimnasio_id,
         }
 
 
@@ -115,6 +131,7 @@ class Rutina:
     titulo: str
     grupos_musculares: List[str]
     alumno_id: str
+    gimnasio_id: str
     profesor_id: Optional[str] = None
     profesor_nombre: Optional[str] = None
     activa: bool = True
@@ -128,6 +145,7 @@ class Rutina:
             "titulo": self.titulo,
             "grupos_musculares": list(self.grupos_musculares),
             "alumno_id": self.alumno_id,
+            "gimnasio_id": self.gimnasio_id,
             "profesor_id": self.profesor_id,
             "profesor_nombre": self.profesor_nombre,
             "activa": self.activa,
@@ -168,6 +186,7 @@ class Rutina:
                 base["maquina"] = {
                     "id": m.id,
                     "nombre": m.nombre,
+                    "grupos_musculares": list(m.grupos_musculares),
                     "imagen_url": m.imagen_url,
                     "descripcion": m.descripcion,
                     "video_url": m.video_url,
@@ -186,6 +205,7 @@ class RegistroSerie:
     numero_serie: int
     peso: str
     repeticiones: str
+    gimnasio_id: str
     maquina_id: Optional[str] = None
     nombre_libre: Optional[str] = None
     rutina_id: Optional[str] = None
@@ -199,6 +219,7 @@ class RegistroSerie:
             "numero_serie": self.numero_serie,
             "peso": self.peso,
             "repeticiones": self.repeticiones,
+            "gimnasio_id": self.gimnasio_id,
             "maquina_id": self.maquina_id,
             "nombre_libre": self.nombre_libre,
             "rutina_id": self.rutina_id,
@@ -212,6 +233,7 @@ class SolicitudEjercicio:
     estado: str
     solicitante_id: str
     solicitante_nombre: str
+    gimnasio_id: str
     nombre: str
     grupos_musculares: List[str]
     descripcion: str
@@ -232,6 +254,7 @@ class SolicitudEjercicio:
             "estado": self.estado,
             "solicitante_id": self.solicitante_id,
             "solicitante_nombre": self.solicitante_nombre,
+            "gimnasio_id": self.gimnasio_id,
             "nombre": self.nombre,
             "grupos_musculares": list(self.grupos_musculares),
             "descripcion": self.descripcion,
@@ -256,6 +279,7 @@ class Reporte:
     descripcion: str
     reportante_id: str
     reportante_nombre: str
+    gimnasio_id: str
     maquina_id: Optional[str] = None
     maquina_nombre: Optional[str] = None
     foto_url: Optional[str] = None
@@ -274,6 +298,7 @@ class Reporte:
             "descripcion": self.descripcion,
             "reportante_id": self.reportante_id,
             "reportante_nombre": self.reportante_nombre,
+            "gimnasio_id": self.gimnasio_id,
             "maquina_id": self.maquina_id,
             "maquina_nombre": self.maquina_nombre,
             "foto_url": self.foto_url,
@@ -291,6 +316,7 @@ class SolicitudRutina:
     estado: str
     alumno_id: str
     alumno_nombre: str
+    gimnasio_id: str
     objetivo: str
     dias_por_semana: int
     comentarios: Optional[str] = None
@@ -317,6 +343,7 @@ class SolicitudRutina:
             "estado": self.estado,
             "alumno_id": self.alumno_id,
             "alumno_nombre": self.alumno_nombre,
+            "gimnasio_id": self.gimnasio_id,
             "objetivo": self.objetivo,
             "dias_por_semana": self.dias_por_semana,
             "comentarios": self.comentarios,
@@ -341,16 +368,13 @@ class SolicitudRutina:
 
 @dataclass
 class Horario:
-    """
-    Horario recurrente semanal de un profesor.
-    dia_semana: 0 = lunes, 6 = domingo.
-    """
     id: str
     profesor_id: str
     profesor_nombre: str
+    gimnasio_id: str
     dia_semana: int
-    hora_inicio: str          # "HH:MM"
-    hora_fin: str             # "HH:MM"
+    hora_inicio: str
+    hora_fin: str
     notas: Optional[str] = None
     fecha_creacion: str = ""
 
@@ -359,36 +383,28 @@ class Horario:
             "id": self.id,
             "profesor_id": self.profesor_id,
             "profesor_nombre": self.profesor_nombre,
+            "gimnasio_id": self.gimnasio_id,
             "dia_semana": self.dia_semana,
             "hora_inicio": self.hora_inicio,
             "hora_fin": self.hora_fin,
             "notas": self.notas,
             "fecha_creacion": self.fecha_creacion,
         }
-        
+
+
 @dataclass
 class Mantenimiento:
-    """
-    Registro de mantenimiento de una máquina.
-
-    Origen:
-      - 'manual': cargado por el admin desde el panel.
-      - 'auto': generado automáticamente al resolver un reporte de tipo
-                'rota' o 'desgastada'.
-
-    Tipo:
-      - 'preventivo' | 'correctivo' | 'limpieza' | 'revision'
-    """
     id: str
     maquina_id: str
     maquina_nombre: str
-    fecha: str                       # ISO 8601
+    fecha: str
     tipo: str
+    gimnasio_id: str
     notas: Optional[str] = None
     realizado_por_id: Optional[str] = None
     realizado_por_nombre: Optional[str] = None
-    origen: str = "manual"           # 'manual' | 'auto'
-    reporte_id: Optional[str] = None  # solo si origen='auto'
+    origen: str = "manual"
+    reporte_id: Optional[str] = None
 
     def to_dict(self) -> dict:
         return {
@@ -397,6 +413,7 @@ class Mantenimiento:
             "maquina_nombre": self.maquina_nombre,
             "fecha": self.fecha,
             "tipo": self.tipo,
+            "gimnasio_id": self.gimnasio_id,
             "notas": self.notas,
             "realizado_por_id": self.realizado_por_id,
             "realizado_por_nombre": self.realizado_por_nombre,

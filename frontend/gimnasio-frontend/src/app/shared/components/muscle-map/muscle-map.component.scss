@@ -1,0 +1,93 @@
+@import "tokens";
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+.muscle-map--single {
+  height: 100%;
+}
+
+.muscle-map {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: $space-2;
+  width: 100%;
+}
+
+.muscle-map__item {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  background: $color-bg-subtle;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+}
+
+.muscle-map__item img {
+  display: block;
+  width: 100%;
+  height: 132px;
+  object-fit: contain;
+  background: #e8e7e4;
+}
+
+.muscle-map__item figcaption {
+  padding: 6px 8px;
+  color: $color-text-muted;
+  font-size: $fs-xs;
+  font-weight: $fw-medium;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.muscle-map--single {
+  display: block;
+}
+
+.muscle-map--single .muscle-map__item {
+  height: 100%;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+}
+
+.muscle-map--single .muscle-map__item img {
+  height: 100%;
+  object-fit: cover;
+  object-position: center 24%;
+  background: transparent;
+}
+
+.muscle-map--single .muscle-map__item figcaption {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+.muscle-map--compact {
+  display: block;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+}
+
+.muscle-map--compact .muscle-map__item {
+  height: 100%;
+}
+
+.muscle-map--compact .muscle-map__item img {
+  height: 100%;
+  object-fit: cover;
+  object-position: center 24%;
+}
+
+.muscle-map--compact .muscle-map__item figcaption {
+  display: none;
+}

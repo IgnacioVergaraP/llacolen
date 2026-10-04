@@ -47,12 +47,16 @@ def obtener_perfil(usuario: Usuario, rol_solicitante: Optional[str] = None) -> d
     return _perfil_dict(usuario, rol)
 
 
-def obtener_perfil_por_id(alumno_id: str, rol_solicitante: str) -> Optional[dict]:
+def obtener_perfil_por_id(
+    alumno_id: str,
+    rol_solicitante: str,
+    gimnasio_id: Optional[str] = None,
+) -> Optional[dict]:
     """
     Igual que obtener_perfil pero buscando por id.
     rol_solicitante determina si se incluyen notas_profesor.
     """
-    usuario = _usuarios_repo.find_by_id(alumno_id)
+    usuario = _usuarios_repo.find_by_id(alumno_id, gimnasio_id)
     if not usuario:
         return None
     return _perfil_dict(usuario, rol_solicitante)

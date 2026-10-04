@@ -21,7 +21,7 @@ class SolicitudesRepository(ABC):
         ...
 
     @abstractmethod
-    def listar_pendientes(self) -> List[SolicitudEjercicio]:
+    def listar_pendientes(self, gimnasio_id: str) -> List[SolicitudEjercicio]:
         ...
 
     @abstractmethod

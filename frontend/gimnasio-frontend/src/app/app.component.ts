@@ -4,6 +4,7 @@ import { Observable, combineLatest } from 'rxjs';
 import { filter, map, startWith } from 'rxjs/operators';
 
 import { AuthService } from './modules/auth/services/auth.service';
+import { GimnasioConfigService } from './core/services/gimnasio-config.service';
 
 @Component({
   selector: 'app-root',
@@ -16,9 +17,11 @@ export class AppComponent {
   mostrarSidebar$: Observable<boolean>;
   mostrarBannerProfesor$: Observable<boolean>;
   mostrarBannerAdmin$: Observable<boolean>;
+  readonly gimnasioConfig$ = this.gimnasioConfig.config$;
 
   constructor(
     private auth: AuthService,
+    private gimnasioConfig: GimnasioConfigService,
     private router: Router,
   ) {
     const navEnd$ = this.router.events.pipe(

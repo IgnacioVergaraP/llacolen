@@ -13,7 +13,7 @@ _COLUMNS = (
     "nombre,grupos_musculares,descripcion,video_url,imagen_url,"
     "maquina_id_objetivo,maquina_id_creado,"
     "revisado_por_id,revisado_por_nombre,motivo_rechazo,"
-    "fecha_creacion,fecha_revision"
+    "fecha_creacion,fecha_revision,gimnasio_id"
 )
 
 
@@ -36,6 +36,7 @@ def _row_a_solicitud(row: dict) -> SolicitudEjercicio:
         revisado_por_id=row.get("revisado_por_id"),
         revisado_por_nombre=row.get("revisado_por_nombre"),
         motivo_rechazo=row.get("motivo_rechazo"),
+        gimnasio_id=row["gimnasio_id"],
         fecha_creacion=fecha_cre.isoformat() if hasattr(fecha_cre, "isoformat") else (fecha_cre or ""),
         fecha_revision=fecha_rev.isoformat() if hasattr(fecha_rev, "isoformat") else fecha_rev,
     )
@@ -57,6 +58,7 @@ class SupabaseSolicitudesRepository(SolicitudesRepository):
             "descripcion": solicitud.descripcion,
             "video_url": solicitud.video_url,
             "imagen_url": solicitud.imagen_url,
+            "gimnasio_id": solicitud.gimnasio_id,
         }
         resp = self._sb.table("solicitudes_ejercicio").insert(payload).execute()
         if not resp.data:
@@ -85,11 +87,12 @@ class SupabaseSolicitudesRepository(SolicitudesRepository):
         )
         return [_row_a_solicitud(row) for row in (resp.data or [])]
 
-    def listar_pendientes(self) -> List[SolicitudEjercicio]:
+    def listar_pendientes(self, gimnasio_id: str) -> List[SolicitudEjercicio]:
         resp = (
             self._sb.table("solicitudes_ejercicio")
             .select(_COLUMNS)
             .eq("estado", "pendiente")
+            .eq("gimnasio_id", gimnasio_id)
             .order("fecha_creacion", desc=False)
             .execute()
         )

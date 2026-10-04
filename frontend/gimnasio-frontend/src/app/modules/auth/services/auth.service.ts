@@ -7,6 +7,7 @@ import { map, switchMap, tap } from 'rxjs/operators';
 import { SupabaseService } from '../../../core/services/supabase.service';
 import { User, UserRole } from '../../../shared/models/user.model';
 import { ApiHttpService } from '../../../core/services/api-http.service';
+import { GimnasioConfigService } from '../../../core/services/gimnasio-config.service';
 
 @Injectable({
   providedIn: 'root',
@@ -28,6 +29,7 @@ export class AuthService implements OnDestroy {
   constructor(
     private supabaseService: SupabaseService,
     private apiHttp: ApiHttpService,
+    private gimnasioConfig: GimnasioConfigService,
     private router: Router,
   ) {
     // Escuchar cambios de sesión de Supabase
@@ -97,11 +99,13 @@ export class AuthService implements OnDestroy {
       next: () => {
         this._usuario$.next(null);
         this._session$.next(null);
+        this.gimnasioConfig.limpiar();
         if (redirect) this.router.navigate(['/auth']);
       },
       error: () => {
         this._usuario$.next(null);
         this._session$.next(null);
+        this.gimnasioConfig.limpiar();
         if (redirect) this.router.navigate(['/auth']);
       },
     });
@@ -145,9 +149,10 @@ export class AuthService implements OnDestroy {
         next: (user) => {
           this._usuario$.next(user);
           this._inicializado$.next(true);
+          // Cargamos la config del gimnasio (logo, color, tabs)
+          this.gimnasioConfig.cargar().subscribe({ error: () => {} });
         },
         error: () => {
-          // Si falla, limpiamos la sesión (token vencido, perfil inexistente)
           this._usuario$.next(null);
           this._inicializado$.next(true);
         },

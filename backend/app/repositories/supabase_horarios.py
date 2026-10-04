@@ -8,7 +8,7 @@ from app.repositories.horarios_repository import HorariosRepository
 from app.extensions import get_supabase
 
 
-_COLUMNS = "id,profesor_id,profesor_nombre,dia_semana,hora_inicio,hora_fin,notas,fecha_creacion"
+_COLUMNS = "id,profesor_id,profesor_nombre,dia_semana,hora_inicio,hora_fin,notas,fecha_creacion,gimnasio_id"
 
 
 def _row_a_horario(row: dict) -> Horario:
@@ -22,6 +22,7 @@ def _row_a_horario(row: dict) -> Horario:
         hora_fin=row["hora_fin"],
         notas=row.get("notas"),
         fecha_creacion=fecha_cre.isoformat() if hasattr(fecha_cre, "isoformat") else (fecha_cre or ""),
+        gimnasio_id=row["gimnasio_id"],
     )
 
 
@@ -43,11 +44,12 @@ class SupabaseHorariosRepository(HorariosRepository):
     def __init__(self):
         self._sb = get_supabase()
 
-    def listar(self, profesor_id: Optional[str] = None) -> List[Horario]:
+    def listar(self, gimnasio_id: str, profesor_id: Optional[str] = None) -> List[Horario]:
         query = (
             self._sb.table("horarios")
             .select(_COLUMNS)
         )
+        query = query.eq("gimnasio_id", gimnasio_id)
         if profesor_id:
             query = query.eq("profesor_id", profesor_id)
         resp = query.order("dia_semana").order("hora_inicio").execute()
@@ -73,6 +75,7 @@ class SupabaseHorariosRepository(HorariosRepository):
             "hora_inicio": horario.hora_inicio,
             "hora_fin": horario.hora_fin,
             "notas": horario.notas,
+            "gimnasio_id": horario.gimnasio_id,
         }
         resp = self._sb.table("horarios").insert(payload).execute()
         if not resp.data:

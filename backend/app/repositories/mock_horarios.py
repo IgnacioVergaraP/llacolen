@@ -1,6 +1,7 @@
 """
 Implementación mock del repositorio de horarios.
 """
+from copy import deepcopy
 from datetime import datetime, timezone
 from typing import List, Optional
 from app.domain.models import Horario
@@ -31,6 +32,7 @@ _HORARIOS_MOCK: List[Horario] = [
         id="hor-001",
         profesor_id="u-pro-001",
         profesor_nombre="Prof. Martínez",
+        gimnasio_id="mock-gym",
         dia_semana=0,             # lunes
         hora_inicio="08:00",
         hora_fin="12:00",
@@ -41,6 +43,7 @@ _HORARIOS_MOCK: List[Horario] = [
         id="hor-002",
         profesor_id="u-pro-001",
         profesor_nombre="Prof. Martínez",
+        gimnasio_id="mock-gym",
         dia_semana=2,             # miércoles
         hora_inicio="17:00",
         hora_fin="21:00",
@@ -51,6 +54,7 @@ _HORARIOS_MOCK: List[Horario] = [
         id="hor-003",
         profesor_id="u-pro-001",
         profesor_nombre="Prof. Martínez",
+        gimnasio_id="mock-gym",
         dia_semana=4,             # viernes
         hora_inicio="08:00",
         hora_fin="12:00",
@@ -61,6 +65,7 @@ _HORARIOS_MOCK: List[Horario] = [
         id="hor-004",
         profesor_id="u-gim-001",
         profesor_nombre="Admin Gimnasio",
+        gimnasio_id="mock-gym",
         dia_semana=1,             # martes
         hora_inicio="10:00",
         hora_fin="14:00",
@@ -73,8 +78,7 @@ _HORARIOS_MOCK: List[Horario] = [
 class MockHorariosRepository(HorariosRepository):
 
     def __init__(self):
-        # Lista compartida a nivel módulo: los cambios persisten entre instancias.
-        self._horarios: List[Horario] = _HORARIOS_MOCK
+        self._horarios: List[Horario] = deepcopy(_HORARIOS_MOCK)
 
     def _calcular_next_num(self) -> int:
         max_n = 0
@@ -90,10 +94,11 @@ class MockHorariosRepository(HorariosRepository):
     def _generar_id(self) -> str:
         return f"hor-{self._calcular_next_num():03d}"
 
-    def listar(self, profesor_id: Optional[str] = None) -> List[Horario]:
+    def listar(self, gimnasio_id: str, profesor_id: Optional[str] = None) -> List[Horario]:
+        horarios = [h for h in self._horarios if h.gimnasio_id == gimnasio_id]
         if profesor_id:
-            return [h for h in self._horarios if h.profesor_id == profesor_id]
-        return list(self._horarios)
+            return [h for h in horarios if h.profesor_id == profesor_id]
+        return horarios
 
     def find_by_id(self, horario_id: str) -> Optional[Horario]:
         for h in self._horarios:

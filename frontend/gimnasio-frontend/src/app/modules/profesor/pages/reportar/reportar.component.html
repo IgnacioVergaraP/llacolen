@@ -23,10 +23,10 @@
 <!-- Filtros -->
 <div class="rep__filtros">
   <button
-    *ngFor="let f of filtros"
-    type="button"
-    class="rep__chip"
-    [class.rep__chip--active]="filtroEstado === f.value"
+        *ngFor="let f of filtros"
+        type="button"
+        class="rep__chip ui-choice-chip ui-choice-chip--wide"
+        [class.ui-choice-chip--active]="filtroEstado === f.value"
     (click)="onFiltroChange(f.value)">
     {{ f.label }}
   </button>
@@ -82,8 +82,8 @@
         <button
           *ngFor="let t of tipos"
           type="button"
-          class="rep__chip-opt"
-          [class.rep__chip-opt--active]="tipoSeleccionado === t.value"
+          class="rep__chip-opt ui-choice-chip"
+          [class.ui-choice-chip--active]="tipoSeleccionado === t.value"
           (click)="seleccionarTipo(t.value)">
           {{ t.label }}
         </button>
@@ -97,8 +97,8 @@
         <button
           *ngFor="let p of prioridades"
           type="button"
-          class="rep__chip-opt"
-          [class.rep__chip-opt--active]="prioridadSeleccionada === p.value"
+          class="rep__chip-opt ui-choice-chip"
+          [class.ui-choice-chip--active]="prioridadSeleccionada === p.value"
           (click)="seleccionarPrioridad(p.value)">
           {{ p.label }}
         </button>
@@ -114,7 +114,7 @@
       <div *ngIf="!maquinaSeleccionada" class="rep__maquina-picker">
         <input
           type="search"
-          class="rep__search"
+          class="rep__search ui-text-control ui-text-control--search"
           placeholder="Buscar máquina..."
           [(ngModel)]="busquedaMaquina"
           [ngModelOptions]="{ standalone: true }"
@@ -123,16 +123,16 @@
         <div class="rep__musculo-chips">
           <button
             type="button"
-            class="rep__musculo-chip"
-            [class.rep__musculo-chip--active]="!filtroMusculo"
+            class="rep__musculo-chip ui-choice-chip ui-choice-chip--small"
+            [class.ui-choice-chip--active]="!filtroMusculo"
             (click)="onFiltroMusculoChange(null)">
             Todos
           </button>
           <button
             *ngFor="let g of grupos"
             type="button"
-            class="rep__musculo-chip"
-            [class.rep__musculo-chip--active]="filtroMusculo === g"
+            class="rep__musculo-chip ui-choice-chip ui-choice-chip--small"
+            [class.ui-choice-chip--active]="filtroMusculo === g"
             (click)="onFiltroMusculoChange(g)">
             {{ etiqueta(g) }}
           </button>
@@ -175,7 +175,7 @@
       <label class="rep__form-label" for="rep-desc">Descripción</label>
       <textarea
         id="rep-desc"
-        class="rep__textarea"
+          class="rep__textarea ui-text-control ui-text-control--textarea"
         formControlName="descripcion"
         rows="4"
         placeholder="Describí el problema con el mayor detalle posible...">

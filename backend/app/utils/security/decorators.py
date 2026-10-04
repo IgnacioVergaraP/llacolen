@@ -42,6 +42,7 @@ def requiere_auth(fn):
 
         g.usuario_actual = usuario
         g.jwt_payload = payload
+        g.gimnasio_id = usuario.gimnasio_id
         return fn(*args, **kwargs)
     return wrapper
 

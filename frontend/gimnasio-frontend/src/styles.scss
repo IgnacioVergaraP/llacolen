@@ -10,4 +10,51 @@
 @import "styles/typography";
 @import "styles/components";
 
+// Bridge: expone las variables SCSS como CSS custom properties.
+// El GimnasioConfigService va a sobreescribir estas en runtime.
+:root {
+  --color-primary: #{$color-primary-default};
+  --color-primary-hover: #{$color-primary-hover-default};
+  --color-primary-soft: #{$color-primary-soft-default};
+}
+
+.app-gym-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 7px $content-padding-x;
+  background: $color-bg;
+  border-bottom: 1px solid $color-border;
+}
+
+.app-gym-brand img,
+.app-gym-brand__mark {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  border-radius: $radius-sm;
+}
+
+.app-gym-brand img { object-fit: contain; }
+
+.app-gym-brand__mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: $color-primary;
+  background: $color-primary-soft;
+  font-size: 15px;
+}
+
+.app-gym-brand__name {
+  min-width: 0;
+  overflow: hidden;
+  color: $color-text-muted;
+  font-size: $fs-xs;
+  font-weight: $fw-semibold;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 // Bootstrap está registrado en angular.json (styles[]). No duplicar acá.

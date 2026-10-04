@@ -10,7 +10,7 @@ from app.extensions import get_supabase
 
 _COLUMNS = (
     "id,alumno_id,fecha,ejercicio_tipo,maquina_id,nombre_libre,rutina_id,"
-    "numero_serie,peso,repeticiones"
+    "numero_serie,peso,repeticiones,gimnasio_id"
 )
 
 
@@ -27,6 +27,7 @@ def _row_a_registro(row: dict) -> RegistroSerie:
         maquina_id=row.get("maquina_id"),
         nombre_libre=row.get("nombre_libre"),
         rutina_id=row.get("rutina_id"),
+        gimnasio_id=row["gimnasio_id"],
     )
 
 
@@ -133,6 +134,7 @@ class SupabaseProgresoRepository(ProgresoRepository):
             "maquina_id": registro.maquina_id if registro.ejercicio_tipo == "maquina" else None,
             "nombre_libre": registro.nombre_libre if registro.ejercicio_tipo == "libre" else None,
             "rutina_id": registro.rutina_id,
+            "gimnasio_id": registro.gimnasio_id,
             "numero_serie": registro.numero_serie,
             "peso": registro.peso,
             "repeticiones": registro.repeticiones,

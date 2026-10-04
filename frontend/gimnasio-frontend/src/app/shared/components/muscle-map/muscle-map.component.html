@@ -1,0 +1,12 @@
+<div
+  *ngIf="illustrations.length"
+  class="muscle-map"
+  [class.muscle-map--compact]="compact"
+  [class.muscle-map--single]="primaryOnly"
+  role="list"
+  aria-label="Músculos trabajados">
+  <figure *ngFor="let muscle of illustrations" class="muscle-map__item" role="listitem">
+    <img [src]="muscle.src" [alt]="'Ilustración del músculo ' + muscle.label" loading="lazy">
+    <figcaption>{{ muscle.label }}</figcaption>
+  </figure>
+</div>

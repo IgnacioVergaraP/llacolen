@@ -10,7 +10,7 @@ from app.extensions import get_supabase
 
 _COLUMNS = (
     "id,maquina_id,maquina_nombre,fecha,tipo,notas,"
-    "realizado_por_id,realizado_por_nombre,origen,reporte_id"
+    "realizado_por_id,realizado_por_nombre,origen,reporte_id,gimnasio_id"
 )
 
 
@@ -27,6 +27,7 @@ def _row_a_mantenimiento(row: dict) -> Mantenimiento:
         realizado_por_nombre=row.get("realizado_por_nombre"),
         origen=row.get("origen", "manual"),
         reporte_id=row.get("reporte_id"),
+        gimnasio_id=row.get("gimnasio_id"),
     )
 
 
@@ -46,6 +47,7 @@ class SupabaseMantenimientosRepository(MantenimientosRepository):
             "realizado_por_nombre": mantenimiento.realizado_por_nombre,
             "origen": mantenimiento.origen,
             "reporte_id": mantenimiento.reporte_id,
+            "gimnasio_id": mantenimiento.gimnasio_id,
         }
         resp = self._sb.table("mantenciones").insert(payload).execute()
         if not resp.data:
@@ -64,27 +66,29 @@ class SupabaseMantenimientosRepository(MantenimientosRepository):
             return None
         return _row_a_mantenimiento(resp.data[0])
 
-    def listar_por_maquina(self, maquina_id: str) -> List[Mantenimiento]:
+    def listar_por_maquina(self, maquina_id: str, gimnasio_id: str) -> List[Mantenimiento]:
         resp = (
             self._sb.table("mantenciones")
             .select(_COLUMNS)
             .eq("maquina_id", maquina_id)
+            .eq("gimnasio_id", gimnasio_id)
             .order("fecha", desc=True)
             .execute()
         )
         return [_row_a_mantenimiento(row) for row in (resp.data or [])]
 
-    def listar_todos(self) -> List[Mantenimiento]:
+    def listar_todos(self, gimnasio_id: str) -> List[Mantenimiento]:
         resp = (
             self._sb.table("mantenciones")
             .select(_COLUMNS)
+            .eq("gimnasio_id", gimnasio_id)
             .order("fecha", desc=True)
             .execute()
         )
         return [_row_a_mantenimiento(row) for row in (resp.data or [])]
 
-    def ultima_por_maquina(self, maquina_id: str) -> Optional[Mantenimiento]:
-        items = self.listar_por_maquina(maquina_id)
+    def ultima_por_maquina(self, maquina_id: str, gimnasio_id: str) -> Optional[Mantenimiento]:
+        items = self.listar_por_maquina(maquina_id, gimnasio_id)
         return items[0] if items else None
 
     def eliminar(self, mantenimiento_id: str) -> bool:

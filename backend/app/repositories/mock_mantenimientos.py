@@ -1,6 +1,7 @@
 """
 Implementación mock del repositorio de mantenciones.
 """
+from copy import deepcopy
 from datetime import datetime, timezone, timedelta
 from typing import List, Optional
 from app.domain.models import Mantenimiento
@@ -23,6 +24,7 @@ _MANTENIMIENTOS_MOCK: List[Mantenimiento] = [
         maquina_nombre="Jalón al pecho en polea",
         fecha=_hace_dias(4),
         tipo="correctivo",
+        gimnasio_id="mock-gym",
         notas="Se reemplazó el cable de acero y se lubricó la polea superior.",
         realizado_por_id="u-gim-001",
         realizado_por_nombre="Admin Gimnasio",
@@ -35,6 +37,7 @@ _MANTENIMIENTOS_MOCK: List[Mantenimiento] = [
         maquina_nombre="Curl de bíceps con mancuernas",
         fecha=_hace_dias(4),
         tipo="revision",
+        gimnasio_id="mock-gym",
         notas="Se repuso el agarre faltante de la mancuerna izquierda.",
         realizado_por_id="u-gim-001",
         realizado_por_nombre="Admin Gimnasio",
@@ -47,6 +50,7 @@ _MANTENIMIENTOS_MOCK: List[Mantenimiento] = [
         maquina_nombre="Sentadilla con barra",
         fecha=_hace_dias(15),
         tipo="preventivo",
+        gimnasio_id="mock-gym",
         notas="Ajuste general de tornillería y engrase de guías.",
         realizado_por_id="u-gim-001",
         realizado_por_nombre="Admin Gimnasio",
@@ -58,6 +62,7 @@ _MANTENIMIENTOS_MOCK: List[Mantenimiento] = [
         maquina_nombre="Prensa de piernas 45°",
         fecha=_hace_dias(30),
         tipo="limpieza",
+        gimnasio_id="mock-gym",
         notas="Limpieza profunda de tapizado y estructura.",
         realizado_por_id="u-gim-001",
         realizado_por_nombre="Admin Gimnasio",
@@ -69,6 +74,7 @@ _MANTENIMIENTOS_MOCK: List[Mantenimiento] = [
         maquina_nombre="Press de banca",
         fecha=_hace_dias(45),
         tipo="preventivo",
+        gimnasio_id="mock-gym",
         notas="Revisión de banco y barra. Todo en orden.",
         realizado_por_id="u-gim-001",
         realizado_por_nombre="Admin Gimnasio",
@@ -80,8 +86,7 @@ _MANTENIMIENTOS_MOCK: List[Mantenimiento] = [
 class MockMantenimientosRepository(MantenimientosRepository):
 
     def __init__(self):
-        # Lista compartida a nivel módulo: los cambios persisten entre instancias.
-        self._items: List[Mantenimiento] = _MANTENIMIENTOS_MOCK
+        self._items: List[Mantenimiento] = deepcopy(_MANTENIMIENTOS_MOCK)
 
     def _calcular_next_num(self) -> int:
         max_n = 0
@@ -110,18 +115,18 @@ class MockMantenimientosRepository(MantenimientosRepository):
                 return m
         return None
 
-    def listar_por_maquina(self, maquina_id: str) -> List[Mantenimiento]:
-        result = [m for m in self._items if m.maquina_id == maquina_id]
+    def listar_por_maquina(self, maquina_id: str, gimnasio_id: str) -> List[Mantenimiento]:
+        result = [m for m in self._items if m.maquina_id == maquina_id and m.gimnasio_id == gimnasio_id]
         result.sort(key=lambda m: m.fecha, reverse=True)
         return result
 
-    def listar_todos(self) -> List[Mantenimiento]:
-        result = list(self._items)
+    def listar_todos(self, gimnasio_id: str) -> List[Mantenimiento]:
+        result = [m for m in self._items if m.gimnasio_id == gimnasio_id]
         result.sort(key=lambda m: m.fecha, reverse=True)
         return result
 
-    def ultima_por_maquina(self, maquina_id: str) -> Optional[Mantenimiento]:
-        items = self.listar_por_maquina(maquina_id)
+    def ultima_por_maquina(self, maquina_id: str, gimnasio_id: str) -> Optional[Mantenimiento]:
+        items = self.listar_por_maquina(maquina_id, gimnasio_id)
         return items[0] if items else None
 
     def eliminar(self, mantenimiento_id: str) -> bool:

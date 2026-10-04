@@ -17,7 +17,7 @@ bp = Blueprint("admin", __name__)
 @bp.get("/profesores")
 @requiere_rol("gimnasio")
 def listar_profesores():
-    return ok(services.listar_profesores())
+    return ok(services.listar_profesores(g.usuario_actual.gimnasio_id))
 
 
 # -------- Horarios --------
@@ -26,13 +26,13 @@ def listar_profesores():
 @requiere_rol("gimnasio")
 def listar_horarios():
     profesor_id = request.args.get("profesor_id")
-    return ok(services.listar_horarios(profesor_id))
+    return ok(services.listar_horarios(g.usuario_actual.gimnasio_id, profesor_id))
 
 
 @bp.get("/horarios/<horario_id>")
 @requiere_rol("gimnasio")
 def obtener_horario(horario_id: str):
-    return ok(services.obtener_horario(horario_id))
+    return ok(services.obtener_horario(horario_id, g.usuario_actual.gimnasio_id))
 
 
 @bp.post("/horarios")
@@ -40,7 +40,7 @@ def obtener_horario(horario_id: str):
 def crear_horario():
     data = request.get_json(silent=True) or {}
     payload = validar_crear_horario_payload(data)
-    return created(services.crear_horario(payload))
+    return created(services.crear_horario(g.usuario_actual, payload))
 
 
 @bp.put("/horarios/<horario_id>")
@@ -48,13 +48,17 @@ def crear_horario():
 def editar_horario(horario_id: str):
     data = request.get_json(silent=True) or {}
     payload = validar_editar_horario_payload(data)
-    return ok(services.editar_horario(horario_id, payload))
+    return ok(services.editar_horario(
+        horario_id,
+        g.usuario_actual.gimnasio_id,
+        payload,
+    ))
 
 
 @bp.delete("/horarios/<horario_id>")
 @requiere_rol("gimnasio")
 def eliminar_horario(horario_id: str):
-    return ok(services.eliminar_horario(horario_id))
+    return ok(services.eliminar_horario(horario_id, g.usuario_actual.gimnasio_id))
 
 
 # -------- Dashboard de uso --------
@@ -63,7 +67,7 @@ def eliminar_horario(horario_id: str):
 @requiere_rol("gimnasio")
 def dashboard_uso():
     rango = request.args.get("rango", "30d")
-    return ok(services.obtener_dashboard_uso(rango))
+    return ok(services.obtener_dashboard_uso(rango, g.usuario_actual.gimnasio_id))
 
 
 # -------- Mantenciones --------
@@ -71,13 +75,16 @@ def dashboard_uso():
 @bp.get("/mantenimientos")
 @requiere_rol("gimnasio")
 def listar_mantenimientos():
-    return ok(services.listar_todos_mantenimientos())
+    return ok(services.listar_todos_mantenimientos(g.usuario_actual.gimnasio_id))
 
 
 @bp.get("/maquinas/<maquina_id>/mantenimientos")
 @requiere_rol("gimnasio")
 def listar_mantenimientos_maquina(maquina_id: str):
-    return ok(services.listar_mantenimientos_maquina(maquina_id))
+    return ok(services.listar_mantenimientos_maquina(
+        maquina_id,
+        g.usuario_actual.gimnasio_id,
+    ))
 
 
 @bp.post("/mantenimientos")
@@ -91,4 +98,7 @@ def crear_mantenimiento():
 @bp.delete("/mantenimientos/<mantenimiento_id>")
 @requiere_rol("gimnasio")
 def eliminar_mantenimiento(mantenimiento_id: str):
-    return ok(services.eliminar_mantenimiento(mantenimiento_id))
+    return ok(services.eliminar_mantenimiento(
+        mantenimiento_id,
+        g.usuario_actual.gimnasio_id,
+    ))

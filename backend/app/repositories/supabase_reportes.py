@@ -13,7 +13,7 @@ _COLUMNS = (
     "reportante_id,reportante_nombre,"
     "maquina_id,maquina_nombre,foto_url,"
     "resolucion,revisado_por_id,revisado_por_nombre,"
-    "fecha_creacion,fecha_revision"
+    "fecha_creacion,fecha_revision,gimnasio_id"
 )
 
 
@@ -34,6 +34,7 @@ def _row_a_reporte(row: dict) -> Reporte:
         resolucion=row.get("resolucion"),
         revisado_por_id=row.get("revisado_por_id"),
         revisado_por_nombre=row.get("revisado_por_nombre"),
+        gimnasio_id=row["gimnasio_id"],
         fecha_creacion=fecha_cre.isoformat() if hasattr(fecha_cre, "isoformat") else (fecha_cre or ""),
         fecha_revision=fecha_rev.isoformat() if hasattr(fecha_rev, "isoformat") else fecha_rev,
     )
@@ -53,6 +54,7 @@ class SupabaseReportesRepository(ReportesRepository):
             "reportante_id": reporte.reportante_id,
             "reportante_nombre": reporte.reportante_nombre,
             "maquina_id": reporte.maquina_id,
+            "gimnasio_id": reporte.gimnasio_id,
             "maquina_nombre": reporte.maquina_nombre,
             "foto_url": reporte.foto_url,
         }
@@ -83,10 +85,11 @@ class SupabaseReportesRepository(ReportesRepository):
         )
         return [_row_a_reporte(row) for row in (resp.data or [])]
 
-    def listar_todos(self) -> List[Reporte]:
+    def listar_todos(self, gimnasio_id: str) -> List[Reporte]:
         resp = (
             self._sb.table("reportes")
             .select(_COLUMNS)
+            .eq("gimnasio_id", gimnasio_id)
             .order("fecha_creacion", desc=True)
             .execute()
         )

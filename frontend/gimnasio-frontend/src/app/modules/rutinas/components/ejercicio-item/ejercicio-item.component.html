@@ -6,6 +6,12 @@
 
   <div class="ejercicio-item__index">{{ indice }}</div>
 
+  <app-muscle-map
+    [muscles]="muscles"
+    [primaryOnly]="true"
+    [compact]="true">
+  </app-muscle-map>
+
   <div class="ejercicio-item__body">
     <p class="ejercicio-item__name">
       {{ nombreVisible }}

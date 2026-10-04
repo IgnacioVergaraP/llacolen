@@ -1,6 +1,7 @@
 """
 Implementación mock del repositorio de solicitudes de rutina.
 """
+from copy import deepcopy
 from datetime import datetime, timezone, timedelta
 from typing import List, Optional
 from app.domain.models import SolicitudRutina
@@ -24,6 +25,7 @@ _SOLICITUDES_INICIALES: List[SolicitudRutina] = [
         estado="pendiente",
         alumno_id="u-alu-002",
         alumno_nombre="María González",
+        gimnasio_id="mock-gym",
         objetivo="hipertrofia",
         dias_por_semana=4,
         comentarios="Quiero enfocarme en tren inferior. Tengo molestia en el hombro derecho.",
@@ -38,6 +40,7 @@ _SOLICITUDES_INICIALES: List[SolicitudRutina] = [
         estado="pendiente",
         alumno_id="u-alu-004",
         alumno_nombre="Lucía Fernández",
+        gimnasio_id="mock-gym",
         objetivo="mantenimiento",
         dias_por_semana=3,
         comentarios="Vuelvo después de un parate largo. Prefiero arrancar suave.",
@@ -50,8 +53,7 @@ _SOLICITUDES_INICIALES: List[SolicitudRutina] = [
 class MockSolicitudesRutinaRepository(SolicitudesRutinaRepository):
 
     def __init__(self):
-        # Lista compartida a nivel módulo: los cambios persisten entre instancias.
-        self._solicitudes: List[SolicitudRutina] = _SOLICITUDES_INICIALES
+        self._solicitudes: List[SolicitudRutina] = deepcopy(_SOLICITUDES_INICIALES)
 
     def _calcular_next_num(self) -> int:
         max_n = 0
@@ -84,13 +86,13 @@ class MockSolicitudesRutinaRepository(SolicitudesRutinaRepository):
         result.sort(key=lambda s: s.fecha_creacion, reverse=True)
         return result
 
-    def listar_todas(self) -> List[SolicitudRutina]:
-        result = list(self._solicitudes)
+    def listar_todas(self, gimnasio_id: str) -> List[SolicitudRutina]:
+        result = [s for s in self._solicitudes if s.gimnasio_id == gimnasio_id]
         result.sort(key=lambda s: s.fecha_creacion, reverse=True)
         return result
 
-    def listar_pendientes(self) -> List[SolicitudRutina]:
-        result = [s for s in self._solicitudes if s.estado == "pendiente"]
+    def listar_pendientes(self, gimnasio_id: str) -> List[SolicitudRutina]:
+        result = [s for s in self._solicitudes if s.estado == "pendiente" and s.gimnasio_id == gimnasio_id]
         result.sort(key=lambda s: s.fecha_creacion)
         return result
 

@@ -16,7 +16,7 @@ _COLUMNS = (
     "rutina_id,mensaje_resolucion,motivo_rechazo,"
     "estado_liberacion,fecha_liberacion_solicitada,"
     "liberacion_revisada_por_id,liberacion_revisada_por_nombre,liberacion_motivo_rechazo,"
-    "fecha_creacion,fecha_tomada,fecha_revision"
+    "fecha_creacion,fecha_tomada,fecha_revision,gimnasio_id"
 )
 
 
@@ -53,6 +53,7 @@ def _row_a_solicitud(row: dict) -> SolicitudRutina:
         fecha_creacion=_iso(fecha_cre),
         fecha_tomada=_iso(fecha_tom),
         fecha_revision=_iso(fecha_rev),
+        gimnasio_id=row["gimnasio_id"],
     )
 
 
@@ -72,6 +73,7 @@ class SupabaseSolicitudesRutinaRepository(SolicitudesRutinaRepository):
             "grupos_interes": list(solicitud.grupos_interes) if solicitud.grupos_interes else [],
             "profesor_preferido_id": solicitud.profesor_preferido_id,
             "profesor_preferido_nombre": solicitud.profesor_preferido_nombre,
+            "gimnasio_id": solicitud.gimnasio_id,
         }
         resp = self._sb.table("solicitudes_rutina").insert(payload).execute()
         if not resp.data:
@@ -100,20 +102,22 @@ class SupabaseSolicitudesRutinaRepository(SolicitudesRutinaRepository):
         )
         return [_row_a_solicitud(row) for row in (resp.data or [])]
 
-    def listar_todas(self) -> List[SolicitudRutina]:
+    def listar_todas(self, gimnasio_id: str) -> List[SolicitudRutina]:
         resp = (
             self._sb.table("solicitudes_rutina")
             .select(_COLUMNS)
+            .eq("gimnasio_id", gimnasio_id)
             .order("fecha_creacion", desc=True)
             .execute()
         )
         return [_row_a_solicitud(row) for row in (resp.data or [])]
 
-    def listar_pendientes(self) -> List[SolicitudRutina]:
+    def listar_pendientes(self, gimnasio_id: str) -> List[SolicitudRutina]:
         resp = (
             self._sb.table("solicitudes_rutina")
             .select(_COLUMNS)
             .eq("estado", "pendiente")
+            .eq("gimnasio_id", gimnasio_id)
             .order("fecha_creacion", desc=False)
             .execute()
         )

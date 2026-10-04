@@ -13,7 +13,7 @@ from app.extensions import get_supabase
 
 _COLS_RUTINA = (
     "id,alumno_id,titulo,grupos_musculares,profesor_id,profesor_nombre,"
-    "activa,fecha_creacion,fecha_modificacion"
+    "activa,fecha_creacion,fecha_modificacion,gimnasio_id"
 )
 _COLS_EJERCICIO = (
     "id,rutina_id,posicion,tipo,maquina_id,nombre_libre,descripcion_libre,"
@@ -44,6 +44,7 @@ def _row_a_rutina(row: dict, ejercicios: List[Ejercicio]) -> Rutina:
         titulo=row["titulo"],
         grupos_musculares=list(row.get("grupos_musculares") or []),
         alumno_id=row["alumno_id"],
+        gimnasio_id=row["gimnasio_id"],
         profesor_id=row.get("profesor_id"),
         profesor_nombre=row.get("profesor_nombre"),
         activa=row.get("activa", True),
@@ -154,6 +155,7 @@ class SupabaseRutinasRepository(RutinasRepository):
             "profesor_id": rutina.profesor_id,
             "profesor_nombre": rutina.profesor_nombre,
             "activa": rutina.activa,
+            "gimnasio_id": rutina.gimnasio_id,
         }
         resp = self._sb.table("rutinas").insert(rutina_row).execute()
         if not resp.data:
@@ -264,6 +266,7 @@ class SupabaseRutinasRepository(RutinasRepository):
             titulo=original.titulo,
             grupos_musculares=list(original.grupos_musculares),
             alumno_id=nuevo_alumno_id,
+            gimnasio_id=original.gimnasio_id,
             profesor_id=profesor["id"],
             profesor_nombre=profesor["nombre"],
             activa=True,

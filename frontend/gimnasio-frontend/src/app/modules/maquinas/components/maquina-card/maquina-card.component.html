@@ -4,15 +4,7 @@
   [attr.aria-label]="'Ver detalle de ' + maquina.nombre">
 
   <div class="maquina-card__thumb">
-    <img
-      *ngIf="tieneImagen"
-      [src]="maquina.imagen_url"
-      [alt]="maquina.nombre"
-      loading="lazy" />
-
-    <div *ngIf="!tieneImagen" class="maquina-card__thumb-placeholder" aria-hidden="true">
-      <i class="bi bi-image"></i>
-    </div>
+    <app-muscle-map [muscles]="maquina.grupos_musculares" [primaryOnly]="true"></app-muscle-map>
   </div>
 
   <div class="maquina-card__body">

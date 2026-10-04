@@ -52,6 +52,13 @@
   margin: 0;
 }
 
+.detalle__muscles-title {
+  margin: $space-4 0 $space-2;
+  color: $color-text-muted;
+  font-size: $fs-sm;
+  font-weight: $fw-semibold;
+}
+
 .spinner {
   width: 16px;
   height: 16px;

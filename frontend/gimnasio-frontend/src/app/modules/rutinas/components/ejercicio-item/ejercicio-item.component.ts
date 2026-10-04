@@ -10,6 +10,13 @@ export class EjercicioItemComponent {
 
   @Input() ejercicio!: Ejercicio;
   @Input() indice = 1;
+  @Input() routineMuscles: string[] = [];
+
+  get muscles(): string[] {
+    return this.esMaquina
+      ? (this.ejercicio?.maquina?.grupos_musculares ?? this.routineMuscles)
+      : this.routineMuscles;
+  }
 
   @Output() verDetalle = new EventEmitter<Ejercicio>();
 

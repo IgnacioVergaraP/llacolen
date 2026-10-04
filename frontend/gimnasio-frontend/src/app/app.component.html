@@ -4,6 +4,16 @@
 
   <div class="app-main">
 
+    <div class="app-gym-brand" *ngIf="gimnasioConfig$ | async as gym">
+      <img *ngIf="gym.logo_url; else gymFallback" [src]="gym.logo_url" alt="">
+      <ng-template #gymFallback>
+        <span class="app-gym-brand__mark" aria-hidden="true">
+          <i class="bi bi-building"></i>
+        </span>
+      </ng-template>
+      <span class="app-gym-brand__name">{{ gym.nombre }}</span>
+    </div>
+
     <!-- Banner: Estás en modo admin (admin viendo /admin en mobile) -->
     <div *ngIf="mostrarBannerAdmin$ | async" class="app-banner-modo app-banner-modo--admin">
       <div class="app-banner-modo__info">

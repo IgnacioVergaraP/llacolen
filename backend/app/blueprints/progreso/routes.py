@@ -24,7 +24,11 @@ def listar():
 def crear():
     data = request.get_json(silent=True) or {}
     payload = validar_crear_serie_payload(data)
-    resultado = services.crear_serie(g.usuario_actual.id, payload)
+    resultado = services.crear_serie(
+        g.usuario_actual.id,
+        g.usuario_actual.gimnasio_id,
+        payload,
+    )
     return created(resultado)
 
 

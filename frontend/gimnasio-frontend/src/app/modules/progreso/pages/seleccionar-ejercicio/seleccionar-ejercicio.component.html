@@ -83,8 +83,7 @@
       class="seleccionar__item"
       (click)="elegirMaquina(m)">
       <div class="seleccionar__item-thumb">
-        <img *ngIf="m.imagen_url" [src]="m.imagen_url" [alt]="m.nombre" loading="lazy" />
-        <i *ngIf="!m.imagen_url" class="bi bi-image" aria-hidden="true"></i>
+        <app-muscle-map [muscles]="m.grupos_musculares" [primaryOnly]="true" [compact]="true"></app-muscle-map>
       </div>
       <div class="seleccionar__item-body">
         <p class="seleccionar__item-nombre">{{ m.nombre }}</p>

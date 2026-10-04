@@ -35,20 +35,20 @@ def _es_alumno(usuario) -> bool:
     return usuario is not None and usuario.rol == "alumno" and usuario.activo
 
 
-def _todos_los_alumnos():
-    return [u for u in _usuarios_repo.listar_todos() if _es_alumno(u)]
+def _todos_los_alumnos(gimnasio_id: str):
+    return [u for u in _usuarios_repo.listar_por_gimnasio(gimnasio_id) if _es_alumno(u)]
 
 
-def _todos_los_profesores():
-    return [u for u in _usuarios_repo.listar_todos() if u.rol in ("profesor", "gimnasio") and u.activo]
+def _todos_los_profesores(gimnasio_id: str):
+    return [u for u in _usuarios_repo.listar_por_gimnasio(gimnasio_id) if u.rol in ("profesor", "gimnasio") and u.activo]
 
 
 # ============================================================
 # Dashboard
 # ============================================================
 
-def obtener_dashboard() -> dict:
-    alumnos = _todos_los_alumnos()
+def obtener_dashboard(gimnasio_id: str) -> dict:
+    alumnos = _todos_los_alumnos(gimnasio_id)
     total = len(alumnos)
     hoy = datetime.now(timezone.utc).date()
     hace_7 = hoy - timedelta(days=7)
@@ -73,9 +73,9 @@ def obtener_dashboard() -> dict:
     return {
         "alumnos_activos_semana": activos,
         "alumnos_total": total,
-        "solicitudes_pendientes": len(_solicitudes_repo.listar_pendientes()),
-        "reportes_abiertos": len([r for r in _reportes_repo.listar_todos() if r.estado in ("abierto", "en_revision")]),
-        "solicitudes_rutina_pendientes": len(_solicitudes_rutina_repo.listar_pendientes()),
+        "solicitudes_pendientes": len(_solicitudes_repo.listar_pendientes(gimnasio_id)),
+        "reportes_abiertos": len([r for r in _reportes_repo.listar_todos(gimnasio_id) if r.estado in ("abierto", "en_revision")]),
+        "solicitudes_rutina_pendientes": len(_solicitudes_rutina_repo.listar_pendientes(gimnasio_id)),
     }
 
 
@@ -83,8 +83,8 @@ def obtener_dashboard() -> dict:
 # Alumnos
 # ============================================================
 
-def listar_alumnos() -> List[dict]:
-    alumnos = _todos_los_alumnos()
+def listar_alumnos(gimnasio_id: str) -> List[dict]:
+    alumnos = _todos_los_alumnos(gimnasio_id)
     alumnos.sort(key=lambda u: u.nombre.lower())
     return [
         {"id": u.id, "nombre": u.nombre, "email": u.email, "imagen_url": u.imagen_url}
@@ -92,8 +92,8 @@ def listar_alumnos() -> List[dict]:
     ]
 
 
-def listar_profesores_disponibles() -> List[dict]:
-    profes = _todos_los_profesores()
+def listar_profesores_disponibles(gimnasio_id: str) -> List[dict]:
+    profes = _todos_los_profesores(gimnasio_id)
     profes.sort(key=lambda u: u.nombre.lower())
     return [
         {
@@ -106,18 +106,18 @@ def listar_profesores_disponibles() -> List[dict]:
     ]
 
 
-def obtener_perfil_alumno(alumno_id: str, rol_solicitante: str) -> dict:
-    usuario = _usuarios_repo.find_by_id(alumno_id)
+def obtener_perfil_alumno(alumno_id: str, rol_solicitante: str, gimnasio_id: str) -> dict:
+    usuario = _usuarios_repo.find_by_id(alumno_id, gimnasio_id)
     if not _es_alumno(usuario):
         raise AuthError(404, "NotFound", f"No existe un alumno con id '{alumno_id}'.")
     return {
-        "perfil": usuario_services.obtener_perfil_por_id(alumno_id, rol_solicitante),
+        "perfil": usuario_services.obtener_perfil_por_id(alumno_id, rol_solicitante, gimnasio_id),
         "resumen": usuario_services.obtener_resumen_por_id(alumno_id),
     }
 
 
-def obtener_progreso_alumno(alumno_id: str) -> dict:
-    usuario = _usuarios_repo.find_by_id(alumno_id)
+def obtener_progreso_alumno(alumno_id: str, gimnasio_id: str) -> dict:
+    usuario = _usuarios_repo.find_by_id(alumno_id, gimnasio_id)
     if not _es_alumno(usuario):
         raise AuthError(404, "NotFound", f"No existe un alumno con id '{alumno_id}'.")
 
@@ -134,7 +134,7 @@ def obtener_progreso_alumno(alumno_id: str) -> dict:
 
 def editar_datos_alumno(profesor, alumno_id: str, payload: dict) -> dict:
     """Edición de datos del alumno por parte del profesor (peso, % grasa, notas)."""
-    usuario = _usuarios_repo.find_by_id(alumno_id)
+    usuario = _usuarios_repo.find_by_id(alumno_id, profesor.gimnasio_id)
     if not _es_alumno(usuario):
         raise AuthError(404, "NotFound", f"No existe un alumno con id '{alumno_id}'.")
 
@@ -171,22 +171,26 @@ def listar_rutinas_del_profesor(profesor_id: str, incluir_inactivas: bool = Fals
     return [r.to_dict() for r in rutinas]
 
 
-def listar_rutinas_de_alumno(alumno_id: str, incluir_inactivas: bool = False) -> List[dict]:
-    usuario = _usuarios_repo.find_by_id(alumno_id)
+def listar_rutinas_de_alumno(
+    alumno_id: str,
+    gimnasio_id: str,
+    incluir_inactivas: bool = False,
+) -> List[dict]:
+    usuario = _usuarios_repo.find_by_id(alumno_id, gimnasio_id)
     if not _es_alumno(usuario):
         raise AuthError(404, "NotFound", f"No existe un alumno con id '{alumno_id}'.")
     return rutinas_services.listar_rutinas_por_alumno_id(alumno_id, incluir_inactivas=incluir_inactivas)
 
 
-def obtener_rutina_para_profesor(rutina_id: str) -> dict:
-    data = rutinas_services.obtener_rutina_resuelta(rutina_id)
+def obtener_rutina_para_profesor(rutina_id: str, gimnasio_id: str) -> dict:
+    data = rutinas_services.obtener_rutina_resuelta(rutina_id, gimnasio_id)
     if not data:
         raise AuthError(404, "NotFound", f"No existe una rutina con id '{rutina_id}'.")
     return data
 
 
 def crear_rutina(profesor, payload: dict) -> dict:
-    alumno = _usuarios_repo.find_by_id(payload["alumno_id"])
+    alumno = _usuarios_repo.find_by_id(payload["alumno_id"], profesor.gimnasio_id)
     if not _es_alumno(alumno):
         raise AuthError(400, "InvalidAlumno", f"No existe un alumno con id '{payload['alumno_id']}'.")
 
@@ -209,6 +213,7 @@ def crear_rutina(profesor, payload: dict) -> dict:
         titulo=payload["titulo"],
         grupos_musculares=payload["grupos_musculares"],
         alumno_id=payload["alumno_id"],
+        gimnasio_id=profesor.gimnasio_id,
         profesor_id=profesor.id,
         profesor_nombre=profesor.nombre,
         activa=True,
@@ -281,12 +286,12 @@ def reactivar_rutina(profesor, rutina_id: str) -> dict:
 
 
 def duplicar_rutina(profesor, rutina_id: str, nuevo_alumno_id: str) -> dict:
-    nuevo_alumno = _usuarios_repo.find_by_id(nuevo_alumno_id)
+    nuevo_alumno = _usuarios_repo.find_by_id(nuevo_alumno_id, profesor.gimnasio_id)
     if not _es_alumno(nuevo_alumno):
         raise AuthError(400, "InvalidAlumno", f"No existe un alumno con id '{nuevo_alumno_id}'.")
 
     original = _rutinas_repo.find_by_id(rutina_id)
-    if not original:
+    if not original or original.gimnasio_id != profesor.gimnasio_id:
         raise AuthError(404, "NotFound", f"No existe una rutina con id '{rutina_id}'.")
 
     nueva = _rutinas_repo.duplicar(
@@ -303,7 +308,7 @@ def _maquinas_dict_para(rutina: Rutina) -> dict:
     maquinas_por_id = {}
     for ej in rutina.ejercicios:
         if ej.tipo == "maquina" and ej.maquina_id:
-            m = _maquinas_repo.find_by_id(ej.maquina_id)
+            m = _maquinas_repo.find_by_id(ej.maquina_id, rutina.gimnasio_id)
             if m:
                 maquinas_por_id[m.id] = m
     return maquinas_por_id
@@ -319,6 +324,7 @@ def crear_solicitud(profesor, payload: dict) -> dict:
         tipo_solicitud="crear",
         estado="pendiente",
         solicitante_id=profesor.id,
+        gimnasio_id=profesor.gimnasio_id,
         solicitante_nombre=profesor.nombre,
         nombre=payload["nombre"],
         grupos_musculares=payload["grupos_musculares"],
@@ -336,9 +342,13 @@ def listar_mis_solicitudes(profesor_id: str) -> List[dict]:
     return [s.to_dict() for s in _solicitudes_repo.listar_por_solicitante(profesor_id)]
 
 
-def cancelar_solicitud(profesor_id: str, solicitud_id: str) -> dict:
+def cancelar_solicitud(profesor, solicitud_id: str) -> dict:
     solicitud = _solicitudes_repo.find_by_id(solicitud_id)
-    if not solicitud or solicitud.solicitante_id != profesor_id:
+    if (
+        not solicitud
+        or solicitud.solicitante_id != profesor.id
+        or solicitud.gimnasio_id != profesor.gimnasio_id
+    ):
         raise AuthError(404, "NotFound", f"No existe una solicitud con id '{solicitud_id}'.")
     if solicitud.estado != "pendiente":
         raise AuthError(400, "InvalidState", "Solo se pueden cancelar solicitudes pendientes.")
@@ -352,17 +362,17 @@ def cancelar_solicitud(profesor_id: str, solicitud_id: str) -> dict:
     return actualizada.to_dict()
 
 
-def listar_pendientes() -> List[dict]:
-    return [s.to_dict() for s in _solicitudes_repo.listar_pendientes()]
+def listar_pendientes(gimnasio_id: str) -> List[dict]:
+    return [s.to_dict() for s in _solicitudes_repo.listar_pendientes(gimnasio_id)]
 
 
-def contar_pendientes() -> dict:
-    return {"count": len(_solicitudes_repo.listar_pendientes())}
+def contar_pendientes(gimnasio_id: str) -> dict:
+    return {"count": len(_solicitudes_repo.listar_pendientes(gimnasio_id))}
 
 
 def aprobar_solicitud(admin, solicitud_id: str) -> dict:
     solicitud = _solicitudes_repo.find_by_id(solicitud_id)
-    if not solicitud:
+    if not solicitud or solicitud.gimnasio_id != admin.gimnasio_id:
         raise AuthError(404, "NotFound", f"No existe una solicitud con id '{solicitud_id}'.")
     if solicitud.estado != "pendiente":
         raise AuthError(400, "InvalidState", "Solo se pueden aprobar solicitudes pendientes.")
@@ -372,6 +382,7 @@ def aprobar_solicitud(admin, solicitud_id: str) -> dict:
             nombre=solicitud.nombre,
             grupos_musculares=solicitud.grupos_musculares,
             descripcion=solicitud.descripcion,
+            gimnasio_id=solicitud.gimnasio_id,
             video_url=solicitud.video_url,
             imagen_url=solicitud.imagen_url,
         )
@@ -396,7 +407,7 @@ def aprobar_solicitud(admin, solicitud_id: str) -> dict:
 
 def rechazar_solicitud(admin, solicitud_id: str, motivo: str) -> dict:
     solicitud = _solicitudes_repo.find_by_id(solicitud_id)
-    if not solicitud:
+    if not solicitud or solicitud.gimnasio_id != admin.gimnasio_id:
         raise AuthError(404, "NotFound", f"No existe una solicitud con id '{solicitud_id}'.")
     if solicitud.estado != "pendiente":
         raise AuthError(400, "InvalidState", "Solo se pueden rechazar solicitudes pendientes.")
@@ -428,7 +439,7 @@ def crear_reporte(profesor, payload: dict) -> dict:
     maquina_id = payload.get("maquina_id")
     maquina_nombre = None
     if maquina_id:
-        maquina = _maquinas_repo.find_by_id(maquina_id)
+        maquina = _maquinas_repo.find_by_id(maquina_id, profesor.gimnasio_id)
         if not maquina:
             raise AuthError(400, "InvalidMaquina", f"No existe una máquina con id '{maquina_id}'.")
         maquina_nombre = maquina.nombre
@@ -436,6 +447,7 @@ def crear_reporte(profesor, payload: dict) -> dict:
         id="", estado="abierto", tipo=payload["tipo"], prioridad=payload["prioridad"],
         descripcion=payload["descripcion"], reportante_id=profesor.id,
         reportante_nombre=profesor.nombre, maquina_id=maquina_id,
+        gimnasio_id=profesor.gimnasio_id,
         maquina_nombre=maquina_nombre, foto_url=payload.get("foto_url"),
     )
     creado = _reportes_repo.crear(reporte)
@@ -448,9 +460,13 @@ def listar_mis_reportes(profesor_id: str) -> List[dict]:
     return [r.to_dict() for r in _reportes_repo.listar_por_reportante(profesor_id)]
 
 
-def cancelar_reporte(profesor_id: str, reporte_id: str) -> dict:
+def cancelar_reporte(profesor, reporte_id: str) -> dict:
     reporte = _reportes_repo.find_by_id(reporte_id)
-    if not reporte or reporte.reportante_id != profesor_id:
+    if (
+        not reporte
+        or reporte.reportante_id != profesor.id
+        or reporte.gimnasio_id != profesor.gimnasio_id
+    ):
         raise AuthError(404, "NotFound", f"No existe un reporte con id '{reporte_id}'.")
     if reporte.estado != "abierto":
         raise AuthError(400, "InvalidState", "Solo se pueden cancelar reportes en estado 'abierto'.")
@@ -464,12 +480,12 @@ def cancelar_reporte(profesor_id: str, reporte_id: str) -> dict:
     return actualizado.to_dict()
 
 
-def listar_todos_reportes() -> List[dict]:
-    return [r.to_dict() for r in _reportes_repo.listar_todos()]
+def listar_todos_reportes(gimnasio_id: str) -> List[dict]:
+    return [r.to_dict() for r in _reportes_repo.listar_todos(gimnasio_id)]
 
 
-def contar_reportes() -> dict:
-    todos = _reportes_repo.listar_todos()
+def contar_reportes(gimnasio_id: str) -> dict:
+    todos = _reportes_repo.listar_todos(gimnasio_id)
     abiertos = len([r for r in todos if r.estado == "abierto"])
     en_revision = len([r for r in todos if r.estado == "en_revision"])
     resueltos = len([r for r in todos if r.estado == "resuelto"])
@@ -483,7 +499,7 @@ def contar_reportes() -> dict:
 
 def marcar_reporte_en_revision(admin, reporte_id: str) -> dict:
     reporte = _reportes_repo.find_by_id(reporte_id)
-    if not reporte:
+    if not reporte or reporte.gimnasio_id != admin.gimnasio_id:
         raise AuthError(404, "NotFound", f"No existe un reporte con id '{reporte_id}'.")
     if reporte.estado != "abierto":
         raise AuthError(400, "InvalidState", "Solo se pueden marcar en revisión reportes en estado 'abierto'.")
@@ -501,7 +517,7 @@ def marcar_reporte_en_revision(admin, reporte_id: str) -> dict:
 
 def resolver_reporte(admin, reporte_id: str, resolucion: str | None) -> dict:
     reporte = _reportes_repo.find_by_id(reporte_id)
-    if not reporte:
+    if not reporte or reporte.gimnasio_id != admin.gimnasio_id:
         raise AuthError(404, "NotFound", f"No existe un reporte con id '{reporte_id}'.")
     if reporte.estado not in ("abierto", "en_revision"):
         raise AuthError(400, "InvalidState", "Solo se pueden resolver reportes abiertos o en revisión.")
@@ -546,14 +562,14 @@ def crear_solicitud_rutina(alumno, payload: dict) -> dict:
     profesor_preferido_id = payload.get("profesor_preferido_id")
     profesor_preferido_nombre = None
     if profesor_preferido_id:
-        profe = _usuarios_repo.find_by_id(profesor_preferido_id)
+        profe = _usuarios_repo.find_by_id(profesor_preferido_id, alumno.gimnasio_id)
         if not profe or profe.rol not in ("profesor", "gimnasio"):
             raise AuthError(400, "InvalidProfesor", f"No existe un profesor con id '{profesor_preferido_id}'.")
         profesor_preferido_nombre = profe.nombre
 
     solicitud = SolicitudRutina(
         id="", estado="pendiente", alumno_id=alumno.id, alumno_nombre=alumno.nombre,
-        objetivo=payload["objetivo"], dias_por_semana=payload["dias_por_semana"],
+        objetivo=payload["objetivo"], dias_por_semana=payload["dias_por_semana"], gimnasio_id=alumno.gimnasio_id,
         comentarios=payload.get("comentarios"), grupos_interes=payload.get("grupos_interes"),
         profesor_preferido_id=profesor_preferido_id, profesor_preferido_nombre=profesor_preferido_nombre,
     )
@@ -567,9 +583,13 @@ def listar_mis_solicitudes_rutina(alumno_id: str) -> List[dict]:
     return [s.to_dict() for s in _solicitudes_rutina_repo.listar_por_alumno(alumno_id)]
 
 
-def cancelar_solicitud_rutina(alumno_id: str, solicitud_id: str) -> dict:
+def cancelar_solicitud_rutina(alumno, solicitud_id: str) -> dict:
     solicitud = _solicitudes_rutina_repo.find_by_id(solicitud_id)
-    if not solicitud or solicitud.alumno_id != alumno_id:
+    if (
+        not solicitud
+        or solicitud.alumno_id != alumno.id
+        or solicitud.gimnasio_id != alumno.gimnasio_id
+    ):
         raise AuthError(404, "NotFound", f"No existe una solicitud con id '{solicitud_id}'.")
     if solicitud.estado not in ("pendiente", "en_proceso"):
         raise AuthError(400, "InvalidState", "Solo se pueden cancelar solicitudes pendientes o en proceso.")
@@ -584,7 +604,7 @@ def cancelar_solicitud_rutina(alumno_id: str, solicitud_id: str) -> dict:
 
 
 def listar_solicitudes_rutina_disponibles(profesor) -> List[dict]:
-    pendientes = _solicitudes_rutina_repo.listar_pendientes()
+    pendientes = _solicitudes_rutina_repo.listar_pendientes(profesor.gimnasio_id)
     result = []
     for s in pendientes:
         if s.profesor_preferido_id is None or s.profesor_preferido_id == profesor.id:
@@ -596,12 +616,12 @@ def listar_mis_solicitudes_rutina_como_profesor(profesor_id: str) -> List[dict]:
     return [s.to_dict() for s in _solicitudes_rutina_repo.listar_por_profesor(profesor_id)]
 
 
-def listar_todas_solicitudes_rutina() -> List[dict]:
-    return [s.to_dict() for s in _solicitudes_rutina_repo.listar_todas()]
+def listar_todas_solicitudes_rutina(gimnasio_id: str) -> List[dict]:
+    return [s.to_dict() for s in _solicitudes_rutina_repo.listar_todas(gimnasio_id)]
 
 
-def listar_solicitudes_rutina_de_alumno(alumno_id: str) -> List[dict]:
-    usuario = _usuarios_repo.find_by_id(alumno_id)
+def listar_solicitudes_rutina_de_alumno(alumno_id: str, gimnasio_id: str) -> List[dict]:
+    usuario = _usuarios_repo.find_by_id(alumno_id, gimnasio_id)
     if not _es_alumno(usuario):
         raise AuthError(404, "NotFound", f"No existe un alumno con id '{alumno_id}'.")
     return [s.to_dict() for s in _solicitudes_rutina_repo.listar_por_alumno(alumno_id)]
@@ -609,7 +629,7 @@ def listar_solicitudes_rutina_de_alumno(alumno_id: str) -> List[dict]:
 
 def tomar_solicitud_rutina(profesor, solicitud_id: str) -> dict:
     solicitud = _solicitudes_rutina_repo.find_by_id(solicitud_id)
-    if not solicitud:
+    if not solicitud or solicitud.gimnasio_id != profesor.gimnasio_id:
         raise AuthError(404, "NotFound", f"No existe una solicitud con id '{solicitud_id}'.")
     if solicitud.estado != "pendiente":
         raise AuthError(400, "InvalidState", "Solo se pueden tomar solicitudes pendientes.")
@@ -629,7 +649,7 @@ def tomar_solicitud_rutina(profesor, solicitud_id: str) -> dict:
 
 def resolver_solicitud_rutina(profesor, solicitud_id: str, mensaje: str, rutina_id: str | None) -> dict:
     solicitud = _solicitudes_rutina_repo.find_by_id(solicitud_id)
-    if not solicitud:
+    if not solicitud or solicitud.gimnasio_id != profesor.gimnasio_id:
         raise AuthError(404, "NotFound", f"No existe una solicitud con id '{solicitud_id}'.")
     if solicitud.profesor_id != profesor.id:
         raise AuthError(403, "Forbidden", "Solo el profesor que tomó la solicitud puede resolverla.")
@@ -649,7 +669,7 @@ def resolver_solicitud_rutina(profesor, solicitud_id: str, mensaje: str, rutina_
 
 def rechazar_solicitud_rutina(profesor, solicitud_id: str, motivo: str) -> dict:
     solicitud = _solicitudes_rutina_repo.find_by_id(solicitud_id)
-    if not solicitud:
+    if not solicitud or solicitud.gimnasio_id != profesor.gimnasio_id:
         raise AuthError(404, "NotFound", f"No existe una solicitud con id '{solicitud_id}'.")
     if solicitud.profesor_id != profesor.id:
         raise AuthError(403, "Forbidden", "Solo el profesor que tomó la solicitud puede rechazarla.")
@@ -668,7 +688,7 @@ def rechazar_solicitud_rutina(profesor, solicitud_id: str, motivo: str) -> dict:
 
 def solicitar_liberacion(profesor, solicitud_id: str) -> dict:
     solicitud = _solicitudes_rutina_repo.find_by_id(solicitud_id)
-    if not solicitud:
+    if not solicitud or solicitud.gimnasio_id != profesor.gimnasio_id:
         raise AuthError(404, "NotFound", f"No existe una solicitud con id '{solicitud_id}'.")
     if solicitud.profesor_id != profesor.id:
         raise AuthError(403, "Forbidden", "Solo el profesor que tomó la solicitud puede pedir liberación.")
@@ -686,8 +706,8 @@ def solicitar_liberacion(profesor, solicitud_id: str) -> dict:
     return actualizada.to_dict()
 
 
-def listar_liberaciones_pendientes() -> List[dict]:
-    todos = _solicitudes_rutina_repo.listar_todas()
+def listar_liberaciones_pendientes(gimnasio_id: str) -> List[dict]:
+    todos = _solicitudes_rutina_repo.listar_todas(gimnasio_id)
     return [
         s.to_dict() for s in todos
         if s.estado == "en_proceso" and s.estado_liberacion == "solicitada"
@@ -696,7 +716,7 @@ def listar_liberaciones_pendientes() -> List[dict]:
 
 def aprobar_liberacion(admin, solicitud_id: str) -> dict:
     solicitud = _solicitudes_rutina_repo.find_by_id(solicitud_id)
-    if not solicitud:
+    if not solicitud or solicitud.gimnasio_id != admin.gimnasio_id:
         raise AuthError(404, "NotFound", f"No existe una solicitud con id '{solicitud_id}'.")
     if solicitud.estado != "en_proceso" or solicitud.estado_liberacion != "solicitada":
         raise AuthError(400, "InvalidState", "La solicitud no tiene una liberación pendiente.")
@@ -717,7 +737,7 @@ def aprobar_liberacion(admin, solicitud_id: str) -> dict:
 
 def rechazar_liberacion(admin, solicitud_id: str, motivo: str) -> dict:
     solicitud = _solicitudes_rutina_repo.find_by_id(solicitud_id)
-    if not solicitud:
+    if not solicitud or solicitud.gimnasio_id != admin.gimnasio_id:
         raise AuthError(404, "NotFound", f"No existe una solicitud con id '{solicitud_id}'.")
     if solicitud.estado != "en_proceso" or solicitud.estado_liberacion != "solicitada":
         raise AuthError(400, "InvalidState", "La solicitud no tiene una liberación pendiente.")
@@ -736,7 +756,7 @@ def rechazar_liberacion(admin, solicitud_id: str, motivo: str) -> dict:
 # Horarios
 # ============================================================
 
-def listar_mis_horarios(profesor_id: str) -> List[dict]:
+def listar_mis_horarios(profesor_id: str, gimnasio_id: str) -> List[dict]:
     """Horarios del profesor autenticado."""
     from app.blueprints.admin import services as admin_services
-    return admin_services.listar_horarios(profesor_id)
+    return admin_services.listar_horarios(gimnasio_id, profesor_id)

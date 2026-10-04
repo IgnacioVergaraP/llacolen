@@ -21,6 +21,7 @@ import { SolicitudCardComponent } from './components/solicitud-card/solicitud-ca
 import { ReporteCardComponent } from './components/reporte-card/reporte-card.component';
 import { SolicitudRutinaCardComponent } from './components/solicitud-rutina-card/solicitud-rutina-card.component';
 import { CalendarioListaComponent } from './components/calendario-lista/calendario-lista.component';
+import { MuscleMapComponent } from './components/muscle-map/muscle-map.component';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import { CalendarioListaComponent } from './components/calendario-lista/calendar
     ReporteCardComponent,
     SolicitudRutinaCardComponent,
     CalendarioListaComponent,
+    MuscleMapComponent,
   ],
   imports: [
     CommonModule,
@@ -62,6 +64,7 @@ import { CalendarioListaComponent } from './components/calendario-lista/calendar
     ReporteCardComponent,
     SolicitudRutinaCardComponent,
     CalendarioListaComponent,
+    MuscleMapComponent,
   ],
 })
 export class SharedModule {}

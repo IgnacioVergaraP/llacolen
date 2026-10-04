@@ -4,12 +4,14 @@ import { Subject, combineLatest } from 'rxjs';
 import { filter, startWith, takeUntil } from 'rxjs/operators';
 
 import { AuthService } from '../../../modules/auth/services/auth.service';
+import { GimnasioConfigService } from '../../../core/services/gimnasio-config.service';
 import { UserRole } from '../../../shared/models/user.model';
 
 interface NavItem {
   label: string;
   icon: string;
   route: string;
+  gimnasioTab?: string;
   action?: 'mas';      // para diferenciar el tab "Más" que no navega
 }
 
@@ -28,10 +30,10 @@ export class BottomNavComponent implements OnInit, OnDestroy {
   private readonly destroy$ = new Subject<void>();
 
   private readonly navAlumno: NavItem[] = [
-    { label: 'Máquinas', icon: 'bi-grid',         route: '/maquinas' },
-    { label: 'Rutina',   icon: 'bi-list-check',   route: '/rutinas'  },
-    { label: 'Progreso', icon: 'bi-graph-up',     route: '/progreso' },
-    { label: 'Usuario',  icon: 'bi-person',       route: '/usuario'  },
+    { label: 'Máquinas', icon: 'bi-grid',         route: '/maquinas', gimnasioTab: 'maquinas' },
+    { label: 'Rutina',   icon: 'bi-list-check',   route: '/rutinas', gimnasioTab: 'rutinas' },
+    { label: 'Progreso', icon: 'bi-graph-up',     route: '/progreso', gimnasioTab: 'progreso' },
+    { label: 'Usuario',  icon: 'bi-person',       route: '/usuario', gimnasioTab: 'usuario' },
   ];
 
   private readonly navProfesor: NavItem[] = [
@@ -53,6 +55,7 @@ export class BottomNavComponent implements OnInit, OnDestroy {
 
   constructor(
     private auth: AuthService,
+    private gimnasioConfig: GimnasioConfigService,
     private router: Router,
   ) {}
 
@@ -62,9 +65,9 @@ export class BottomNavComponent implements OnInit, OnDestroy {
       startWith(null),
     );
 
-    combineLatest([navEnd$, this.auth.usuario$])
+    combineLatest([navEnd$, this.auth.usuario$, this.gimnasioConfig.config$])
       .pipe(takeUntil(this.destroy$))
-      .subscribe(() => this.actualizarItems());
+      .subscribe(([, , config]) => this.actualizarItems(config?.tabs_habilitadas ?? []));
   }
 
   ngOnDestroy(): void {
@@ -93,7 +96,7 @@ export class BottomNavComponent implements OnInit, OnDestroy {
     setTimeout(() => this.auth.logout(true), 150);
   }
 
-  private actualizarItems(): void {
+  private actualizarItems(tabsHabilitadas: string[]): void {
     const rol: UserRole | null = this.auth.usuarioActual?.rol ?? null;
     const url = this.router.url;
 
@@ -102,7 +105,9 @@ export class BottomNavComponent implements OnInit, OnDestroy {
     } else if (rol === 'profesor') {
       this.items = this.navProfesor;
     } else {
-      this.items = this.navAlumno;
+      this.items = tabsHabilitadas.length
+        ? this.navAlumno.filter(item => !item.gimnasioTab || tabsHabilitadas.includes(item.gimnasioTab))
+        : this.navAlumno;
     }
   }
 }

@@ -43,8 +43,8 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
 
-  color: $color-primary;
-  background: $color-primary-soft;
+  color: var(--color-primary, #{$color-primary});
+  background: var(--color-primary-soft, #{$color-primary-soft});
   border-radius: $radius-full;
   padding: 2px 8px;
 }

@@ -3,6 +3,7 @@ export type TipoEjercicio = 'maquina' | 'libre';
 export interface MaquinaResumen {
   id: string;
   nombre: string;
+  grupos_musculares: string[];
   imagen_url: string;
   descripcion: string;
   video_url: string;

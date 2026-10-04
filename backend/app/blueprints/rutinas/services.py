@@ -15,9 +15,9 @@ def listar_rutinas(alumno_id: str, incluir_inactivas: bool = False) -> List[dict
     return [r.to_dict() for r in rutinas]
 
 
-def obtener_rutina(rutina_id: str, alumno_id: str) -> dict:
+def obtener_rutina(rutina_id: str, alumno_id: str, gimnasio_id: str) -> dict:
     rutina = _rutinas_repo.find_by_id(rutina_id)
-    if not rutina or rutina.alumno_id != alumno_id:
+    if not rutina or rutina.alumno_id != alumno_id or rutina.gimnasio_id != gimnasio_id:
         raise AuthError(
             404, "NotFound",
             f"No existe una rutina con id '{rutina_id}' para este usuario.",
@@ -26,7 +26,7 @@ def obtener_rutina(rutina_id: str, alumno_id: str) -> dict:
     maquinas_por_id = {}
     for ej in rutina.ejercicios:
         if ej.tipo == "maquina" and ej.maquina_id:
-            m = _maquinas_repo.find_by_id(ej.maquina_id)
+            m = _maquinas_repo.find_by_id(ej.maquina_id, rutina.gimnasio_id)
             if m:
                 maquinas_por_id[m.id] = m
 
@@ -39,19 +39,19 @@ def listar_rutinas_por_alumno_id(alumno_id: str, incluir_inactivas: bool = False
     return listar_rutinas(alumno_id, incluir_inactivas=incluir_inactivas)
 
 
-def obtener_rutina_resuelta(rutina_id: str) -> dict | None:
+def obtener_rutina_resuelta(rutina_id: str, gimnasio_id: str) -> dict | None:
     """
     Devuelve la rutina resuelta con datos de máquinas, sin chequear pertenencia.
     Usado desde el panel del profesor. Devuelve None si no existe.
     """
     rutina = _rutinas_repo.find_by_id(rutina_id)
-    if not rutina:
+    if not rutina or rutina.gimnasio_id != gimnasio_id:
         return None
 
     maquinas_por_id = {}
     for ej in rutina.ejercicios:
         if ej.tipo == "maquina" and ej.maquina_id:
-            m = _maquinas_repo.find_by_id(ej.maquina_id)
+            m = _maquinas_repo.find_by_id(ej.maquina_id, rutina.gimnasio_id)
             if m:
                 maquinas_por_id[m.id] = m
 

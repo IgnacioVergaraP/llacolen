@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, g, request
 
 from app.utils.responses import ok
 from app.utils.security.decorators import requiere_auth
@@ -12,10 +12,10 @@ bp = Blueprint("maquinas", __name__)
 @requiere_auth
 def listar():
     musculo = validar_query_musculo(request.args.get("musculo"))
-    return ok(services.listar_maquinas(musculo))
+    return ok(services.listar_maquinas(g.usuario_actual.gimnasio_id, musculo))
 
 
 @bp.get("/<maquina_id>")
 @requiere_auth
 def detalle(maquina_id: str):
-    return ok(services.obtener_maquina(maquina_id))
+    return ok(services.obtener_maquina(maquina_id, g.usuario_actual.gimnasio_id))

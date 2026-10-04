@@ -33,6 +33,7 @@
         *ngFor="let e of rutina.ejercicios; let i = index; trackBy: trackByEjercicio"
         [ejercicio]="e"
         [indice]="i + 1"
+        [routineMuscles]="rutina.grupos_musculares"
         (verDetalle)="abrirSheet($event)">
       </app-ejercicio-item>
     </div>
@@ -83,6 +84,8 @@
       <p *ngIf="!sheetDescripcion" class="rutina-detalle__sheet-text rutina-detalle__sheet-text--muted">
         Este ejercicio no tiene descripción.
       </p>
+      <h4 class="rutina-detalle__sheet-muscles-title">Músculos trabajados</h4>
+      <app-muscle-map [muscles]="sheetMuscles"></app-muscle-map>
     </section>
 
     <div class="rutina-detalle__sheet-actions">

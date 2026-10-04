@@ -107,14 +107,14 @@
     <div class="srs__field">
       <label class="srs__label">Objetivo</label>
       <div class="srs__chips">
-        <button
-          *ngFor="let o of objetivos"
-          type="button"
-          class="srs__chip"
-          [class.srs__chip--active]="objetivoSeleccionado === o.value"
-          (click)="seleccionarObjetivo(o.value)">
-          {{ o.label }}
-        </button>
+         <button
+           *ngFor="let o of objetivos"
+           type="button"
+           class="srs__chip ui-choice-chip"
+           [class.ui-choice-chip--active]="objetivoSeleccionado === o.value"
+           (click)="seleccionarObjetivo(o.value)">
+           {{ o.label }}
+         </button>
       </div>
     </div>
 

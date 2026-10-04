@@ -1,6 +1,7 @@
 """
 Implementación mock del repositorio de progreso.
 """
+from copy import deepcopy
 from typing import List, Optional
 from datetime import datetime, timedelta
 from app.domain.models import RegistroSerie
@@ -26,6 +27,7 @@ def _agregar(alumno_id, dias_atras, tipo, peso, reps, num, maquina=None, libre=N
             numero_serie=num,
             peso=peso,
             repeticiones=reps,
+            gimnasio_id="mock-gym",
             maquina_id=maquina,
             nombre_libre=libre,
             rutina_id=rutina,
@@ -90,8 +92,7 @@ _agregar("u-alu-004", 6, "maquina", "corporal", "35 segundos", 2, maquina="mq-01
 class MockProgresoRepository(ProgresoRepository):
 
     def __init__(self):
-        # Lista compartida a nivel módulo: los cambios persisten entre instancias.
-        self._registros: List[RegistroSerie] = _REGISTROS_MOCK
+        self._registros: List[RegistroSerie] = deepcopy(_REGISTROS_MOCK)
 
     def _calcular_next_num(self) -> int:
         max_n = 0

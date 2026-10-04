@@ -1,6 +1,7 @@
 """
 Implementación mock del repositorio de reportes.
 """
+from copy import deepcopy
 from datetime import datetime, timezone, timedelta
 from typing import List, Optional
 from app.domain.models import Reporte
@@ -26,6 +27,7 @@ _REPORTES_INICIALES: List[Reporte] = [
         descripcion="La polea del jalón al pecho hace un ruido fuerte y se traba al subir. Puede lastimar a alguien.",
         reportante_id="u-pro-001",
         reportante_nombre="Prof. Martínez",
+        gimnasio_id="mock-gym",
         maquina_id="mq-004",
         maquina_nombre="Jalón al pecho en polea",
         fecha_creacion=_hace_dias(1),
@@ -38,6 +40,7 @@ _REPORTES_INICIALES: List[Reporte] = [
         descripcion="Falta el agarre de la mancuerna del curl de bíceps.",
         reportante_id="u-pro-001",
         reportante_nombre="Prof. Martínez",
+        gimnasio_id="mock-gym",
         maquina_id="mq-009",
         maquina_nombre="Curl de bíceps con mancuernas",
         resolucion="Se repuso el agarre faltante.",
@@ -52,8 +55,7 @@ _REPORTES_INICIALES: List[Reporte] = [
 class MockReportesRepository(ReportesRepository):
 
     def __init__(self):
-        # Lista compartida a nivel módulo: los cambios persisten entre instancias.
-        self._reportes: List[Reporte] = _REPORTES_INICIALES
+        self._reportes: List[Reporte] = deepcopy(_REPORTES_INICIALES)
 
     def _calcular_next_num(self) -> int:
         max_n = 0
@@ -86,8 +88,8 @@ class MockReportesRepository(ReportesRepository):
         result.sort(key=lambda r: r.fecha_creacion, reverse=True)
         return result
 
-    def listar_todos(self) -> List[Reporte]:
-        result = list(self._reportes)
+    def listar_todos(self, gimnasio_id: str) -> List[Reporte]:
+        result = [r for r in self._reportes if r.gimnasio_id == gimnasio_id]
         result.sort(key=lambda r: r.fecha_creacion, reverse=True)
         return result
     

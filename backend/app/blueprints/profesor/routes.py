@@ -24,7 +24,7 @@ bp = Blueprint("profesor", __name__)
 @bp.get("/dashboard")
 @requiere_rol("profesor", "gimnasio")
 def dashboard():
-    return ok(services.obtener_dashboard())
+    return ok(services.obtener_dashboard(g.usuario_actual.gimnasio_id))
 
 
 # -------- Alumnos --------
@@ -32,13 +32,17 @@ def dashboard():
 @bp.get("/alumnos")
 @requiere_rol("profesor", "gimnasio")
 def listar_alumnos():
-    return ok(services.listar_alumnos())
+    return ok(services.listar_alumnos(g.usuario_actual.gimnasio_id))
 
 
 @bp.get("/alumnos/<alumno_id>/perfil")
 @requiere_rol("profesor", "gimnasio")
 def perfil_alumno(alumno_id: str):
-    return ok(services.obtener_perfil_alumno(alumno_id, g.usuario_actual.rol))
+    return ok(services.obtener_perfil_alumno(
+        alumno_id,
+        g.usuario_actual.rol,
+        g.usuario_actual.gimnasio_id,
+    ))
 
 
 @bp.patch("/alumnos/<alumno_id>/perfil")
@@ -52,7 +56,7 @@ def editar_perfil_alumno(alumno_id: str):
 @bp.get("/alumnos/<alumno_id>/progreso")
 @requiere_rol("profesor", "gimnasio")
 def progreso_alumno(alumno_id: str):
-    return ok(services.obtener_progreso_alumno(alumno_id))
+    return ok(services.obtener_progreso_alumno(alumno_id, g.usuario_actual.gimnasio_id))
 
 
 # -------- Profesores disponibles (para que el alumno elija) --------
@@ -60,7 +64,7 @@ def progreso_alumno(alumno_id: str):
 @bp.get("/profesores-disponibles")
 @requiere_auth
 def profesores_disponibles():
-    return ok(services.listar_profesores_disponibles())
+    return ok(services.listar_profesores_disponibles(g.usuario_actual.gimnasio_id))
 
 
 # -------- Solicitudes de ejercicio --------
@@ -82,7 +86,7 @@ def mis_solicitudes():
 @bp.post("/solicitudes/<solicitud_id>/cancelar")
 @requiere_rol("profesor", "gimnasio")
 def cancelar_solicitud(solicitud_id: str):
-    return ok(services.cancelar_solicitud(g.usuario_actual.id, solicitud_id))
+    return ok(services.cancelar_solicitud(g.usuario_actual, solicitud_id))
 
 
 # -------- Reportes --------
@@ -104,7 +108,7 @@ def mis_reportes():
 @bp.post("/reportes/<reporte_id>/cancelar")
 @requiere_rol("profesor", "gimnasio")
 def cancelar_reporte(reporte_id: str):
-    return ok(services.cancelar_reporte(g.usuario_actual.id, reporte_id))
+    return ok(services.cancelar_reporte(g.usuario_actual, reporte_id))
 
 
 # -------- Rutinas (builder del profesor) --------
@@ -127,7 +131,7 @@ def crear_rutina():
 @bp.get("/rutinas/<rutina_id>")
 @requiere_rol("profesor", "gimnasio")
 def detalle_rutina(rutina_id: str):
-    return ok(services.obtener_rutina_para_profesor(rutina_id))
+    return ok(services.obtener_rutina_para_profesor(rutina_id, g.usuario_actual.gimnasio_id))
 
 
 @bp.put("/rutinas/<rutina_id>")
@@ -162,7 +166,11 @@ def duplicar_rutina(rutina_id: str):
 @requiere_rol("profesor", "gimnasio")
 def rutinas_de_alumno(alumno_id: str):
     incluir_inactivas = request.args.get("incluir_inactivas", "false").lower() == "true"
-    return ok(services.listar_rutinas_de_alumno(alumno_id, incluir_inactivas))
+    return ok(services.listar_rutinas_de_alumno(
+        alumno_id,
+        g.usuario_actual.gimnasio_id,
+        incluir_inactivas,
+    ))
 
 
 # -------- Solicitudes de rutina (alumno) --------
@@ -184,7 +192,7 @@ def mis_solicitudes_rutina():
 @bp.post("/solicitudes-rutina/<solicitud_id>/cancelar")
 @requiere_auth
 def cancelar_solicitud_rutina(solicitud_id: str):
-    return ok(services.cancelar_solicitud_rutina(g.usuario_actual.id, solicitud_id))
+    return ok(services.cancelar_solicitud_rutina(g.usuario_actual, solicitud_id))
 
 
 # -------- Solicitudes de rutina (profesor) --------
@@ -237,13 +245,13 @@ def solicitar_liberacion(solicitud_id: str):
 @bp.get("/admin/pendientes/count")
 @requiere_rol("gimnasio")
 def count_pendientes():
-    return ok(services.contar_pendientes())
+    return ok(services.contar_pendientes(g.usuario_actual.gimnasio_id))
 
 
 @bp.get("/admin/pendientes")
 @requiere_rol("gimnasio")
 def listar_pendientes():
-    return ok(services.listar_pendientes())
+    return ok(services.listar_pendientes(g.usuario_actual.gimnasio_id))
 
 
 @bp.post("/admin/solicitudes/<solicitud_id>/aprobar")
@@ -265,13 +273,13 @@ def rechazar_solicitud(solicitud_id: str):
 @bp.get("/admin/reportes/count")
 @requiere_rol("gimnasio")
 def count_reportes():
-    return ok(services.contar_reportes())
+    return ok(services.contar_reportes(g.usuario_actual.gimnasio_id))
 
 
 @bp.get("/admin/reportes")
 @requiere_rol("gimnasio")
 def listar_reportes():
-    return ok(services.listar_todos_reportes())
+    return ok(services.listar_todos_reportes(g.usuario_actual.gimnasio_id))
 
 
 @bp.post("/admin/reportes/<reporte_id>/en-revision")
@@ -293,7 +301,7 @@ def resolver_reporte(reporte_id: str):
 @bp.get("/admin/solicitudes-rutina/liberaciones")
 @requiere_rol("gimnasio")
 def liberaciones_pendientes():
-    return ok(services.listar_liberaciones_pendientes())
+    return ok(services.listar_liberaciones_pendientes(g.usuario_actual.gimnasio_id))
 
 
 @bp.post("/admin/solicitudes-rutina/<solicitud_id>/liberar/aprobar")
@@ -313,14 +321,20 @@ def rechazar_liberacion(solicitud_id: str):
 @bp.get("/admin/solicitudes-rutina")
 @requiere_rol("gimnasio")
 def listar_todas_solicitudes_rutina():
-    return ok(services.listar_todas_solicitudes_rutina())
+    return ok(services.listar_todas_solicitudes_rutina(g.usuario_actual.gimnasio_id))
 
 @bp.get("/alumnos/<alumno_id>/solicitudes-rutina")
 @requiere_rol("profesor", "gimnasio")
 def solicitudes_rutina_de_alumno(alumno_id: str):
-    return ok(services.listar_solicitudes_rutina_de_alumno(alumno_id))
+    return ok(services.listar_solicitudes_rutina_de_alumno(
+        alumno_id,
+        g.usuario_actual.gimnasio_id,
+    ))
 
 @bp.get("/mis-horarios")
 @requiere_rol("profesor", "gimnasio")
 def mis_horarios():
-    return ok(services.listar_mis_horarios(g.usuario_actual.id))
+    return ok(services.listar_mis_horarios(
+        g.usuario_actual.id,
+        g.usuario_actual.gimnasio_id,
+    ))

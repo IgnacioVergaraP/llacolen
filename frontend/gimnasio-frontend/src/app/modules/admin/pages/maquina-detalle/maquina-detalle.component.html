@@ -26,6 +26,8 @@
       </app-ui-badge>
     </div>
     <p class="md__descripcion">{{ data.maquina.descripcion }}</p>
+    <h2 class="md__muscles-title">Músculos trabajados</h2>
+    <app-muscle-map [muscles]="data.maquina.grupos_musculares"></app-muscle-map>
   </section>
 
   <section class="md__section">

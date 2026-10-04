@@ -17,9 +17,12 @@ $color-text-subtle:   #9b9a97;
 $color-text-inverse:  #ffffff;
 
 // --- Acentos (un solo color de marca, plano) ---
-$color-primary:       #2f6f4e;
-$color-primary-hover: #285f42;
-$color-primary-soft:  #e8f0eb;
+$color-primary-default:       #2f6f4e;
+$color-primary-hover-default: #285f42;
+$color-primary-soft-default:  #e8f0eb;
+$color-primary:       var(--color-primary, #{$color-primary-default});
+$color-primary-hover: var(--color-primary-hover, #{$color-primary-hover-default});
+$color-primary-soft:  var(--color-primary-soft, #{$color-primary-soft-default});
 
 // --- Estados ---
 $color-success:       #2f6f4e;

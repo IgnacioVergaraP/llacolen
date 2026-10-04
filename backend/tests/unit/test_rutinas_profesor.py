@@ -208,7 +208,7 @@ def test_editar_ajena_404(client, mock_auth):
     resp = client.put(
         "/api/profesor/rutinas/rt-001",
         json={
-            "titulo": "X",
+            "titulo": "Rutina ajena",
             "grupos_musculares": [],
             "ejercicios": [
                 {

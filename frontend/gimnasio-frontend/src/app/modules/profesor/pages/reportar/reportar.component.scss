@@ -30,36 +30,6 @@
   &::-webkit-scrollbar { display: none; }
 }
 
-.rep__chip {
-  flex: 0 0 auto;
-  padding: 6px 14px;
-  min-height: 34px;
-
-  font-size: $fs-sm;
-  font-weight: $fw-medium;
-  white-space: nowrap;
-
-  color: $color-text-muted;
-  background: #ffffff;
-  border: 1px solid $color-border;
-  border-radius: $radius-full;
-  cursor: pointer;
-
-  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
-
-  @include hover {
-    border-color: $color-border-strong;
-    color: $color-text;
-  }
-}
-
-.rep__chip--active {
-  background: $color-primary-soft;
-  border-color: rgba(47, 111, 78, 0.30);
-  color: $color-primary;
-  font-weight: $fw-semibold;
-}
-
 .rep__lista-section {
   margin-top: $space-4;
 }
@@ -118,55 +88,6 @@
   gap: 6px;
 }
 
-.rep__chip-opt {
-  padding: 6px 12px;
-  min-height: 34px;
-
-  font-size: $fs-sm;
-  font-weight: $fw-medium;
-  white-space: nowrap;
-
-  color: $color-text-muted;
-  background: #ffffff;
-  border: 1px solid $color-border;
-  border-radius: $radius-full;
-  cursor: pointer;
-
-  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
-
-  @include hover {
-    border-color: $color-border-strong;
-    color: $color-text;
-  }
-}
-
-.rep__chip-opt--active {
-  background: $color-primary-soft;
-  border-color: rgba(47, 111, 78, 0.30);
-  color: $color-primary;
-  font-weight: $fw-semibold;
-}
-
-.rep__search {
-  width: 100%;
-  min-height: 42px;
-  padding: 0 14px;
-  font-size: $fs-base;
-  color: $color-text;
-  background: #ffffff;
-  border: 1px solid $color-border;
-  border-radius: 10px;
-  outline: none;
-  margin-bottom: 8px;
-
-  &::placeholder { color: $color-text-subtle; }
-
-  &:focus {
-    border-color: $color-primary;
-    box-shadow: 0 0 0 3px rgba(47, 111, 78, 0.10);
-  }
-}
-
 .rep__musculo-chips {
   display: flex;
   gap: 6px;
@@ -174,31 +95,6 @@
   padding-bottom: 8px;
   scrollbar-width: none;
   &::-webkit-scrollbar { display: none; }
-}
-
-.rep__musculo-chip {
-  flex: 0 0 auto;
-  padding: 4px 10px;
-  min-height: 30px;
-
-  font-size: $fs-xs;
-  font-weight: $fw-medium;
-  white-space: nowrap;
-
-  color: $color-text-muted;
-  background: #ffffff;
-  border: 1px solid $color-border;
-  border-radius: $radius-full;
-  cursor: pointer;
-
-  @include hover { border-color: $color-border-strong; color: $color-text; }
-}
-
-.rep__musculo-chip--active {
-  background: $color-primary-soft;
-  border-color: rgba(47, 111, 78, 0.30);
-  color: $color-primary;
-  font-weight: $fw-semibold;
 }
 
 .rep__maquinas-lista {
@@ -287,29 +183,6 @@
   i { font-size: 13px; }
 }
 
-.rep__textarea {
-  width: 100%;
-  padding: $space-3;
-  font-family: inherit;
-  font-size: $fs-base;
-  color: $color-text;
-  background: #ffffff;
-  border: 1px solid $color-border;
-  border-radius: 10px;
-  outline: none;
-  resize: vertical;
-  min-height: 96px;
-
-  transition: border-color 150ms ease, box-shadow 150ms ease;
-
-  &::placeholder { color: $color-text-subtle; }
-
-  &:focus {
-    border-color: $color-primary;
-    box-shadow: 0 0 0 3px rgba(47, 111, 78, 0.10);
-  }
-}
-
 .rep__foto-btn {
   display: flex;
   flex-direction: column;
@@ -393,17 +266,4 @@
   margin-top: $space-4;
   padding-top: $space-4;
   border-top: 1px solid $color-border;
-}
-
-.spinner {
-  width: 16px;
-  height: 16px;
-  border: 2px solid $color-border-strong;
-  border-top-color: $color-primary;
-  border-radius: 50%;
-  animation: rep-spin 700ms linear infinite;
-}
-
-@keyframes rep-spin {
-  to { transform: rotate(360deg); }
 }

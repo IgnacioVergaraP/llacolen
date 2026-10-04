@@ -17,4 +17,8 @@ def listar():
 @bp.get("/<rutina_id>")
 @requiere_auth
 def detalle(rutina_id: str):
-    return ok(services.obtener_rutina(rutina_id, g.usuario_actual.id))
+    return ok(services.obtener_rutina(
+        rutina_id,
+        g.usuario_actual.id,
+        g.usuario_actual.gimnasio_id,
+    ))

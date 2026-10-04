@@ -9,7 +9,7 @@ from app.domain.models import Horario
 class HorariosRepository(ABC):
 
     @abstractmethod
-    def listar(self, profesor_id: Optional[str] = None) -> List[Horario]:
+    def listar(self, gimnasio_id: str, profesor_id: Optional[str] = None) -> List[Horario]:
         ...
 
     @abstractmethod

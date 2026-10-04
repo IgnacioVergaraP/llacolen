@@ -35,3 +35,79 @@
   border: 0;
   margin: $space-4 0;
 }
+
+.ui-choice-chip {
+  flex: 0 0 auto;
+  min-height: 34px;
+  padding: 6px 12px;
+  color: $color-text-muted;
+  background: #ffffff;
+  border: 1px solid $color-border;
+  border-radius: $radius-full;
+  font-size: $fs-sm;
+  font-weight: $fw-medium;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+
+  @include hover { border-color: $color-border-strong; color: $color-text; }
+}
+
+.ui-choice-chip--wide { padding-right: 14px; padding-left: 14px; }
+
+.ui-choice-chip--small {
+  min-height: 30px;
+  padding: 4px 10px;
+  font-size: $fs-xs;
+}
+
+.ui-choice-chip--active {
+  background: $color-primary-soft;
+  border-color: rgba(47, 111, 78, 0.30);
+  color: $color-primary;
+  font-weight: $fw-semibold;
+}
+
+.ui-text-control {
+  width: 100%;
+  font-family: inherit;
+  font-size: $fs-base;
+  color: $color-text;
+  background: #ffffff;
+  border: 1px solid $color-border;
+  border-radius: 10px;
+  outline: none;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+
+  &::placeholder { color: $color-text-subtle; }
+
+  &:focus {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px rgba(47, 111, 78, 0.10);
+  }
+}
+
+.ui-text-control--search {
+  min-height: 42px;
+  padding: 0 14px;
+  margin-bottom: 8px;
+}
+
+.ui-text-control--textarea {
+  min-height: 96px;
+  padding: $space-3;
+  resize: vertical;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid $color-border-strong;
+  border-top-color: $color-primary;
+  border-radius: 50%;
+  animation: shared-spinner 700ms linear infinite;
+}
+
+@keyframes shared-spinner {
+  to { transform: rotate(360deg); }
+}

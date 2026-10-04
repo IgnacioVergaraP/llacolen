@@ -17,11 +17,11 @@ class MantenimientosRepository(ABC):
         ...
 
     @abstractmethod
-    def listar_por_maquina(self, maquina_id: str) -> List[Mantenimiento]:
+    def listar_por_maquina(self, maquina_id: str, gimnasio_id: str) -> List[Mantenimiento]:
         ...
 
     @abstractmethod
-    def listar_todos(self) -> List[Mantenimiento]:
+    def listar_todos(self, gimnasio_id: str) -> List[Mantenimiento]:
         ...
 
     @abstractmethod

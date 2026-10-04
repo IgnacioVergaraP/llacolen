@@ -9,6 +9,7 @@ dependa de red.
 La fixture `mock_auth` de tests/conftest.py lo inyecta en el
 módulo de decoradores para simular la autenticación.
 """
+from copy import deepcopy
 from typing import Optional, List
 from app.domain.models import Usuario
 from app.repositories.usuarios_repository import UsuariosRepository
@@ -20,6 +21,7 @@ _USUARIOS_MOCK: List[Usuario] = [
         email="admin@gimnasio.com",
         nombre="Admin Gimnasio",
         rol="gimnasio",
+        gimnasio_id="mock-gym",
         fecha_alta="2024-01-15",
     ),
     Usuario(
@@ -27,6 +29,7 @@ _USUARIOS_MOCK: List[Usuario] = [
         email="profesor@gimnasio.com",
         nombre="Prof. Martínez",
         rol="profesor",
+        gimnasio_id="mock-gym",
         bio="Especialista en hipertrofia y fuerza. 8 años acompañando alumnos en su progreso.",
         especialidades=["musculación", "fuerza", "hipertrofia"],
         anios_experiencia=8,
@@ -38,6 +41,7 @@ _USUARIOS_MOCK: List[Usuario] = [
         email="alumno@gimnasio.com",
         nombre="Juan Pérez",
         rol="alumno",
+        gimnasio_id="mock-gym",
         altura=178.0,
         peso_actual=74.5,
         peso_objetivo=70.0,
@@ -53,6 +57,7 @@ _USUARIOS_MOCK: List[Usuario] = [
         email="maria.gonzalez@gimnasio.com",
         nombre="María González",
         rol="alumno",
+        gimnasio_id="mock-gym",
         altura=165.0,
         peso_actual=58.0,
         peso_objetivo=60.0,
@@ -67,6 +72,7 @@ _USUARIOS_MOCK: List[Usuario] = [
         email="carlos.rodriguez@gimnasio.com",
         nombre="Carlos Rodríguez",
         rol="alumno",
+        gimnasio_id="mock-gym",
         altura=182.0,
         peso_actual=88.0,
         peso_objetivo=80.0,
@@ -81,6 +87,7 @@ _USUARIOS_MOCK: List[Usuario] = [
         email="lucia.fernandez@gimnasio.com",
         nombre="Lucía Fernández",
         rol="alumno",
+        gimnasio_id="mock-gym",
         altura=170.0,
         peso_actual=62.0,
         imagen_url=None,
@@ -91,21 +98,27 @@ _USUARIOS_MOCK: List[Usuario] = [
 
 class MockUsuariosRepository(UsuariosRepository):
 
+    def __init__(self):
+        self._usuarios: List[Usuario] = deepcopy(_USUARIOS_MOCK)
+
     def find_by_email(self, email: str) -> Optional[Usuario]:
         email = email.strip().lower()
-        for u in _USUARIOS_MOCK:
+        for u in self._usuarios:
             if u.email.lower() == email:
                 return u
         return None
 
-    def find_by_id(self, user_id: str) -> Optional[Usuario]:
-        for u in _USUARIOS_MOCK:
-            if u.id == user_id:
+    def find_by_id(self, user_id: str, gimnasio_id: Optional[str] = None) -> Optional[Usuario]:
+        for u in self._usuarios:
+            if u.id == user_id and (gimnasio_id is None or u.gimnasio_id == gimnasio_id):
                 return u
         return None
 
     def listar_todos(self) -> List[Usuario]:
-        return list(_USUARIOS_MOCK)
+        return list(self._usuarios)
+
+    def listar_por_gimnasio(self, gimnasio_id: str) -> List[Usuario]:
+        return [u for u in self._usuarios if u.gimnasio_id == gimnasio_id]
 
     def actualizar(
         self,

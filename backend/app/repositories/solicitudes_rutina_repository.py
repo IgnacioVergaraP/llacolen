@@ -21,11 +21,11 @@ class SolicitudesRutinaRepository(ABC):
         ...
 
     @abstractmethod
-    def listar_todas(self) -> List[SolicitudRutina]:
+    def listar_todas(self, gimnasio_id: str) -> List[SolicitudRutina]:
         ...
 
     @abstractmethod
-    def listar_pendientes(self) -> List[SolicitudRutina]:
+    def listar_pendientes(self, gimnasio_id: str) -> List[SolicitudRutina]:
         ...
 
     @abstractmethod

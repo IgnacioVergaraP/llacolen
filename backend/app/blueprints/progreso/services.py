@@ -19,7 +19,7 @@ def _key_de_registro(r: RegistroSerie) -> str:
 
 def _nombre_visible(r: RegistroSerie) -> str:
     if r.ejercicio_tipo == "maquina" and r.maquina_id:
-        m = _maquinas_repo.find_by_id(r.maquina_id)
+        m = _maquinas_repo.find_by_id(r.maquina_id, r.gimnasio_id)
         return m.nombre if m else r.maquina_id
     return r.nombre_libre or "Ejercicio"
 
@@ -40,7 +40,7 @@ def _peso_max_numerico(registros: List[RegistroSerie]) -> float:
     return max_peso
 
 
-def crear_serie(alumno_id: str, payload: dict) -> dict:
+def crear_serie(alumno_id: str, gimnasio_id: str, payload: dict) -> dict:
     fecha_iso = datetime.now(timezone.utc).isoformat()
 
     numero_serie = payload.get("numero_serie")
@@ -57,6 +57,7 @@ def crear_serie(alumno_id: str, payload: dict) -> dict:
         numero_serie=numero_serie,
         peso=payload["peso"],
         repeticiones=payload["repeticiones"],
+        gimnasio_id=gimnasio_id,
         maquina_id=payload.get("maquina_id"),
         nombre_libre=payload.get("nombre_libre"),
         rutina_id=payload.get("rutina_id"),

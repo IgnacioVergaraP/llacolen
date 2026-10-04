@@ -79,6 +79,14 @@ export class DetalleComponent implements OnInit {
       : (this.ejercicioEnSheet.descripcion ?? null);
   }
 
+  get sheetMuscles(): string[] {
+    if (!this.ejercicioEnSheet) return [];
+    if (this.ejercicioEnSheet.tipo === 'maquina') {
+      return this.ejercicioEnSheet.maquina?.grupos_musculares ?? this.rutina?.grupos_musculares ?? [];
+    }
+    return this.rutina?.grupos_musculares ?? [];
+  }
+
   get sheetResumenSeries(): string {
     if (!this.ejercicioEnSheet) return '';
     return `${this.ejercicioEnSheet.series} × ${this.ejercicioEnSheet.repeticiones}`;

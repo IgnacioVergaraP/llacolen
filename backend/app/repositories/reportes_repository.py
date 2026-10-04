@@ -21,7 +21,7 @@ class ReportesRepository(ABC):
         ...
 
     @abstractmethod
-    def listar_todos(self) -> List[Reporte]:
+    def listar_todos(self, gimnasio_id: str) -> List[Reporte]:
         ...
         
     @abstractmethod

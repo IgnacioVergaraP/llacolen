@@ -1,6 +1,7 @@
 """
 Implementación mock del repositorio de rutinas.
 """
+from copy import deepcopy
 from datetime import datetime, timezone, timedelta
 from typing import List, Optional
 from app.domain.models import Rutina, Ejercicio
@@ -23,6 +24,7 @@ _RUTINAS_MOCK: List[Rutina] = [
         titulo="Rutina de espalda y bíceps",
         grupos_musculares=["espalda", "biceps"],
         alumno_id="u-alu-001",
+        gimnasio_id="mock-gym",
         profesor_id="u-pro-001",
         profesor_nombre="Prof. Martínez",
         activa=True,
@@ -41,6 +43,7 @@ _RUTINAS_MOCK: List[Rutina] = [
         titulo="Rutina de pecho y tríceps",
         grupos_musculares=["pecho", "triceps", "hombros"],
         alumno_id="u-alu-001",
+        gimnasio_id="mock-gym",
         profesor_id="u-pro-001",
         profesor_nombre="Prof. Martínez",
         activa=True,
@@ -58,6 +61,7 @@ _RUTINAS_MOCK: List[Rutina] = [
         titulo="Rutina de core y estabilidad",
         grupos_musculares=["core"],
         alumno_id="u-alu-001",
+        gimnasio_id="mock-gym",
         profesor_id="u-pro-001",
         profesor_nombre="Prof. Martínez",
         activa=True,
@@ -79,6 +83,7 @@ _RUTINAS_MOCK: List[Rutina] = [
         titulo="Rutina de piernas básica",
         grupos_musculares=["piernas", "core"],
         alumno_id="u-alu-002",
+        gimnasio_id="mock-gym",
         profesor_id="u-pro-001",
         profesor_nombre="Prof. Martínez",
         activa=True,
@@ -96,6 +101,7 @@ _RUTINAS_MOCK: List[Rutina] = [
         titulo="Rutina de fuerza — tren superior",
         grupos_musculares=["pecho", "espalda", "hombros", "triceps"],
         alumno_id="u-alu-003",
+        gimnasio_id="mock-gym",
         profesor_id="u-pro-001",
         profesor_nombre="Prof. Martínez",
         activa=True,
@@ -113,8 +119,7 @@ _RUTINAS_MOCK: List[Rutina] = [
 class MockRutinasRepository(RutinasRepository):
 
     def __init__(self):
-        # Lista compartida a nivel módulo: los cambios persisten entre instancias.
-        self._rutinas: List[Rutina] = _RUTINAS_MOCK
+        self._rutinas: List[Rutina] = deepcopy(_RUTINAS_MOCK)
 
     def _calcular_next_num(self) -> int:
         max_n = 0
@@ -200,6 +205,7 @@ class MockRutinasRepository(RutinasRepository):
             titulo=original.titulo,
             grupos_musculares=list(original.grupos_musculares),
             alumno_id=nuevo_alumno_id,
+            gimnasio_id=original.gimnasio_id,
             profesor_id=profesor["id"],
             profesor_nombre=profesor["nombre"],
             activa=True,

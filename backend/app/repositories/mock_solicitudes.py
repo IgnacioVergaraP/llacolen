@@ -1,6 +1,7 @@
 """
 Implementación mock del repositorio de solicitudes.
 """
+from copy import deepcopy
 from datetime import datetime, timezone
 from typing import List, Optional
 from app.domain.models import SolicitudEjercicio
@@ -19,6 +20,7 @@ _SOLICITUDES_INICIALES: List[SolicitudEjercicio] = [
         estado="pendiente",
         solicitante_id="u-pro-001",
         solicitante_nombre="Prof. Martínez",
+        gimnasio_id="mock-gym",
         nombre="Máquina de remo sentado",
         grupos_musculares=["espalda", "biceps"],
         descripcion=(
@@ -36,8 +38,7 @@ _SOLICITUDES_INICIALES: List[SolicitudEjercicio] = [
 class MockSolicitudesRepository(SolicitudesRepository):
 
     def __init__(self):
-        # Lista compartida a nivel módulo: los cambios persisten entre instancias.
-        self._solicitudes: List[SolicitudEjercicio] = _SOLICITUDES_INICIALES
+        self._solicitudes: List[SolicitudEjercicio] = deepcopy(_SOLICITUDES_INICIALES)
 
     def _calcular_next_num(self) -> int:
         max_n = 0
@@ -70,8 +71,8 @@ class MockSolicitudesRepository(SolicitudesRepository):
         result.sort(key=lambda s: s.fecha_creacion, reverse=True)
         return result
 
-    def listar_pendientes(self) -> List[SolicitudEjercicio]:
-        result = [s for s in self._solicitudes if s.estado == "pendiente"]
+    def listar_pendientes(self, gimnasio_id: str) -> List[SolicitudEjercicio]:
+        result = [s for s in self._solicitudes if s.estado == "pendiente" and s.gimnasio_id == gimnasio_id]
         result.sort(key=lambda s: s.fecha_creacion)
         return result
     

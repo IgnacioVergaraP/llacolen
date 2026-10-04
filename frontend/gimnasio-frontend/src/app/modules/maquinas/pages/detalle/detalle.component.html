@@ -39,6 +39,8 @@
   <section class="detalle__section">
     <h2 class="detalle__section-title">Descripción</h2>
     <p class="detalle__description">{{ maquina.descripcion }}</p>
+    <h3 class="detalle__muscles-title">Músculos trabajados</h3>
+    <app-muscle-map [muscles]="maquina.grupos_musculares"></app-muscle-map>
   </section>
 
 </ng-container>

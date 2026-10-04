@@ -33,6 +33,7 @@ def _register_blueprints(app: Flask) -> None:
     from app.blueprints.usuario import bp as usuario_bp
     from app.blueprints.profesor import bp as profesor_bp
     from app.blueprints.admin import bp as admin_bp
+    from app.blueprints.gimnasio import bp as gimnasio_bp
 
     app.register_blueprint(health_bp, url_prefix="/api")
     app.register_blueprint(auth_bp, url_prefix="/api/auth")
@@ -42,3 +43,4 @@ def _register_blueprints(app: Flask) -> None:
     app.register_blueprint(usuario_bp, url_prefix="/api/usuario")
     app.register_blueprint(profesor_bp, url_prefix="/api/profesor")
     app.register_blueprint(admin_bp, url_prefix="/api/admin")
+    app.register_blueprint(gimnasio_bp, url_prefix="/api/gimnasio")
