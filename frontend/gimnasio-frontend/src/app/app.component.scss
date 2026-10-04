@@ -104,7 +104,8 @@
 // -------- Contenido --------
 
 .app-content {
-  flex: 1;
+  flex: 1 0 auto;
+  min-width: 0;
   width: 100%;
   max-width: $content-max-width;
   margin: 0 auto;
