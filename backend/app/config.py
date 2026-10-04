@@ -10,10 +10,11 @@ class Config:
     SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-cambiar")
 
     # CORS
-    CORS_ORIGINS = os.getenv(
-        "CORS_ORIGINS",
-        "http://localhost:4200,http://127.0.0.1:4200"
-    ).split(",")
+    CORS_ORIGINS = [
+    "https://llacolen.vercel.app",
+    "http://localhost:4200",
+    "http://127.0.0.1:4200",
+]
 
     # -------- Supabase --------
     SUPABASE_URL = os.getenv("SUPABASE_URL", "")
