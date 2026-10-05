@@ -8,7 +8,10 @@
     </app-avatar>
 
     <div class="ap__header-info">
-      <h1 class="ap__header-nombre">{{ usuario.nombre }}</h1>
+      <div class="ap__header-title-row">
+        <app-ui-back-button></app-ui-back-button>
+        <h1 class="ap__header-nombre">{{ usuario.nombre }}</h1>
+      </div>
       <p class="ap__header-email">{{ usuario.email }}</p>
       <span class="ap__header-rol">Administrador</span>
     </div>

@@ -5,6 +5,12 @@
   width: 100%;
 }
 
+:host(.app-muscle-map) {
+  display: block;
+  width: auto;
+  flex: 0 0 auto;
+}
+
 .muscle-map--single {
   height: 100%;
 }

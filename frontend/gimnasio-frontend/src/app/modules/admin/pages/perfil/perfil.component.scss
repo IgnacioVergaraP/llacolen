@@ -9,7 +9,15 @@
 
 .ap__header-info { flex: 1; min-width: 0; }
 
+.ap__header-title-row {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+}
+
 .ap__header-nombre {
+  min-width: 0;
+  flex: 1;
   font-size: $fs-xl;
   font-weight: $fw-semibold;
   color: $color-text;

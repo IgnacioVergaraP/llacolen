@@ -75,13 +75,13 @@
   font-weight: $fw-medium;
   color: $color-primary;
   background: $color-primary-soft;
-  border: 1px solid rgba(47, 111, 78, 0.20);
+  border: 1px solid rgba(var(--brand-rgb), 0.20);
   border-radius: $radius-md;
   cursor: pointer;
 
   transition: background 150ms ease, border-color 150ms ease;
 
-  @include hover { background: rgba(47, 111, 78, 0.12); border-color: rgba(47, 111, 78, 0.35); }
+  @include hover { background: rgba(var(--brand-rgb), 0.12); border-color: rgba(var(--brand-rgb), 0.35); }
   &:active { transform: scale(0.99); }
 
   i { font-size: 14px; }

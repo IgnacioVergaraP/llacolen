@@ -34,6 +34,9 @@ const MUSCLE_IMAGES: Record<string, MuscleIllustration> = {
 
 @Component({
   selector: 'app-muscle-map',
+  host: {
+    '[class.app-muscle-map]': 'compact',
+  },
   templateUrl: './muscle-map.component.html',
   styleUrls: ['./muscle-map.component.scss'],
 })

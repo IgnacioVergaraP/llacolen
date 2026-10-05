@@ -12,8 +12,8 @@
   margin-top: $space-3;
   padding: 10px 12px;
   border-radius: 10px;
-  border: 1px solid rgba(47, 111, 78, 0.20);
-  background: rgba(47, 111, 78, 0.06);
+  border: 1px solid rgba(var(--brand-rgb), 0.20);
+  background: rgba(var(--brand-rgb), 0.06);
   color: $color-primary;
   font-size: $fs-sm;
 
@@ -151,7 +151,7 @@
 
   padding: 10px 12px;
   background: $color-primary-soft;
-  border: 1px solid rgba(47, 111, 78, 0.30);
+  border: 1px solid rgba(var(--brand-rgb), 0.30);
   border-radius: $radius-md;
 
   i { color: $color-primary; font-size: 15px; flex-shrink: 0; }

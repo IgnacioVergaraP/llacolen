@@ -18,7 +18,7 @@
   width: 320px;
   height: 320px;
   border-radius: 50%;
-  background: rgba(47, 111, 78, 0.14);
+  background: rgba(var(--brand-rgb), 0.14);
   filter: blur(120px);
   top: -120px;
   right: -80px;
@@ -73,7 +73,7 @@
   height: 44px;
   border-radius: 12px;
 
-  background: rgba(47, 111, 78, 0.10);
+  background: rgba(var(--brand-rgb), 0.10);
   color: $color-primary;
 
   margin-bottom: 10px;
@@ -122,8 +122,8 @@
   margin-top: 22px;
   padding: 12px 14px;
   border-radius: 10px;
-  border: 1px solid rgba(47, 111, 78, 0.14);
-  background: rgba(47, 111, 78, 0.05);
+  border: 1px solid rgba(var(--brand-rgb), 0.14);
+  background: rgba(var(--brand-rgb), 0.05);
   color: $color-text-muted;
   font-size: $fs-xs;
   line-height: 1.5;

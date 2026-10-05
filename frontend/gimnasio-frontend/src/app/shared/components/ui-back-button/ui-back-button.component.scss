@@ -1,0 +1,16 @@
+@import "tokens";
+
+.ui-back-button {
+  display: inline-flex;
+  flex: 0 0 $touch-min;
+  align-items: center;
+  justify-content: center;
+  width: $touch-min;
+  height: $touch-min;
+  border-radius: $radius-md;
+  color: $color-text;
+
+  &:active { background: $color-bg-hover; }
+  &:focus-visible { outline: 2px solid $color-primary; outline-offset: 2px; }
+  i { font-size: 20px; }
+}

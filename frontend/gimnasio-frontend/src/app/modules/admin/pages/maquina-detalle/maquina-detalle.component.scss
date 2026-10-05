@@ -80,7 +80,7 @@
   border: 0;
   cursor: pointer;
 
-  box-shadow: 0 4px 12px rgba(47, 111, 78, 0.28);
+  box-shadow: 0 4px 12px rgba(var(--brand-rgb), 0.28);
   transition: background 150ms ease, transform 100ms ease;
 
   @include hover { background: $color-primary-hover; }
@@ -145,7 +145,7 @@
 
 .md__tipo--active {
   background: $color-primary-soft;
-  border-color: rgba(47, 111, 78, 0.30);
+  border-color: rgba(var(--brand-rgb), 0.30);
   color: $color-primary;
   font-weight: $fw-semibold;
 }
@@ -167,7 +167,7 @@
 
   &:focus {
     border-color: $color-primary;
-    box-shadow: 0 0 0 3px rgba(47, 111, 78, 0.10);
+    box-shadow: 0 0 0 3px var(--brand-10);
   }
 }
 
@@ -253,7 +253,7 @@
 
   &:focus {
     border-color: $color-primary;
-    box-shadow: 0 0 0 3px rgba(47, 111, 78, 0.10);
+    box-shadow: 0 0 0 3px var(--brand-10);
   }
 }
 
@@ -278,13 +278,13 @@
 
   color: $color-primary;
   background: $color-primary-soft;
-  border: 1px solid rgba(47, 111, 78, 0.20);
+  border: 1px solid rgba(var(--brand-rgb), 0.20);
   border-radius: $radius-md;
   cursor: pointer;
 
   transition: background 150ms ease, border-color 150ms ease;
 
-  @include hover { background: rgba(47, 111, 78, 0.12); border-color: rgba(47, 111, 78, 0.35); }
+  @include hover { background: rgba(var(--brand-rgb), 0.12); border-color: rgba(var(--brand-rgb), 0.35); }
   &:active { transform: scale(0.98); }
 
   i { font-size: 13px; }

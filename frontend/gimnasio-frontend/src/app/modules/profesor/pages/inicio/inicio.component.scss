@@ -71,7 +71,7 @@
 
   padding: $space-3 $space-4;
   background: $color-primary-soft;
-  border: 1px solid rgba(47, 111, 78, 0.20);
+  border: 1px solid var(--brand-20);
   border-left: 4px solid $color-primary;
   border-radius: $radius-md;
 }
@@ -88,7 +88,7 @@
 }
 
 .inicio__horario-sep {
-  color: rgba(47, 111, 78, 0.5);
+  color: var(--brand-50);
   font-weight: $fw-regular;
 }
 
@@ -140,9 +140,9 @@
 
 .inicio__metrica-card--destacada {
   background: $color-primary-soft;
-  border-color: rgba(47, 111, 78, 0.20);
+  border-color: var(--brand-20);
 
-  @include hover { border-color: rgba(47, 111, 78, 0.40); }
+  @include hover { border-color: var(--brand-40); }
 
   .inicio__metrica-valor { color: $color-primary; }
   .inicio__metrica-icon { color: $color-primary; }

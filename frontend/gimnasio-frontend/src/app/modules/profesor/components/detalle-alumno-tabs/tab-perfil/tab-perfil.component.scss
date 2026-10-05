@@ -22,13 +22,13 @@
   font-weight: $fw-medium;
   color: $color-primary;
   background: $color-primary-soft;
-  border: 1px solid rgba(47, 111, 78, 0.20);
+  border: 1px solid rgba(var(--brand-rgb), 0.20);
   border-radius: $radius-md;
   cursor: pointer;
 
   transition: background 150ms ease, border-color 150ms ease;
 
-  @include hover { background: rgba(47, 111, 78, 0.12); border-color: rgba(47, 111, 78, 0.35); }
+  @include hover { background: rgba(var(--brand-rgb), 0.12); border-color: rgba(var(--brand-rgb), 0.35); }
   &:active { transform: scale(0.99); }
 
   i { font-size: 14px; }
@@ -41,8 +41,8 @@
 
   padding: 10px 12px;
   border-radius: 10px;
-  border: 1px solid rgba(47, 111, 78, 0.20);
-  background: rgba(47, 111, 78, 0.06);
+  border: 1px solid rgba(var(--brand-rgb), 0.20);
+  background: rgba(var(--brand-rgb), 0.06);
   color: $color-primary;
   font-size: $fs-sm;
 
@@ -56,7 +56,7 @@
 
   padding: $space-3 $space-4;
   background: $color-primary-soft;
-  border: 1px solid rgba(47, 111, 78, 0.18);
+  border: 1px solid rgba(var(--brand-rgb), 0.18);
   border-radius: $radius-md;
 }
 
@@ -215,7 +215,7 @@
 
   &:focus {
     border-color: $color-primary;
-    box-shadow: 0 0 0 3px rgba(47, 111, 78, 0.10);
+    box-shadow: 0 0 0 3px rgba(var(--brand-rgb), 0.10);
   }
 }
 

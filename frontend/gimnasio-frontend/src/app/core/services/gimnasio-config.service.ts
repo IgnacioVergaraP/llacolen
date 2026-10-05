@@ -79,4 +79,5 @@ export class GimnasioConfigService {
     const toHex = (n: number) => n.toString(16).padStart(2, '0');
     return `#${toHex(nr)}${toHex(ng)}${toHex(nb)}`;
   }
+
 }

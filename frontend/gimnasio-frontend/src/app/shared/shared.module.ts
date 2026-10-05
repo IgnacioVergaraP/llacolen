@@ -9,6 +9,7 @@ import { UiCardComponent } from './components/ui-card/ui-card.component';
 import { UiBadgeComponent } from './components/ui-badge/ui-badge.component';
 import { UiEmptyStateComponent } from './components/ui-empty-state/ui-empty-state.component';
 import { UiPageHeaderComponent } from './components/ui-page-header/ui-page-header.component';
+import { UiBackButtonComponent } from './components/ui-back-button/ui-back-button.component';
 import { UiSheetComponent } from './components/ui-sheet/ui-sheet.component';
 
 // Componentes de dominio
@@ -31,6 +32,7 @@ import { MuscleMapComponent } from './components/muscle-map/muscle-map.component
     UiBadgeComponent,
     UiEmptyStateComponent,
     UiPageHeaderComponent,
+    UiBackButtonComponent,
     UiSheetComponent,
     AvatarComponent,
     MetricaCardComponent,
@@ -54,6 +56,7 @@ import { MuscleMapComponent } from './components/muscle-map/muscle-map.component
     UiBadgeComponent,
     UiEmptyStateComponent,
     UiPageHeaderComponent,
+    UiBackButtonComponent,
     UiSheetComponent,
     AvatarComponent,
     MetricaCardComponent,

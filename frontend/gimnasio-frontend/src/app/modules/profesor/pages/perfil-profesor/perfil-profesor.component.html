@@ -24,7 +24,10 @@
     </app-avatar>
 
     <div class="pp__header-info">
-      <h1 class="pp__header-nombre">{{ usuario.nombre }}</h1>
+      <div class="pp__header-title-row">
+        <app-ui-back-button></app-ui-back-button>
+        <h1 class="pp__header-nombre">{{ usuario.nombre }}</h1>
+      </div>
       <p class="pp__header-email">{{ usuario.email }}</p>
       <span class="pp__header-rol">Profesor</span>
     </div>

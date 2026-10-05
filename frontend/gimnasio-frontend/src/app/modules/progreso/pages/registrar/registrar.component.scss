@@ -87,8 +87,8 @@
 }
 
 .registrar__exito {
-  border: 1px solid rgba(47, 111, 78, 0.20);
-  background: rgba(47, 111, 78, 0.06);
+  border: 1px solid rgba(var(--brand-rgb), 0.20);
+  background: rgba(var(--brand-rgb), 0.06);
   color: $color-primary;
 }
 

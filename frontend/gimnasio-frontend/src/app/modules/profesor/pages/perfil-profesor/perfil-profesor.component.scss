@@ -22,7 +22,15 @@
   min-width: 0;
 }
 
+.pp__header-title-row {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+}
+
 .pp__header-nombre {
+  min-width: 0;
+  flex: 1;
   font-size: $fs-xl;
   font-weight: $fw-semibold;
   color: $color-text;
@@ -233,7 +241,7 @@
 
   &:focus {
     border-color: $color-primary;
-    box-shadow: 0 0 0 3px rgba(47, 111, 78, 0.10);
+    box-shadow: 0 0 0 3px rgba(var(--brand-rgb), 0.10);
   }
 }
 

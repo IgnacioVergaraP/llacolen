@@ -9,7 +9,10 @@
   </div>
 
   <div class="perfil-header__info">
-    <h1 class="perfil-header__nombre">{{ usuario.nombre }}</h1>
+    <div class="perfil-header__title-row">
+      <app-ui-back-button></app-ui-back-button>
+      <h1 class="perfil-header__nombre">{{ usuario.nombre }}</h1>
+    </div>
     <p class="perfil-header__email">{{ usuario.email }}</p>
     <span class="perfil-header__rol">{{ rolEtiqueta }}</span>
   </div>

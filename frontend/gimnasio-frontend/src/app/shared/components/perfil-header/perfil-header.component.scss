@@ -15,7 +15,15 @@
   min-width: 0;
 }
 
+.perfil-header__title-row {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+}
+
 .perfil-header__nombre {
+  min-width: 0;
+  flex: 1;
   font-size: $fs-xl;
   font-weight: $fw-semibold;
   color: $color-text;

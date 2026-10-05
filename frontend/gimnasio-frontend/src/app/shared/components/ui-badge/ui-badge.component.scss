@@ -24,13 +24,13 @@
 .ui-badge--primary {
   background: $color-primary-soft;
   color: $color-primary;
-  border-color: rgba(47, 111, 78, 0.18);
+  border-color: rgba(var(--brand-rgb), 0.18);
 }
 
 .ui-badge--success {
-  background: rgba(47, 111, 78, 0.10);
+  background: rgba(var(--brand-rgb), 0.10);
   color: $color-success;
-  border-color: rgba(47, 111, 78, 0.18);
+  border-color: rgba(var(--brand-rgb), 0.18);
 }
 
 .ui-badge--warning {

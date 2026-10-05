@@ -48,7 +48,12 @@ export class LoginComponent {
       .subscribe({
         next: () => {
           const redirect = this.route.snapshot.queryParamMap.get('redirect');
-          const defaultRoute = this.auth.usuarioActual?.rol === 'gimnasio' ? '/admin' : '/maquinas';
+          const rol = this.auth.usuarioActual?.rol;
+          const defaultRoute = rol === 'profesor'
+            ? '/profesor'
+            : rol === 'gimnasio'
+              ? '/admin'
+              : '/rutinas';
           this.router.navigateByUrl(redirect || defaultRoute);
         },
         error: (err: any) => {

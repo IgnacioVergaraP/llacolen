@@ -13,7 +13,7 @@
 
   padding: 10px 12px;
   background: $color-primary-soft;
-  border: 1px solid rgba(47, 111, 78, 0.30);
+  border: 1px solid rgba(var(--brand-rgb), 0.30);
   border-radius: $radius-md;
 
   i { color: $color-primary; font-size: 16px; flex-shrink: 0; }
@@ -79,7 +79,7 @@
 
   &:focus {
     border-color: $color-primary;
-    box-shadow: 0 0 0 3px rgba(47, 111, 78, 0.10);
+    box-shadow: 0 0 0 3px rgba(var(--brand-rgb), 0.10);
   }
 }
 
@@ -112,7 +112,7 @@
 
 .mp__chip--active {
   background: $color-primary-soft;
-  border-color: rgba(47, 111, 78, 0.30);
+  border-color: rgba(var(--brand-rgb), 0.30);
   color: $color-primary;
   font-weight: $fw-semibold;
 }

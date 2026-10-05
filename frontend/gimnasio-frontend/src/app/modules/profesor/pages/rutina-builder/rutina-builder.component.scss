@@ -46,7 +46,7 @@
 
   &:focus {
     border-color: $color-primary;
-    box-shadow: 0 0 0 3px rgba(47, 111, 78, 0.10);
+    box-shadow: 0 0 0 3px rgba(var(--brand-rgb), 0.10);
   }
 }
 
@@ -75,7 +75,7 @@
 
 .rb__chip--active {
   background: $color-primary-soft;
-  border-color: rgba(47, 111, 78, 0.30);
+  border-color: rgba(var(--brand-rgb), 0.30);
   color: $color-primary;
   font-weight: $fw-semibold;
 }
@@ -123,13 +123,13 @@
   font-weight: $fw-medium;
   color: $color-primary;
   background: transparent;
-  border: 1px dashed rgba(47, 111, 78, 0.40);
+  border: 1px dashed rgba(var(--brand-rgb), 0.40);
   border-radius: $radius-md;
   cursor: pointer;
 
   transition: background 150ms ease, border-color 150ms ease;
 
-  @include hover { background: $color-primary-soft; border-color: rgba(47, 111, 78, 0.60); }
+  @include hover { background: $color-primary-soft; border-color: rgba(var(--brand-rgb), 0.60); }
   &:active { background: $color-primary-soft; }
 
   i { font-size: 15px; }

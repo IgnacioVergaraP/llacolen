@@ -150,7 +150,7 @@
 
 .ebc__tipo--active {
   background: $color-primary-soft;
-  border-color: rgba(47, 111, 78, 0.30);
+  border-color: rgba(var(--brand-rgb), 0.30);
   color: $color-primary;
   font-weight: $fw-semibold;
 }
@@ -191,7 +191,7 @@
 
   &:focus {
     border-color: $color-primary;
-    box-shadow: 0 0 0 3px rgba(47, 111, 78, 0.10);
+    box-shadow: 0 0 0 3px rgba(var(--brand-rgb), 0.10);
   }
 }
 

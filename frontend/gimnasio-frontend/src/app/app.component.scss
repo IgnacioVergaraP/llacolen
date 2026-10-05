@@ -52,18 +52,18 @@
 
 // Variante: modo admin (verde / primary)
 .app-banner-modo--admin {
-  background: rgba(47, 111, 78, 0.08);
-  border-bottom-color: rgba(47, 111, 78, 0.22);
+  background: rgba(var(--brand-rgb), 0.08);
+  border-bottom-color: rgba(var(--brand-rgb), 0.22);
 
   .app-banner-modo__info i { color: $color-primary; }
 
   .app-banner-modo__btn {
     color: $color-primary;
-    border-color: rgba(47, 111, 78, 0.30);
+    border-color: rgba(var(--brand-rgb), 0.30);
 
     @include hover {
-      background: rgba(47, 111, 78, 0.10);
-      border-color: rgba(47, 111, 78, 0.50);
+      background: rgba(var(--brand-rgb), 0.10);
+      border-color: rgba(var(--brand-rgb), 0.50);
     }
   }
 }

@@ -21,7 +21,7 @@
 }
 
 .grafico__area {
-  fill: rgba(47, 111, 78, 0.08);
+  fill: rgba(var(--brand-rgb), 0.08);
   stroke: none;
 }
 

@@ -82,7 +82,7 @@
   border: 0;
   cursor: pointer;
 
-  box-shadow: 0 4px 12px rgba(47, 111, 78, 0.28);
+  box-shadow: 0 4px 12px rgba(var(--brand-rgb), 0.28);
 
   transition: background 150ms ease, transform 100ms ease;
 
