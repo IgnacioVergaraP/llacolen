@@ -35,7 +35,7 @@
   [title]="items.length === 0 ? 'Sin máquinas' : 'Sin resultados'"
   [message]="items.length === 0
     ? 'El catálogo está vacío.'
-    : 'Probá con otro término.'">
+    : 'Prueba con otro término.'">
 </app-ui-empty-state>
 
 <div *ngIf="!cargando && !errorMensaje && filtrados.length > 0" class="ml__lista">

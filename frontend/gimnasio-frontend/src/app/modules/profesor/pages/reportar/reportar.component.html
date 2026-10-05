@@ -55,7 +55,7 @@
     [title]="reportes.length === 0 ? 'Sin reportes' : 'Sin resultados'"
     [message]="reportes.length === 0
       ? 'Todavía no reportaste ningún problema.'
-      : 'Probá con otro filtro.'">
+      : 'Prueba con otro filtro.'">
   </app-ui-empty-state>
 
   <div *ngIf="!cargando && !errorMensaje && filtrados.length > 0" class="rep__lista">

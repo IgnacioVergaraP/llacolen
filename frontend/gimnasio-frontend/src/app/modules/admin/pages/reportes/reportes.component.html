@@ -33,7 +33,7 @@
   [title]="reportes.length === 0 ? 'Sin reportes' : 'Sin resultados'"
   [message]="reportes.length === 0
     ? 'No hay reportes de los profesores todavía.'
-    : 'Probá con otro filtro.'">
+    : 'Prueba con otro filtro.'">
 </app-ui-empty-state>
 
 <div *ngIf="!cargando && !errorMensaje && filtrados.length > 0" class="ad__lista">

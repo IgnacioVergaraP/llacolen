@@ -64,8 +64,8 @@
   icon="bi-clipboard-plus"
   [title]="rutinas.length === 0 ? 'Sin rutinas todavía' : 'Sin resultados'"
   [message]="rutinas.length === 0
-    ? 'Creá tu primera rutina para asignar a un alumno.'
-    : 'Probá con otro filtro o búsqueda.'">
+    ? 'Crea tu primera rutina para asignar a un alumno.'
+    : 'Prueba con otro filtro o búsqueda.'">
   <app-ui-button *ngIf="rutinas.length === 0" variant="primary" (clicked)="irANueva()">
     Crear rutina
   </app-ui-button>

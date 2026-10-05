@@ -50,7 +50,7 @@
   *ngIf="!cargando && !errorMensaje && rutinas.length === 0"
   icon="bi-clipboard-x"
   title="Sin rutinas asignadas"
-  message="Todavía no tenés rutinas. Podés pedirle una a un profesor.">
+  message="Todavía no tienes rutinas. Puedes pedirle una a un profesor.">
 </app-ui-empty-state>
 
 <div *ngIf="!cargando && !errorMensaje && rutinas.length > 0" class="rutinas-lista">
@@ -69,7 +69,7 @@
   <form class="srs__form" [formGroup]="form" (ngSubmit)="enviarSolicitud()" novalidate>
 
     <p class="srs__info">
-      Un profesor va a coordinar con vos para armar la rutina. Si no elegís a nadie,
+      Un profesor coordinará contigo para armar la rutina. Si no eliges a nadie,
       cualquier profesor disponible puede tomarla.
     </p>
 
@@ -99,7 +99,7 @@
       </div>
 
       <span class="srs__field-hint">
-        Si elegís un profesor, solo esa persona podrá tomar tu solicitud.
+        Si eliges un profesor, solo esa persona podrá tomar tu solicitud.
       </span>
     </div>
 
@@ -167,7 +167,7 @@
         class="srs__textarea"
         formControlName="comentarios"
         rows="3"
-        placeholder="Contale al profesor si tenés alguna molestia, preferencia o disponibilidad horaria...">
+        placeholder="Cuéntale al profesor si tienes alguna molestia, preferencia o disponibilidad horaria...">
       </textarea>
     </div>
 

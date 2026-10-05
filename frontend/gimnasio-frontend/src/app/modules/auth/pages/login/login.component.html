@@ -11,7 +11,7 @@
         <i class="bi bi-activity"></i>
       </div>
       <h1 class="login__title">Campos Deportivos Llacolen</h1>
-      <p class="login__subtitle">Ingresá a tu cuenta para continuar</p>
+      <p class="login__subtitle">Inicia sesión en tu cuenta para continuar</p>
     </header>
 
     <!-- Formulario -->
@@ -24,7 +24,7 @@
         icon="bi-envelope"
         placeholder="tu@email.com"
         autocomplete="email"
-        [error]="emailCtrl.touched && emailCtrl.invalid ? 'Ingresá un email válido' : ''">
+        [error]="emailCtrl.touched && emailCtrl.invalid ? 'Ingresa un correo válido' : ''">
       </app-ui-input>
 
       <app-ui-input
@@ -48,7 +48,7 @@
         [block]="true"
         [loading]="enviando"
         [disabled]="enviando">
-        {{ enviando ? 'Ingresando…' : 'Ingresar' }}
+        {{ enviando ? 'Iniciando sesión…' : 'Iniciar sesión' }}
       </app-ui-button>
     </form>
 
