@@ -100,12 +100,18 @@ export class DetalleComponent implements OnInit {
   }
 
   registrarSeries(): void {
-    if (!this.ejercicioEnSheet || !this.rutina) return;
+    if (this.ejercicioEnSheet) this.iniciarRegistroSerie(this.ejercicioEnSheet);
+  }
 
-    const ej = this.ejercicioEnSheet;
+  registrarSerieDesdeFila(ejercicio: Ejercicio): void {
+    this.iniciarRegistroSerie(ejercicio);
+  }
+
+  private iniciarRegistroSerie(ej: Ejercicio): void {
+    if (!this.rutina) return;
     const esMaquina = ej.tipo === 'maquina';
 
-    this.cerrarSheet();
+    if (this.sheetVisible) this.cerrarSheet();
 
     this.router.navigate(['/progreso/registrar'], {
       queryParams: {
@@ -115,6 +121,7 @@ export class DetalleComponent implements OnInit {
           ? (ej.maquina?.nombre ?? ej.maquina_id ?? '')
           : (ej.nombre ?? ''),
         rutina_id: this.rutina.id,
+        volver_a: this.router.url,
         series: ej.series,
         peso: ej.peso_sugerido ?? null,
         repeticiones: ej.repeticiones,

@@ -19,6 +19,7 @@ export class EjercicioItemComponent {
   }
 
   @Output() verDetalle = new EventEmitter<Ejercicio>();
+  @Output() registrarSerie = new EventEmitter<Ejercicio>();
 
   get esMaquina(): boolean {
     return this.ejercicio?.tipo === 'maquina';
@@ -42,5 +43,10 @@ export class EjercicioItemComponent {
 
   onTap(): void {
     this.verDetalle.emit(this.ejercicio);
+  }
+
+  onRegister(event: Event): void {
+    event.stopPropagation();
+    this.registrarSerie.emit(this.ejercicio);
   }
 }

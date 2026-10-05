@@ -15,6 +15,7 @@ export class ListaComponent implements OnInit {
   cargando = false;
   errorMensaje: string | null = null;
   musculoSeleccionado: string | null = null;
+  busqueda = '';
 
   constructor(private maquinasService: MaquinasService) {}
 
@@ -25,6 +26,23 @@ export class ListaComponent implements OnInit {
   onMusculoChange(musculo: string | null): void {
     this.musculoSeleccionado = musculo;
     this.cargar();
+  }
+
+  onBusquedaChange(event: Event): void {
+    this.busqueda = (event.target as HTMLInputElement).value;
+  }
+
+  get maquinasFiltradas(): Maquina[] {
+    const query = this.normalizar(this.busqueda);
+    if (!query) return this.maquinas;
+
+    return this.maquinas.filter(maquina =>
+      this.normalizar([
+        maquina.nombre,
+        maquina.descripcion,
+        ...maquina.grupos_musculares,
+      ].join(' ')).includes(query),
+    );
   }
 
   reintentar(): void {
@@ -53,5 +71,13 @@ export class ListaComponent implements OnInit {
 
   trackById(_: number, m: Maquina): string {
     return m.id;
+  }
+
+  private normalizar(texto: string): string {
+    return texto
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim();
   }
 }

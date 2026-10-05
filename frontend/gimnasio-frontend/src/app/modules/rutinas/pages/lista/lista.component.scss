@@ -168,6 +168,28 @@
   gap: 6px;
 }
 
+.srs__chip {
+  flex: 0 0 auto;
+  min-height: 34px;
+  padding: 6px 14px;
+  color: $color-text-muted;
+  background: #ffffff;
+  border: 1px solid $color-border;
+  border-radius: $radius-full;
+  font-size: $fs-sm;
+  font-weight: $fw-medium;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.srs__chip--active {
+  color: $color-primary;
+  background: $color-primary-soft;
+  border-color: rgba(47, 111, 78, 0.30);
+  font-weight: $fw-semibold;
+}
+
 .srs__stepper {
   display: flex;
   align-items: center;

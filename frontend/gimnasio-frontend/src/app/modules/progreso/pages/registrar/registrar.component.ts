@@ -22,6 +22,7 @@ export class RegistrarComponent implements OnInit {
   nombreLibre: string | null = null;
   nombreVisible = '';
   rutinaId: string | null = null;
+  rutaRetorno = '/progreso';
   seriesObjetivo: number | null = null;
 
   peso = 40;
@@ -53,6 +54,7 @@ export class RegistrarComponent implements OnInit {
     const maquinaId = qp.get('maquina_id');
     const nombreLibre = qp.get('nombre');
     const rutinaId = qp.get('rutina_id');
+    const volverA = qp.get('volver_a');
     const seriesObjetivo = qp.get('series');
     const pesoInicial = qp.get('peso');
     const repsInicial = qp.get('repeticiones');
@@ -71,6 +73,9 @@ export class RegistrarComponent implements OnInit {
     }
 
     this.rutinaId = rutinaId;
+    if (volverA?.startsWith('/') && !volverA.startsWith('//')) {
+      this.rutaRetorno = volverA;
+    }
 
     if (seriesObjetivo) {
       const n = Number(seriesObjetivo);
@@ -192,11 +197,11 @@ export class RegistrarComponent implements OnInit {
   }
 
   terminar(): void {
-    this.router.navigate(['/progreso']);
+    this.router.navigateByUrl(this.rutaRetorno);
   }
 
   cancelar(): void {
-    this.router.navigate(['/progreso']);
+    this.router.navigateByUrl(this.rutaRetorno);
   }
 
   trackBySerie(_: number, s: SerieConfirmada): string {

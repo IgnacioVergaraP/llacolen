@@ -11,7 +11,7 @@
   -webkit-overflow-scrolling: touch;
 
   padding: 4px $content-padding-x 8px;
-  margin: 0 -#{$content-padding-x};
+  margin: 10 -#{$content-padding-x};
 
   scrollbar-width: none;
   &::-webkit-scrollbar { display: none; }

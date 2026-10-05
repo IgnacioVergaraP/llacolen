@@ -34,7 +34,8 @@
         [ejercicio]="e"
         [indice]="i + 1"
         [routineMuscles]="rutina.grupos_musculares"
-        (verDetalle)="abrirSheet($event)">
+        (verDetalle)="abrirSheet($event)"
+        (registrarSerie)="registrarSerieDesdeFila($event)">
       </app-ejercicio-item>
     </div>
   </section>

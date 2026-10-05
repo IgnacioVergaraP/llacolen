@@ -7,6 +7,38 @@
   padding-top: $space-2;
 }
 
+.maquinas-lista__busqueda {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: $space-2;
+}
+
+.maquinas-lista__busqueda-icon {
+  position: absolute;
+  left: 14px;
+  color: $color-text-subtle;
+  pointer-events: none;
+}
+
+.maquinas-lista__busqueda-input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 14px 0 40px;
+  color: $color-text;
+  background: #ffffff;
+  border: 1px solid $color-border;
+  border-radius: 10px;
+  outline: none;
+
+  &::placeholder { color: $color-text-subtle; }
+
+  &:focus {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px rgba(47, 111, 78, 0.10);
+  }
+}
+
 .maquinas-lista__loading {
   display: flex;
   align-items: center;

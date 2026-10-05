@@ -3,6 +3,17 @@
   subtitle="Explorá los equipos y ejercicios del gimnasio">
 </app-ui-page-header>
 
+<div class="maquinas-lista__busqueda">
+  <i class="bi bi-search maquinas-lista__busqueda-icon" aria-hidden="true"></i>
+  <input
+    type="search"
+    class="maquinas-lista__busqueda-input"
+    aria-label="Buscar máquinas"
+    placeholder="Buscar máquinas o grupos musculares"
+    [value]="busqueda"
+    (input)="onBusquedaChange($event)" />
+</div>
+
 <app-musculo-filter
   [seleccionado]="musculoSeleccionado"
   (seleccionadoChange)="onMusculoChange($event)">
@@ -27,16 +38,18 @@
 
 <!-- Empty (sin resultados) -->
 <app-ui-empty-state
-  *ngIf="!cargando && !errorMensaje && maquinas.length === 0"
+  *ngIf="!cargando && !errorMensaje && maquinasFiltradas.length === 0"
   icon="bi-search"
-  title="Sin resultados"
-  message="No hay máquinas para el grupo muscular seleccionado.">
+  [title]="maquinas.length === 0 ? 'Sin máquinas' : 'Sin resultados'"
+  [message]="maquinas.length === 0
+    ? 'No hay máquinas para el grupo muscular seleccionado.'
+    : 'Probá con otro término o grupo muscular.'">
 </app-ui-empty-state>
 
 <!-- Listado -->
-<div *ngIf="!cargando && !errorMensaje && maquinas.length > 0" class="maquinas-lista">
+<div *ngIf="!cargando && !errorMensaje && maquinasFiltradas.length > 0" class="maquinas-lista">
   <app-maquina-card
-    *ngFor="let m of maquinas; trackBy: trackById"
+    *ngFor="let m of maquinasFiltradas; trackBy: trackById"
     [maquina]="m">
   </app-maquina-card>
 </div>

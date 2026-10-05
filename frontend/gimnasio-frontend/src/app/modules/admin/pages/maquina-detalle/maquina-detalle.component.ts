@@ -58,7 +58,7 @@ export class MaquinaDetalleComponent implements OnInit {
       return;
     }
     this.maquinaId = id;
-    this.cargar();
+    this.cargar(this.route.snapshot.queryParamMap.get('registrar') === '1');
   }
 
   get puedeGuardar(): boolean {
@@ -157,7 +157,7 @@ export class MaquinaDetalleComponent implements OnInit {
 
   // -------- Carga --------
 
-  private cargar(): void {
+  private cargar(abrirSheet = false): void {
     this.cargando = true;
     this.errorMensaje = null;
 
@@ -165,7 +165,10 @@ export class MaquinaDetalleComponent implements OnInit {
       .listarMantenimientosMaquina(this.maquinaId)
       .pipe(finalize(() => (this.cargando = false)))
       .subscribe({
-        next: (d) => (this.data = d),
+        next: (d) => {
+          this.data = d;
+          if (abrirSheet) this.abrirSheet();
+        },
         error: (err: any) => {
           this.errorMensaje = err?.error?.error?.message ?? 'No se pudo cargar la máquina.';
           this.data = null;

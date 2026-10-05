@@ -39,29 +39,38 @@
 </app-ui-empty-state>
 
 <div *ngIf="!cargando && !errorMensaje && filtrados.length > 0" class="ml__lista">
-  <button
-    *ngFor="let item of filtrados; trackBy: trackById"
-    type="button"
-    class="ml__item"
-    (click)="irADetalle(item.maquina)">
+  <div *ngFor="let item of filtrados; trackBy: trackById" class="ml__item-row">
+    <button
+      type="button"
+      class="ml__item"
+      (click)="irADetalle(item.maquina)">
 
-    <div class="ml__item-thumb">
-      <img
-        *ngIf="item.maquina.imagen_url"
-        [src]="item.maquina.imagen_url"
-        [alt]="item.maquina.nombre"
-        loading="lazy" />
-      <i *ngIf="!item.maquina.imagen_url" class="bi bi-gear" aria-hidden="true"></i>
-    </div>
+      <div class="ml__item-thumb">
+        <img
+          *ngIf="item.maquina.imagen_url"
+          [src]="item.maquina.imagen_url"
+          [alt]="item.maquina.nombre"
+          loading="lazy" />
+        <i *ngIf="!item.maquina.imagen_url" class="bi bi-gear" aria-hidden="true"></i>
+      </div>
 
-    <div class="ml__item-body">
-      <p class="ml__item-nombre">{{ item.maquina.nombre }}</p>
-      <p class="ml__item-tags">
-        {{ item.maquina.grupos_musculares.join(' · ') }}
-      </p>
-      <p class="ml__item-fecha">{{ getFechaUltima(item.ultimaMantenimiento) }}</p>
-    </div>
+      <div class="ml__item-body">
+        <p class="ml__item-nombre">{{ item.maquina.nombre }}</p>
+        <p class="ml__item-tags">
+          {{ item.maquina.grupos_musculares.join(' · ') }}
+        </p>
+        <p class="ml__item-fecha">{{ getFechaUltima(item.ultimaMantenimiento) }}</p>
+      </div>
 
-    <i class="bi bi-chevron-right ml__item-chevron" aria-hidden="true"></i>
-  </button>
+      <i class="bi bi-chevron-right ml__item-chevron" aria-hidden="true"></i>
+    </button>
+
+    <button
+      type="button"
+      class="ml__add"
+      [attr.aria-label]="'Registrar mantención para ' + item.maquina.nombre"
+      (click)="irARegistrar(item.maquina)">
+      <i class="bi bi-plus-lg" aria-hidden="true"></i>
+    </button>
+  </div>
 </div>

@@ -3,23 +3,56 @@
 .ejercicio-item {
   display: flex;
   align-items: center;
-  gap: $space-3;
+  gap: $space-2;
 
   width: 100%;
   padding: $space-3;
-  text-align: left;
 
   background: #ffffff;
   border: 1px solid $color-border;
   border-radius: $radius-md;
-  color: inherit;
-  cursor: pointer;
 
-  transition: border-color 150ms ease, background 150ms ease;
+  transition: border-color 150ms ease;
 
   @include hover { border-color: $color-border-strong; }
+}
+
+.ejercicio-item__details {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  color: inherit;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+
   &:active { background: $color-bg-hover; }
   &:focus-visible { outline: 2px solid $color-primary; outline-offset: 2px; }
+}
+
+.ejercicio-item__register {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex: 0 0 auto;
+  min-height: 40px;
+  padding: 0 8px;
+  color: $color-primary;
+  background: $color-primary-soft;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  font-size: $fs-xs;
+  font-weight: $fw-semibold;
+  cursor: pointer;
+
+  &:active { transform: scale(0.97); }
+  &:focus-visible { outline: 2px solid $color-primary; outline-offset: 2px; }
+  i { font-size: 14px; }
 }
 
 .ejercicio-item__index {

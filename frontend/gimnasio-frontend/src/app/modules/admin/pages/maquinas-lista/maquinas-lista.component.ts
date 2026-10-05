@@ -54,6 +54,12 @@ export class MaquinasListaComponent implements OnInit {
     this.router.navigate(['/admin/maquinas', m.id]);
   }
 
+  irARegistrar(m: Maquina): void {
+    this.router.navigate(['/admin/maquinas', m.id], {
+      queryParams: { registrar: '1' },
+    });
+  }
+
   getFechaUltima(m: Mantenimiento | null): string {
     if (!m) return 'Sin mantención';
     const d = new Date(m.fecha);
