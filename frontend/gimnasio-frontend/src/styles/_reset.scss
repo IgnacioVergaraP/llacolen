@@ -33,5 +33,6 @@ a { color: $color-primary; text-decoration: none; }
 :focus-visible { @include focus-ring; }
 
 input, select, textarea {
+  font-family: $font-family-base;
   font-size: $fs-base;
 }

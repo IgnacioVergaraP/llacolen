@@ -16,7 +16,10 @@ $touch-min: 44px;
 // Layout
 $bottom-nav-height: 60px;
 $header-height: 56px;
-$content-max-width: 720px;
+$content-max-width: 1220px;
+// Secciones compactas para la app, adaptadas del espaciado de la landing.
+$section-gap-mobile: 32px;
+$section-gap: 48px;
 $content-padding-x: $space-4;
 
 // Safe areas iOS (para Capacitor)

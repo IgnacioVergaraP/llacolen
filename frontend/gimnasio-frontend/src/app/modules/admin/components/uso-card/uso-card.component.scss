@@ -29,7 +29,9 @@
 }
 
 .uc__valor {
-  font-size: $fs-sm;
+  font-family: $font-family-display;
+  font-variant-numeric: tabular-nums;
+  font-size: 32px;
   font-weight: $fw-semibold;
   color: $color-primary;
   flex-shrink: 0;

@@ -16,7 +16,8 @@
   padding-right: max(0px, #{$safe-area-right});
   padding-bottom: $safe-area-bottom;
 
-  background: $color-bg;
+  background: $color-bg-dark;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
   border-top: 1px solid $color-border;
 
   @include lg-up {
@@ -39,14 +40,14 @@
   gap: 2px;
 
   min-height: $touch-min;
-  color: $color-text-muted;
+  color: #b9bbc1;
   font-size: $fs-xs;
   font-weight: $fw-medium;
   text-decoration: none;
 
   transition: color 120ms ease, background 120ms ease;
 
-  &:active { background: $color-bg-hover; }
+  &:active { background: rgba(var(--brand-rgb), 0.12); }
 
   i { font-size: 20px; line-height: 1; }
 }
@@ -159,7 +160,7 @@
   }
 
   @include hover { background: $color-bg-hover; }
-  &:active { background: $color-bg-hover; }
+  &:active { background: rgba(var(--brand-rgb), 0.12); }
 
   &:focus-visible {
     outline: 2px solid $color-primary;

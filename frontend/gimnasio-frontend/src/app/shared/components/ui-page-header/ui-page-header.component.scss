@@ -7,15 +7,19 @@
   gap: $space-3;
 
   padding: $space-4 0 $space-3;
-  margin-bottom: $space-3;
+  margin-bottom: $space-6;
+  border-bottom: 1px solid $color-border;
 }
 
 .ui-page-header__titles { min-width: 0; flex: 1; }
 
 .ui-page-header__title {
-  font-size: $fs-xl;
-  font-weight: $fw-semibold;
-  letter-spacing: -0.01em;
+  font-family: $font-family-display;
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: $fw-bold;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
   color: $color-text;
   margin: 0;
 }

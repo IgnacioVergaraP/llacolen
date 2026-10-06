@@ -19,6 +19,7 @@ type InputType = 'text' | 'email' | 'password' | 'number';
 })
 export class UiInputComponent implements ControlValueAccessor {
 
+  @Input() appearance: 'default' | 'dark' = 'default';
   @Input() label = '';
   @Input() type: InputType = 'text';
   @Input() placeholder = '';

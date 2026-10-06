@@ -28,7 +28,7 @@ export class GimnasioConfigService {
     return this.apiHttp.get<GimnasioConfig>('/gimnasio/config').pipe(
       tap(config => {
         this._config$.next(config);
-        this.aplicarTema(config);
+        this.aplicarTema();
       }),
     );
   }
@@ -38,11 +38,12 @@ export class GimnasioConfigService {
     this.limpiarTema();
   }
 
-  private aplicarTema(config: GimnasioConfig): void {
+  private aplicarTema(): void {
     const root = document.documentElement;
-    const primary = config.color_primario;
+    // La identidad visual del template tiene prioridad sobre el color del gimnasio.
+    const primary = '#FF6B00';
     root.style.setProperty(CSS_VAR_PRIMARY, primary);
-    root.style.setProperty(CSS_VAR_PRIMARY_HOVER, this.darken(primary, 0.1));
+    root.style.setProperty(CSS_VAR_PRIMARY_HOVER, '#202020');
     root.style.setProperty(CSS_VAR_PRIMARY_SOFT, this.lighten(primary, 0.9));
   }
 
@@ -51,11 +52,6 @@ export class GimnasioConfigService {
     root.style.removeProperty(CSS_VAR_PRIMARY);
     root.style.removeProperty(CSS_VAR_PRIMARY_HOVER);
     root.style.removeProperty(CSS_VAR_PRIMARY_SOFT);
-  }
-
-  /** Oscurece un hex. factor 0..1 (0.1 = 10% más oscuro). */
-  private darken(hex: string, factor: number): string {
-    return this.shift(hex, -factor);
   }
 
   /** Aclara un hex. factor 0..1 (0.9 = muy claro). */

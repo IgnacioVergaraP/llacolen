@@ -1,5 +1,7 @@
 h1, h2, h3, h4, h5, h6 {
   color: $color-text;
+  font-family: $font-family-display;
+  letter-spacing: 0.01em;
   font-weight: $fw-semibold;
   line-height: $lh-tight;
   margin: 0;
@@ -13,6 +15,6 @@ h4 { font-size: $fs-md; }
 body {
   font-family: $font-family-base;
   font-size: $fs-base;
-  line-height: $lh-normal;
-  color: $color-text;
+  line-height: 1.625;
+  color: $color-body;
 }

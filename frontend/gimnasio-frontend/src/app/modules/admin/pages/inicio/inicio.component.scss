@@ -30,7 +30,8 @@
   padding: $space-4;
   background: #ffffff;
   border: 1px solid $color-border;
-  border-radius: $radius-md;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
   text-align: left;
   cursor: pointer;
   color: inherit;
@@ -62,7 +63,9 @@
 }
 
 .ad__metrica-valor {
-  font-size: 28px;
+  font-family: $font-family-display;
+  font-variant-numeric: tabular-nums;
+  font-size: 34px;
   font-weight: $fw-semibold;
   color: $color-text;
   margin: 0;
@@ -113,7 +116,8 @@
   padding: $space-4;
   background: #ffffff;
   border: 1px solid $color-border;
-  border-radius: $radius-md;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
 }
 
 .ad__perfil-info {
@@ -151,7 +155,8 @@
 
   width: 40px;
   height: 40px;
-  border-radius: $radius-md;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
   color: $color-text-muted;
   cursor: pointer;
 
@@ -178,7 +183,8 @@
   color: $color-danger;
   background: #ffffff;
   border: 1px solid rgba(192, 57, 43, 0.30);
-  border-radius: $radius-md;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
   cursor: pointer;
 
   transition: background 150ms ease, border-color 150ms ease;
@@ -191,4 +197,8 @@
   &:active { background: rgba(192, 57, 43, 0.10); }
 
   i { font-size: 16px; }
+}
+.ad__perfil {
+  margin-top: $section-gap-mobile;
+  @include lg-up { margin-top: $section-gap; }
 }

@@ -13,6 +13,7 @@ import { GimnasioConfigService } from './core/services/gimnasio-config.service';
 })
 export class AppComponent {
 
+  readonly esAuth$: Observable<boolean>;
   mostrarBottomNav$: Observable<boolean>;
   mostrarSidebar$: Observable<boolean>;
   mostrarBannerProfesor$: Observable<boolean>;
@@ -28,6 +29,8 @@ export class AppComponent {
       filter((e): e is NavigationEnd => e instanceof NavigationEnd),
       startWith(null),
     );
+
+    this.esAuth$ = navEnd$.pipe(map(() => this.router.url.startsWith('/auth')));
 
     this.mostrarBottomNav$ = combineLatest([navEnd$, this.auth.usuario$]).pipe(
       map(() => !this.router.url.startsWith('/auth')),

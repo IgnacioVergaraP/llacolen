@@ -186,7 +186,7 @@
 .srs__chip--active {
   color: $color-primary;
   background: $color-primary-soft;
-  border-color: rgba(47, 111, 78, 0.30);
+  border-color: rgba(var(--brand-rgb), 0.30);
   font-weight: $fw-semibold;
 }
 

@@ -46,7 +46,8 @@
   padding: $space-4;
   background: $color-bg-subtle;
   border: 1px dashed $color-border;
-  border-radius: $radius-md;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
 
   i { font-size: 20px; color: $color-text-subtle; }
 
@@ -73,7 +74,8 @@
   background: $color-primary-soft;
   border: 1px solid var(--brand-20);
   border-left: 4px solid $color-primary;
-  border-radius: $radius-md;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
 }
 
 .inicio__horario-hora {
@@ -120,7 +122,8 @@
   padding: $space-4;
   background: #ffffff;
   border: 1px solid $color-border;
-  border-radius: $radius-md;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
   text-align: left;
   cursor: pointer;
   color: inherit;
@@ -155,7 +158,9 @@
 }
 
 .inicio__metrica-valor {
-  font-size: 26px;
+  font-family: $font-family-display;
+  font-variant-numeric: tabular-nums;
+  font-size: 34px;
   font-weight: $fw-semibold;
   color: $color-text;
   margin: 0;
@@ -194,7 +199,8 @@
   padding: $space-3;
   background: #ffffff;
   border: 1px solid $color-border;
-  border-radius: $radius-md;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
   text-align: left;
   cursor: pointer;
   color: inherit;
@@ -212,7 +218,9 @@
 }
 
 .inicio__metrica-mini-valor {
-  font-size: $fs-md;
+  font-family: $font-family-display;
+  font-variant-numeric: tabular-nums;
+  font-size: 28px;
   font-weight: $fw-semibold;
   color: $color-text;
 }
@@ -241,7 +249,8 @@
 
   background: #ffffff;
   border: 1px solid $color-border;
-  border-radius: $radius-md;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
   text-align: left;
   cursor: pointer;
   color: inherit;
@@ -272,4 +281,11 @@
 .inicio__acceso-chevron {
   font-size: 14px;
   color: $color-text-subtle;
+}
+
+.inicio__horario-hoy,
+.inicio__metricas,
+.inicio__metricas-mini {
+  margin-top: $section-gap-mobile;
+  @include lg-up { margin-top: $section-gap; }
 }

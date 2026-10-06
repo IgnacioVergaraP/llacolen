@@ -32,6 +32,8 @@ export class LoginComponent {
   get passwordCtrl() { return this.form.get('password')!; }
 
   onSubmit(): void {
+    if (this.enviando) return;
+
     this.errorMensaje = null;
 
     if (this.form.invalid) {

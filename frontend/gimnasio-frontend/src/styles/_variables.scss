@@ -1,25 +1,27 @@
 // ============================================================
-// Design tokens — inspirado en Notion
+// Design tokens — identidad fitness adaptada de estilos.txt
 // ============================================================
 
 // --- Colores neutros (base de toda la UI) ---
-$color-bg:            #ffffff;
-$color-bg-subtle:     #f7f6f3;
-$color-bg-hover:      #efefee;
+$color-bg:            #F3F3F3;
+$color-bg-subtle:     #F6F6F7;
+$color-bg-hover:      #eeeeef;
 $color-surface:       #ffffff;
-$color-border:        #e9e9e7;
+$color-border:        #E3E3E3;
 $color-border-strong: #d3d1cb;
 
 // --- Texto ---
-$color-text:          #37352f;
-$color-text-muted:    #787774;
-$color-text-subtle:   #9b9a97;
+$color-bg-dark:       #202020;
+$color-body:          #7B7E86;
+$color-text:          #1C1C1C;
+$color-text-muted:    #7B7E86;
+$color-text-subtle:   #9fa2ad;
 $color-text-inverse:  #ffffff;
 
 // --- Acentos (un solo color de marca, plano) ---
-$color-primary-default:       #2f6f4e;
-$color-primary-hover-default: #285f42;
-$color-primary-soft-default:  #e8f0eb;
+$color-primary-default:       #FF6B00;
+$color-primary-hover-default: #202020;
+$color-primary-soft-default:  #fff0e6;
 $color-primary:       var(--color-primary, #{$color-primary-default});
 $color-primary-hover: var(--color-primary-hover, #{$color-primary-hover-default});
 $color-primary-soft:  var(--color-primary-soft, #{$color-primary-soft-default});
@@ -32,13 +34,13 @@ $color-info:          #2f5f8f;
 
 // --- Radios ---
 $radius-sm: 4px;
-$radius-md: 6px;
+$radius-md: 10px;
 $radius-lg: 10px;
 $radius-full: 999px;
 
 // --- Sombras ---
 $shadow-xs: 0 1px 2px rgba(15, 15, 15, 0.04);
-$shadow-sm: 0 1px 3px rgba(15, 15, 15, 0.06);
+$shadow-sm: 0 8px 24px rgba(28, 28, 28, 0.06);
 $shadow-md: 0 4px 12px rgba(15, 15, 15, 0.08);
 
 // --- Z-index ---
@@ -47,13 +49,14 @@ $z-bottom-nav: 200;
 $z-sheet: 1000;
 
 // --- Tipografía (tokens) ---
-$font-family-base: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+$font-family-base: "Kumbh Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
                    "Helvetica Neue", Arial, sans-serif;
+$font-family-display: "Kanit", $font-family-base;
 $font-family-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
 
 $fs-xs:   12px;
 $fs-sm:   13px;
-$fs-base: 15px;
+$fs-base: 16px;
 $fs-md:   17px;
 $fs-lg:   20px;
 $fs-xl:   24px;

@@ -109,11 +109,15 @@
   width: 100%;
   max-width: $content-max-width;
   margin: 0 auto;
-  padding: $space-4 max(#{$space-4}, #{$safe-area-right}) $space-4 max(#{$space-4}, #{$safe-area-left});
+  padding: $space-6 max(#{$space-4}, #{$safe-area-right}) $space-4 max(#{$space-4}, #{$safe-area-left});
   padding-bottom: calc(#{$bottom-nav-height} + #{$safe-area-bottom} + #{$space-4});
 }
 
 .app-shell--with-sidebar .app-content {
-  max-width: 1200px;
+  max-width: $content-max-width;
   padding-bottom: $space-6;
+}
+.app-shell--auth {
+  background: #15191c;
+  .app-content { max-width: none; padding: 0; }
 }

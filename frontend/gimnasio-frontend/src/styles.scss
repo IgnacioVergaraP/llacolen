@@ -1,5 +1,5 @@
-// Fuente Inter (alineada con estética Linear/Vercel/Notion)
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+// Tipografías del template fitness.
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700&family=Kumbh+Sans:wght@400;500;600;700&display=swap');
 
 // Design system
 @import "styles/variables";
@@ -16,6 +16,7 @@
   --color-primary: #{$color-primary-default};
   --color-primary-hover: #{$color-primary-hover-default};
   --color-primary-soft: #{$color-primary-soft-default};
+  --brand-rgb: 255, 107, 0;
   --safe-area-top: #{$safe-area-top};
   --safe-area-right: #{$safe-area-right};
   --safe-area-bottom: #{$safe-area-bottom};
@@ -28,8 +29,8 @@
   gap: 10px;
   min-height: 44px;
   padding: 7px max(#{$space-4}, #{$safe-area-left}) 7px max(#{$space-4}, #{$safe-area-right});
-  background: $color-bg;
-  border-bottom: 1px solid $color-border;
+  background: $color-bg-dark;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .app-gym-brand {
@@ -81,11 +82,18 @@
 .app-gym-brand__name {
   min-width: 0;
   overflow: hidden;
-  color: $color-text-muted;
-  font-size: $fs-xs;
+  color: $color-text-inverse;
+  font-size: $fs-sm;
   font-weight: $fw-semibold;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 // Bootstrap está registrado en angular.json (styles[]). No duplicar acá.
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

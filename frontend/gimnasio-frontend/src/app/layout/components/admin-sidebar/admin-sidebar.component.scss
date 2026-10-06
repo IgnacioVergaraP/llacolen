@@ -12,8 +12,8 @@
   height: 100dvh;
   position: sticky;
   top: 0;
-  background: $color-bg-subtle;
-  border-right: 1px solid $color-border;
+  background: $color-bg-dark;
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
 
   overflow-y: auto;
 }
@@ -23,7 +23,7 @@
   flex-direction: column;
   gap: $space-3;
   padding-bottom: $space-3;
-  border-bottom: 1px solid $color-border;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .as__user {
@@ -51,7 +51,7 @@
 .as__user-nombre {
   font-size: $fs-sm;
   font-weight: $fw-semibold;
-  color: $color-text;
+  color: $color-text-inverse;
   margin: 0;
   line-height: 1.2;
 
@@ -60,7 +60,7 @@
 
 .as__user-rol {
   font-size: $fs-xs;
-  color: $color-text-muted;
+  color: #b9bbc1;
   margin: 2px 0 0;
 }
 
@@ -74,7 +74,7 @@
   font-size: $fs-sm;
   font-weight: $fw-medium;
   color: $color-primary;
-  background: $color-primary-soft;
+  background: rgba(var(--brand-rgb), 0.12);
   border: 1px solid rgba(var(--brand-rgb), 0.20);
   border-radius: $radius-md;
   cursor: pointer;
@@ -103,12 +103,12 @@
 
   font-size: $fs-sm;
   font-weight: $fw-medium;
-  color: $color-text-muted;
+  color: #b9bbc1;
   text-decoration: none;
 
   transition: background 150ms ease, color 150ms ease;
 
-  @include hover { background: rgba(0,0,0,0.04); color: $color-text; }
+  @include hover { background: rgba(255,255,255,0.06); color: $color-text-inverse; }
 
   i { font-size: 16px; width: 18px; text-align: center; }
 
@@ -119,8 +119,8 @@
 }
 
 .as__link--active {
-  background: #ffffff;
-  color: $color-primary;
+  background: $color-primary;
+  color: $color-text;
   font-weight: $fw-semibold;
   box-shadow: $shadow-xs;
 }

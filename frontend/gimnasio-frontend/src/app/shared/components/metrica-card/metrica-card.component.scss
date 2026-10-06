@@ -9,7 +9,8 @@
   padding: $space-3;
   background: #ffffff;
   border: 1px solid $color-border;
-  border-radius: $radius-md;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
   min-height: 96px;
 }
 
@@ -20,7 +21,9 @@
 }
 
 .metrica-card__valor {
-  font-size: 26px;
+  font-family: $font-family-display;
+  font-variant-numeric: tabular-nums;
+  font-size: 32px;
   font-weight: $fw-semibold;
   color: $color-text;
   margin: 0;
@@ -28,6 +31,7 @@
 }
 
 .metrica-card__sufijo {
+  font-family: $font-family-base;
   font-size: $fs-sm;
   color: $color-text-muted;
   font-weight: $fw-regular;

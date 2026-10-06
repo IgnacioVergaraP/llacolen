@@ -1,4 +1,4 @@
-<div class="ui-input" [class.ui-input--error]="!!error">
+<div class="ui-input" [class.ui-input--error]="!!error" [class.ui-input--dark]="appearance === 'dark'">
 
   <label *ngIf="label" class="ui-input__label" [for]="inputId">{{ label }}</label>
 
@@ -15,6 +15,8 @@
       [class.ui-input__field--with-icon]="!!icon"
       [class.ui-input__field--with-action]="esPassword"
       [id]="inputId"
+      [attr.aria-invalid]="error ? true : null"
+      [attr.aria-describedby]="error ? inputId + '-error' : null"
       [type]="tipoEfectivo"
       [placeholder]="placeholder"
       [autocomplete]="autocomplete"
@@ -28,6 +30,8 @@
       type="button"
       class="ui-input__action"
       [attr.aria-label]="mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+      [attr.aria-pressed]="mostrarPassword"
+      [disabled]="disabled"
       (click)="togglePassword()">
       <i
         class="bi"
@@ -38,5 +42,5 @@
     </button>
   </div>
 
-  <p *ngIf="error" class="ui-input__error">{{ error }}</p>
+  <p *ngIf="error" class="ui-input__error" [id]="inputId + '-error'">{{ error }}</p>
 </div>

@@ -59,7 +59,8 @@
   padding: $space-3;
   background: #ffffff;
   border: 1px solid $color-border;
-  border-radius: $radius-md;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
   min-height: 96px;
 }
 
@@ -70,7 +71,9 @@
 }
 
 .dash__stat-valor {
-  font-size: 22px;
+  font-family: $font-family-display;
+  font-variant-numeric: tabular-nums;
+  font-size: 30px;
   font-weight: $fw-semibold;
   color: $color-text;
   margin: 0;
@@ -131,7 +134,8 @@
   padding: 4px;
   background: $color-bg-subtle;
   border: 1px solid $color-border;
-  border-radius: $radius-md;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
 }
 
 .dash__vista-btn {
@@ -168,4 +172,8 @@
   color: $color-text;
   font-weight: $fw-semibold;
   box-shadow: $shadow-xs;
+}
+.dash__section {
+  margin-top: $section-gap-mobile;
+  @include lg-up { margin-top: $section-gap; }
 }

@@ -36,7 +36,7 @@
   padding: 0 14px;
   font-size: $fs-base;
   color: $color-text;
-  background: #ffffff;
+  background: $color-bg-subtle;
   border: 1px solid $color-border;
   border-radius: 10px;
   outline: none;
@@ -53,6 +53,7 @@
   }
 
   &:focus {
+    background: $color-surface;
     border-color: $color-primary;
     box-shadow: 0 0 0 3px rgba(var(--brand-rgb), 0.10);
   }
@@ -116,4 +117,30 @@
   font-size: $fs-xs;
   color: $color-danger;
   line-height: 1.3;
+}
+// Variante local para formularios sobre fondo carbón.
+.ui-input--dark {
+  .ui-input__label { color: #ffffff; font-size: 14px; }
+  .ui-input__field {
+    min-height: 54px;
+    background: #20262b;
+    border-color: #3d464d;
+    border-radius: 12px;
+    color: #ffffff;
+    &::placeholder { color: #9ba3aa; }
+    &:hover:not(:disabled) { border-color: #6b747c; }
+    &:focus { border-color: #ff6b00; background: #20262b; box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.15); }
+  }
+  .ui-input__icon, .ui-input__action { color: #a4a9ae; }
+  .ui-input__wrap:focus-within .ui-input__icon { color: #ff6b00; }
+  .ui-input__action {
+    width: 48px;
+    height: 48px;
+    right: 3px;
+    &:hover { color: #ffffff; background: #2c343a; }
+    &:focus-visible { outline-color: #ff6b00; }
+  }
+  .ui-input__field--with-action { padding-right: 56px; }
+  .ui-input__error { color: #ffb4ab; }
+  &.ui-input--error .ui-input__field { border-color: #ffb4ab; }
 }

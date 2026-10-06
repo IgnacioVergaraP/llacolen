@@ -1,10 +1,10 @@
-<div class="app-shell" [class.app-shell--with-sidebar]="mostrarSidebar$ | async">
+<div class="app-shell" [class.app-shell--auth]="esAuth$ | async" [class.app-shell--with-sidebar]="mostrarSidebar$ | async">
 
   <app-admin-sidebar *ngIf="mostrarSidebar$ | async"></app-admin-sidebar>
 
   <div class="app-main">
 
-    <div class="app-gym-brand" *ngIf="gimnasioConfig$ | async as gym">
+    <div class="app-gym-brand" *ngIf="!(esAuth$ | async) && (gimnasioConfig$ | async) as gym">
       <img *ngIf="gym.logo_url; else gymFallback" [src]="gym.logo_url" alt="">
       <ng-template #gymFallback>
         <span class="app-gym-brand__mark" aria-hidden="true">
