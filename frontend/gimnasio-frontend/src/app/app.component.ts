@@ -66,6 +66,8 @@ export class AppComponent {
     );
   }
 
+  get esDashboard(): boolean { return this.router.url.split(/[?#]/)[0] === '/admin/dashboard'; }
+
   irAModoProfesor(): void {
     this.router.navigate(['/profesor']);
   }

@@ -24,6 +24,7 @@ export class RecursosComponent implements OnInit, OnDestroy {
   nombre = '';
   tipo: TipoRecurso = 'maquina';
   numero = '';
+  esCardio = false;
   descripcion = '';
   guardando = false;
   errorGuardar: string | null = null;
@@ -47,7 +48,7 @@ export class RecursosComponent implements OnInit, OnDestroy {
   abrir(r?: Recurso): void {
     if (this.guardando) return;
     this.editandoId = r?.id ?? null; this.nombre = r?.nombre ?? ''; this.tipo = r?.tipo ?? 'maquina';
-    this.numero = r?.numero_maquina ?? ''; this.descripcion = r?.descripcion ?? '';
+    this.esCardio = r?.es_cardio ?? false; this.numero = r?.numero_maquina ?? ''; this.descripcion = r?.descripcion ?? '';
     this.errorGuardar = null; this.sheetVisible = true;
   }
   cerrar(): void { if (!this.guardando) this.sheetVisible = false; }
@@ -55,7 +56,7 @@ export class RecursosComponent implements OnInit, OnDestroy {
     if (this.guardando || !this.nombre.trim()) return;
     this.guardando = true; this.errorGuardar = null;
     this.escritura = this.service.guardarRecurso({ nombre: this.nombre.trim(), tipo: this.tipo,
-      numero_maquina: this.numero.trim() || null, descripcion: this.descripcion.trim(),
+      es_cardio: this.tipo === 'maquina' && this.esCardio, numero_maquina: this.numero.trim() || null, descripcion: this.descripcion.trim(),
     }, this.editandoId).pipe(finalize(() => (this.guardando = false))).subscribe({
       next: () => { this.sheetVisible = false; this.cargar(); },
       error: err => { this.errorGuardar = err?.error?.error?.message ?? 'No se pudo guardar el recurso.'; },

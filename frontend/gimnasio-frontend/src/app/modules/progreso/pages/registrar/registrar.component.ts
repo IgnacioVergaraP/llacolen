@@ -17,7 +17,6 @@ export class RegistrarComponent implements OnInit, OnDestroy {
   rutinaId: string | null = null;
   catalogoId: string | null = null;
   ejercicio: EjercicioCatalogo | null = null;
-  recursosSeleccionados: string[] = [];
   rutaRetorno = '/progreso';
   seriesObjetivo: number | null = null;
   pesoSugerido = '';
@@ -68,7 +67,7 @@ export class RegistrarComponent implements OnInit, OnDestroy {
   }
   get puedeRegistrar(): boolean {
     return !this.cargando && !this.guardando && metricasValidas(this.metricas)
-      && (!this.catalogoId || (!!this.ejercicio && this.recursosSeleccionados.length > 0));
+      && (!this.catalogoId || !!this.ejercicio);
   }
   cargarEjercicio(): void {
     if (!this.catalogoId) return;
@@ -85,20 +84,15 @@ export class RegistrarComponent implements OnInit, OnDestroy {
           if (Number.isFinite(minutos) && minutos > 0 && minutos <= 10080) this.metricas.duracion_segundos = Math.round(minutos * 60);
           if (Number.isFinite(km) && km > 0 && km <= 1000) this.metricas.distancia_metros = Math.round(km * 100000) / 100;
         }
-        this.recursosSeleccionados = e.recursos.length === 1 ? [e.recursos[0].id] : [];
       },
       error: err => { this.errorMensaje = err?.error?.error?.message ?? 'No se pudo cargar el ejercicio.'; },
     });
-  }
-  toggleRecurso(id: string): void {
-    this.recursosSeleccionados = this.recursosSeleccionados.includes(id)
-      ? this.recursosSeleccionados.filter(r => r !== id) : [...this.recursosSeleccionados, id];
   }
   registrarSerie(): void {
     if (!this.puedeRegistrar) return;
     this.guardando = true; this.errorMensaje = null;
     const payload: CrearSeriePayload = { ...metricasPayload(this.metricas), rutina_id: this.rutinaId,
-      ...(this.catalogoId ? { ejercicio_catalogo_id: this.catalogoId, recurso_ids: this.recursosSeleccionados }
+      ...(this.catalogoId ? { ejercicio_catalogo_id: this.catalogoId }
         : { ejercicio_tipo: this.tipo, maquina_id: this.maquinaId, nombre_libre: this.nombreLibre }) };
     this.escritura = this.progresoService.registrarSerie(payload).pipe(finalize(() => (this.guardando = false))).subscribe({
       next: creado => {

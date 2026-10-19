@@ -176,7 +176,13 @@
 }
 .dash__nota { color: $color-text-muted; font-size: $fs-sm; line-height: 1.5; margin: 0 0 $space-4; }
 .dash__cobertura { padding: $space-3; border: 1px solid $color-border; border-radius: $radius-md; font-size: $fs-sm; line-height: 1.5; background: $color-bg-subtle; }
-.dash__section {
-  margin-top: $section-gap-mobile;
-  @include lg-up { margin-top: $section-gap; }
+
+.dash__layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: $space-5; align-items: start; }
+.dash__panel { min-width: 0; padding: $space-4; border: 1px solid $color-border; border-radius: $radius-lg; background: #fff; }
+.dash__panel--resumen > section + section { margin-top: $space-5; padding-top: $space-5; border-top: 1px solid $color-border; }
+.dash__section { margin-bottom: 0; }
+.dash__resumen { grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); }
+.dash__panel .dash__rangos { flex-wrap: wrap; overflow: visible; }
+@media (min-width: 1100px) {
+  .dash__layout { grid-template-columns: minmax(320px, 0.9fr) minmax(0, 1.1fr); }
 }

@@ -5,11 +5,12 @@ export interface Recurso {
   gimnasio_id: string;
   nombre: string;
   tipo: TipoRecurso;
+  es_cardio?: boolean;
   numero_maquina: string | null;
   descripcion: string;
   maquina_origen_id: string | null;
 }
-export type RecursoPayload = Pick<Recurso, 'nombre' | 'tipo' | 'numero_maquina' | 'descripcion'>;
+export type RecursoPayload = Pick<Recurso, 'nombre' | 'tipo' | 'numero_maquina' | 'descripcion' | 'es_cardio'>;
 export interface EjercicioCatalogo {
   id: string;
   gimnasio_id: string;

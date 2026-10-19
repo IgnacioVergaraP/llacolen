@@ -49,6 +49,7 @@ export class EditorComponent implements OnInit, OnDestroy {
         this.nombre = e.nombre; this.categoria = e.categoria; this.descripcion = e.descripcion;
         this.videoUrl = e.video_url; this.imagenUrl = e.imagen_url; this.gruposSeleccionados = [...e.grupos_musculares];
         this.seleccionados = new Map(e.recursos.map(r => [r.id, r]));
+        this.cambiarCategoria(e.categoria);
       },
       error: err => { this.error = err?.error?.error?.message ?? 'No se pudo cargar el ejercicio.'; },
     });
@@ -65,11 +66,16 @@ export class EditorComponent implements OnInit, OnDestroy {
     else if (seleccion.size < 30) seleccion.set(r.id, r);
     this.seleccionados = seleccion;
   }
+  cambiarCategoria(categoria: CategoriaEjercicio): void {
+    this.categoria = categoria;
+    if (categoria === 'cardio') this.seleccionados = new Map([...this.seleccionados].filter(([, r]) => r.tipo === 'maquina' && r.es_cardio));
+    this.cargarRecursos();
+  }
   cargarRecursos(mas = false): void {
     this.cargaRecursos?.unsubscribe();
     if (!mas) this.recursos = [];
     this.cargandoRecursos = true; this.errorRecursos = null;
-    this.cargaRecursos = this.service.recursos({ tipo: '', buscar: this.buscarRecurso.trim(), desde: mas ? this.recursos.length : 0 })
+    this.cargaRecursos = this.service.recursos({ tipo: this.categoria === 'cardio' ? 'maquina' : '', ...(this.categoria === 'cardio' ? { es_cardio: true } : {}), buscar: this.buscarRecurso.trim(), desde: mas ? this.recursos.length : 0 })
       .pipe(finalize(() => (this.cargandoRecursos = false))).subscribe({
         next: pagina => { this.recursos = [...this.recursos, ...pagina.items]; this.hayMasRecursos = pagina.hay_mas; },
         error: err => { this.errorRecursos = err?.error?.error?.message ?? 'No se pudieron cargar los recursos.'; },

@@ -29,12 +29,17 @@ export class SubirEjercicioComponent implements OnInit, OnDestroy {
   errorRecursos: string | null = null;
   private cargaRecursos?: Subscription;
   ngOnDestroy(): void { this.cargaRecursos?.unsubscribe(); }
+  cambiarCategoria(categoria: CategoriaEjercicio): void {
+    this.categoria = categoria;
+    if (categoria === 'cardio') this.recursosSeleccionados = this.recursosSeleccionados.filter(r => r.tipo === 'maquina' && r.es_cardio);
+    this.cargarRecursos();
+  }
   cargarRecursos(mas = false): void {
     this.cargaRecursos?.unsubscribe();
     if (!mas) this.recursos = [];
     this.cargandoRecursos = true;
     this.errorRecursos = null;
-    this.cargaRecursos = this.catalogoService.recursos({ tipo: '', buscar: this.buscarRecurso.trim(), desde: mas ? this.recursos.length : 0 })
+    this.cargaRecursos = this.catalogoService.recursos({ tipo: this.categoria === 'cardio' ? 'maquina' : '', ...(this.categoria === 'cardio' ? { es_cardio: true } : {}), buscar: this.buscarRecurso.trim(), desde: mas ? this.recursos.length : 0 })
       .pipe(finalize(() => this.cargandoRecursos = false)).subscribe({
         next: p => { this.recursos = [...this.recursos, ...p.items]; this.recursosHayMas = p.hay_mas; },
         error: () => this.errorRecursos = 'No pudimos cargar los recursos.',

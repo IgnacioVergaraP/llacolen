@@ -15,7 +15,7 @@
 <div class="catalogo__lista">
   <article *ngFor="let r of recursos" class="catalogo__card catalogo__card--recurso">
     <div class="catalogo__cabecera"><h2>{{ r.nombre }}</h2><app-ui-badge *ngIf="r.numero_maquina" variant="primary">N.º {{ r.numero_maquina }}</app-ui-badge></div>
-    <p class="catalogo__meta">{{ etiquetaRecurso(r.tipo) }}</p><p *ngIf="r.descripcion" class="catalogo__descripcion">{{ r.descripcion }}</p>
+    <p class="catalogo__meta">{{ etiquetaRecurso(r.tipo) }}<span *ngIf="r.es_cardio"> · Cardio</span></p><p *ngIf="r.descripcion" class="catalogo__descripcion">{{ r.descripcion }}</p>
     <app-ui-button variant="secondary" [disabled]="guardando" (clicked)="abrir(r)">Editar recurso</app-ui-button>
   </article>
 </div>
@@ -24,6 +24,7 @@
   <form class="catalogo__form" (ngSubmit)="guardar()" #form="ngForm">
     <label for="rec-nombre">Nombre</label><input id="rec-nombre" name="nombre" class="catalogo__input" [(ngModel)]="nombre" maxlength="100" required placeholder="Ej: Polea alta, banco o zona funcional" />
     <label for="rec-tipo">Tipo</label><select id="rec-tipo" name="tipo" class="catalogo__input" [(ngModel)]="tipo"><option *ngFor="let t of tipos" [value]="t.value">{{ t.label }}</option></select>
+    <label *ngIf="tipo === 'maquina'" class="catalogo__opcion"><input type="checkbox" name="esCardio" [(ngModel)]="esCardio" /> Máquina de cardio (trotadora, bicicleta, elíptica…)</label>
     <label for="rec-numero">Número de máquina o recurso (opcional)</label><input id="rec-numero" name="numero" class="catalogo__input" [(ngModel)]="numero" maxlength="30" placeholder="Ej: 12, A-03 o B2" />
     <p class="catalogo__nota">Si está informado, debe ser único dentro de este gimnasio.</p>
     <label for="rec-descripcion">Descripción (opcional)</label><textarea id="rec-descripcion" name="descripcion" class="catalogo__input" [(ngModel)]="descripcion" maxlength="1000" rows="3"></textarea>

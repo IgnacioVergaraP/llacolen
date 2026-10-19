@@ -5,13 +5,7 @@
 </header>
 <div class="registrar__body">
   <p *ngIf="cargando" role="status">Cargando ejercicio…</p>
-  <p *ngIf="pesoSugerido && !esCardio">Peso sugerido: {{ pesoSugerido }}</p>
   <app-metricas-registro [conSteppers]="true" *ngIf="!cargando && (!catalogoId || ejercicio)" [(valor)]="metricas"></app-metricas-registro>
-  <fieldset *ngIf="ejercicio" class="registrar__recursos">
-    <legend>Recursos que utilizaste</legend>
-    <label *ngFor="let r of ejercicio.recursos"><input type="checkbox" [checked]="recursosSeleccionados.includes(r.id)" (change)="toggleRecurso(r.id)" /> {{ r.nombre }}<strong *ngIf="r.numero_maquina"> · N.º {{ r.numero_maquina }}</strong></label>
-    <p *ngIf="!recursosSeleccionados.length">Selecciona al menos un recurso.</p>
-  </fieldset>
   <div *ngIf="errorMensaje" class="registrar__error" role="alert">{{ errorMensaje }}</div>
   <app-ui-button *ngIf="catalogoId && !cargando && !ejercicio" variant="secondary" (clicked)="cargarEjercicio()">Reintentar</app-ui-button>
   <div *ngIf="exitoMensaje" class="registrar__exito" role="status">{{ exitoMensaje }}</div>

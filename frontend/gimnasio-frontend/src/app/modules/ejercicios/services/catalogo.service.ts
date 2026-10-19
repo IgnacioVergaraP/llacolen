@@ -21,7 +21,7 @@ export class CatalogoService {
       : this.http.post<ApiResponse<EjercicioCatalogo>>(`${this.url}/ejercicios`, payload);
     return solicitud.pipe(map(r => r.data));
   }
-  recursos(filtros: { tipo: string; buscar: string; desde: number }): Observable<Pagina<Recurso>> {
+  recursos(filtros: { tipo: string; buscar: string; desde: number; es_cardio?: boolean }): Observable<Pagina<Recurso>> {
     return this.http.get<ApiResponse<Pagina<Recurso>>>(`${this.url}/recursos`, { params: { ...filtros } }).pipe(map(r => r.data));
   }
   guardarRecurso(payload: RecursoPayload, id?: string | null): Observable<Recurso> {

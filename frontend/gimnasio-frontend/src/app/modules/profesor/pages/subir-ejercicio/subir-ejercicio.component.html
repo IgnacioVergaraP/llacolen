@@ -70,12 +70,13 @@
 
     <div class="subir__form-field">
       <label class="subir__form-label" for="sb-categoria">Tipo de ejercicio</label>
-      <select id="sb-categoria" class="subir__textarea" [ngModel]="categoria" (ngModelChange)="categoria = $event" [ngModelOptions]="{standalone: true}">
+      <select id="sb-categoria" class="subir__textarea" [ngModel]="categoria" (ngModelChange)="cambiarCategoria($event)" [ngModelOptions]="{standalone: true}">
         <option *ngFor="let c of categorias" [value]="c.value">{{ c.label }}</option>
       </select>
     </div>
     <fieldset class="subir__recursos">
-      <legend>Máquinas, equipamiento o infraestructura</legend>
+      <legend>{{ categoria === 'cardio' ? 'Máquinas de cardio' : 'Máquinas, equipamiento o infraestructura' }}</legend>
+      <p *ngIf="categoria === 'cardio'" class="subir__form-hint">Solo se muestran máquinas marcadas como cardio. El administrador puede clasificarlas en Recursos.</p>
       <p class="subir__form-hint">Asocia entre 1 y 30 recursos. El administrador puede agregar recursos al gimnasio.</p>
       <input class="subir__textarea" type="search" aria-label="Buscar recurso" placeholder="Buscar por nombre o número…" maxlength="80" [(ngModel)]="buscarRecurso" [ngModelOptions]="{standalone: true}" (ngModelChange)="cargarRecursos()" />
       <div *ngIf="recursosSeleccionados.length" class="subir__chips">

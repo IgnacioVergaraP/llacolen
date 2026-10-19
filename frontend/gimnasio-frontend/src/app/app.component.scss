@@ -121,3 +121,5 @@
   background: #15191c;
   .app-content { max-width: none; padding: 0; }
 }
+
+.app-shell--with-sidebar .app-content--dashboard { max-width: 1440px; }

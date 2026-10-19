@@ -6,7 +6,8 @@
 <app-ui-empty-state *ngIf="!cargando && errorMensaje" icon="bi-wifi-off" title="No pudimos cargar el informe" [message]="errorMensaje">
   <app-ui-button variant="secondary" (clicked)="reintentar()">Reintentar</app-ui-button>
 </app-ui-empty-state>
-<ng-container *ngIf="!cargando && !errorMensaje && data">
+<div *ngIf="!cargando && !errorMensaje && data" class="dash__layout">
+  <div class="dash__panel dash__panel--resumen">
   <section aria-labelledby="dash-actividad">
     <h2 id="dash-actividad" class="dash__section-title">Actividad del período</h2>
     <div class="dash__resumen">
@@ -14,7 +15,7 @@
       <div class="dash__stat"><p class="dash__stat-valor">{{ data.registros_con_recursos }}</p><p class="dash__stat-label">Con recursos informados</p></div>
       <div class="dash__stat"><p class="dash__stat-valor">{{ data.registros_sin_recursos }}</p><p class="dash__stat-label">Sin recurso informado</p></div>
     </div>
-    <p class="dash__nota">{{ data.registros_fuerza }} series de fuerza · {{ data.registros_cardio }} bloques de cardio · {{ data.alumnos_con_registros }} alumnos</p>
+    <p class="dash__nota">{{ data.registros_fuerza }} series de fuerza · {{ data.registros_cardio }} registros de cardio · {{ data.alumnos_con_registros }} alumnos</p>
     <p *ngIf="data.registros_sin_recursos" class="dash__cobertura">Los registros sin recurso informado se conservan en el historial y no se atribuyen a ningún equipo o espacio.</p>
     <p *ngIf="!data.total_registros" class="dash__nota">Todavía no hay entrenamientos registrados en este período.</p>
   </section>
@@ -29,15 +30,18 @@
       <div class="dash__stat"><p class="dash__stat-valor">{{ data.recursos_sin_uso }}</p><p class="dash__stat-label">Sin uso registrado</p></div>
       <div class="dash__stat"><p class="dash__stat-valor">{{ data.total_usos }}</p><p class="dash__stat-label">Usos registrados</p></div>
     </div>
-    <p class="dash__nota">Cada serie o bloque de cardio cuenta un uso por cada recurso seleccionado. El informe refleja entrenamientos registrados, no ocupación en tiempo real.</p>
+    <p class="dash__nota">Los usos se calculan con los recursos asociados a cada ejercicio registrado. Si hay máquinas alternativas asociadas, se cuenta un uso para cada una. El informe no mide ocupación en tiempo real.</p>
+  </section>
+  </div>
+  <section class="dash__panel dash__panel--ranking" aria-labelledby="dash-ranking">
     <div class="dash__vista-toggle" role="group" aria-label="Orden del ranking">
       <button type="button" class="dash__vista-btn" [class.dash__vista-btn--active]="vista === 'top'" [attr.aria-pressed]="vista === 'top'" (click)="setVista('top')">Más utilizados</button>
       <button type="button" class="dash__vista-btn" [class.dash__vista-btn--active]="vista === 'bottom'" [attr.aria-pressed]="vista === 'bottom'" (click)="setVista('bottom')">Menos utilizados</button>
     </div>
-    <h3 class="dash__section-title">{{ tituloVista }} · hasta 5 recursos</h3>
+    <h2 id="dash-ranking" class="dash__section-title">{{ tituloVista }} · hasta 5 recursos</h2>
     <app-ui-empty-state *ngIf="!lista.length" icon="bi-inbox" [title]="data.total_recursos ? 'Sin usos registrados' : 'Sin recursos de este tipo'" message="Selecciona otro tipo de recurso o período para comparar.">
       <app-ui-button *ngIf="data.total_recursos && vista === 'top'" variant="secondary" (clicked)="setVista('bottom')">Ver recursos sin uso registrado</app-ui-button>
     </app-ui-empty-state>
     <div class="dash__lista"><app-uso-card *ngFor="let r of lista" [recurso]="r" [maximo]="maximo" [variante]="vista === 'top' ? 'top' : 'baja'"></app-uso-card></div>
   </section>
-</ng-container>
+</div>
