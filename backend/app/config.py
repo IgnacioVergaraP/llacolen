@@ -10,7 +10,7 @@ class Config:
     SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-cambiar")
 
     # CORS
-    # CORS: lista separada por comas desde Railway
+    # Lista de orígenes permitidos separada por comas.
     CORS_ORIGINS = [
         origin.strip()
         for origin in os.getenv(
@@ -61,5 +61,6 @@ CONFIG_MAP = {
 
 
 def get_config(name: str | None = None):
-    name = name or os.getenv("FLASK_ENV", "development")
+    default_env = "production" if os.getenv("VERCEL") == "1" else "development"
+    name = name or os.getenv("FLASK_ENV", default_env)
     return CONFIG_MAP.get(name, DevelopmentConfig)
